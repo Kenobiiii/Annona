@@ -247,3 +247,34 @@ class OffCacheRow(SQLModel, table=True):
     found: bool
     payload: dict | None = Field(default=None, sa_type=JSON)
     fetched_at: datetime = utc()
+
+
+class LlmCacheRow(SQLModel, table=True):
+    """Validated LLM answers keyed by a hash of model + prompt + images + schema."""
+
+    __tablename__ = "llm_cache"
+
+    key: str = Field(primary_key=True, max_length=64)
+    model: str
+    response: str
+    created_at: datetime = utc()
+
+
+class LlmUsageRow(SQLModel, table=True):
+    """One row per model call or cache hit: tokens, cost and latency (no prompt contents)."""
+
+    __tablename__ = "llm_usage"
+
+    id: int | None = Field(default=None, primary_key=True)
+    at: datetime = utc()
+    task: str = Field(index=True)
+    tier: str
+    model: str
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cost_usd: Decimal | None = dec(nullable=True)
+    latency_ms: int | None = None
+    cached: bool = False
+    repair: bool = False
+    success: bool = True
+    error: str | None = None

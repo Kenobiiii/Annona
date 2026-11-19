@@ -55,4 +55,8 @@ known-first-party = ["annona_core", "annona_providers", "annona_server", "annona
 [tool.pytest.ini_options]
 testpaths = ["tests", "core/tests", "providers/tests", "server/tests"]
 addopts = ["--import-mode=importlib", "--strict-markers", "-ra"]
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # Third-party (LiteLLM's dependencies) TypedDicts using ReadOnly; not our code.
+    "ignore:Items? .* using the `ReadOnly` qualifier:UserWarning",
+]

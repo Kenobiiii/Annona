@@ -23,6 +23,8 @@ EXPECTED_TABLES = {
     "receipt",
     "receipt_line",
     "off_cache",
+    "llm_cache",
+    "llm_usage",
 }
 
 
