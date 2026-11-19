@@ -36,6 +36,8 @@ uv run python -m annona_server.evals rescore    # re-apply fixed labels to old r
 | `accuracy_unambiguous` | same, on items not marked ambiguous | removes label noise |
 | `type_accuracy` | lenient match of the type label | secondary detail |
 | `missing` | items the model skipped | silent failures |
+| `diet_unsafe_errors` | wrong category that would let some diet ALLOW the product (e.g. ham as "prepared" for a vegetarian) | **safety: the most important number** |
+| `diet_over_restrictive_errors` | wrong category that would wrongly EXCLUDE it (oat drink as dairy for a vegan) | annoying, not dangerous |
 | `valid_first_try_rate` / `repair_rate` | batches valid at once / needing the repair retry | reliability and hidden cost |
 | `input_tokens`, `output_tokens`, `cost_usd`, `cost_per_item_usd` | spend | the price of quality |
 | `latency_ms_p50` / `p95` | typical / slow-case time per batch | user wait |
@@ -80,9 +82,23 @@ Findings:
 - On clear items the variants are equal; the overall gap comes from ambiguous items (baked beans,
   protein mousse, marinated chicken), within run-to-run noise (the control itself moved from a
   99.2 % mean earlier to 97.7 % now).
-- One safety-relevant error appeared only with `v2_compact` (1 of 6 runs): a plant-based coconut
-  yogurt classified as dairy, which matters for vegan diets.
+- Correction: a plant-based coconut yogurt classified as dairy (once, `v2_compact`) only hides
+  it from vegans (over-restrictive), it is not dangerous. The diet-severity metric added
+  afterwards found the real risk: `v2_compact` classified marinated chicken as "prepared" in 2
+  of 6 runs, which would let a vegetarian get meat; `v1_role` never did.
 - Absolute savings are tiny at today's volume (~$0.0005 per 87 products).
 
 Decision: keep `v1_role` as the default for now (quality and diet safety over a negligible
 saving); revisit `v2_compact` when volumes grow, with a larger dataset that has more diet traps.
+
+## Diet-severity metric (added after the second experiment, rescored for free)
+
+| Prompt | Unsafe diet errors over 6 runs |
+|---|---|
+| `v1_role` | protein mousse (dairy) -> other: 3 |
+| `v2_compact` | protein mousse -> other: 5; marinated chicken (meat) -> prepared: 2 |
+| rules only (1 run) | 17 |
+
+Note: categories `prepared` and `other` exclude nothing for any diet, so a meat-containing ready
+meal is only caught by its declared allergens or by the `diet_uncertain` flag. Unsafe errors into
+those two categories are the ones to watch.

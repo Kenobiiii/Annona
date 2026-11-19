@@ -11,6 +11,7 @@ from .diet import (
     ProductDecision,
     allergy_notice,
     check_product,
+    diets_excluding,
     is_product_allowed,
 )
 from .settings import TargetSettings
@@ -39,6 +40,7 @@ __all__ = [
     "bmr_mifflin_st_jeor",
     "check_product",
     "daily_targets",
+    "diets_excluding",
     "is_product_allowed",
     "suggest_activity_level",
     "weekly_targets",

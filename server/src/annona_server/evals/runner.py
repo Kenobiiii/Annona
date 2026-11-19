@@ -137,8 +137,12 @@ def run_classification(
             "estimated_cost_usd": None if estimated_cost is None else str(estimated_cost),
         },
         "metrics": classification_metrics(items, calls),
-        "items": [asdict(i) | {"correct": i.correct} for i in items],
+        "items": [_item_json(i) for i in items],
     }
+
+
+def _item_json(item: ItemResult) -> dict[str, Any]:
+    return asdict(item) | {"correct": item.correct, "diet_severity": item.diet_severity}
 
 
 def save_report(report: dict[str, Any], directory: Path = RESULTS) -> Path:
@@ -186,7 +190,7 @@ def rescore(report: dict[str, Any], rows: list[dict[str, Any]]) -> dict[str, Any
     return report | {
         "meta": report["meta"] | {"dataset_hash": dataset_hash(rows), "rescored": True},
         "metrics": metrics,
-        "items": [asdict(i) | {"correct": i.correct} for i in items],
+        "items": [_item_json(i) for i in items],
     }
 
 

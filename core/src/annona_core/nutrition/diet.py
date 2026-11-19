@@ -64,6 +64,13 @@ _EXCLUDED_ALLERGENS: dict[Diet, set[Allergen]] = {
 _UNCERTAIN_CATEGORIES = {Category.PREPARED, Category.OTHER}
 
 
+def diets_excluding(category: Category) -> frozenset[Diet]:
+    """Diets for which a product of this category is not allowed (by category alone)."""
+    return frozenset(
+        diet for diet, excluded in _EXCLUDED_CATEGORIES.items() if category in excluded
+    )
+
+
 def check_product(product: Product, profile: UserProfile) -> ProductDecision:
     reasons: list[ExclusionReason] = []
     found: tuple[Allergen, ...] = ()

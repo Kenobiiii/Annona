@@ -143,3 +143,31 @@ def test_compact_count_mismatch_is_repaired():
     )
     assert [r.category for r in result] == ["dairy", "grains"]
     assert "expected exactly 2" in fake.requests[1][1].messages[-1].text
+
+
+@pytest.mark.parametrize(
+    ("expected", "predicted", "severity"),
+    [
+        ("meat", "prepared", "unsafe"),  # a vegetarian would get ham
+        ("dairy", "beverages", "unsafe"),  # a vegan would get milk
+        ("fish", None, "unsafe"),  # skipped -> "other" -> allowed for everyone
+        ("beverages", "dairy", "over_restrictive"),  # oat drink hidden from vegans
+        ("legumes", "meat", "over_restrictive"),
+        ("bakery", "grains", None),  # wrong, but no diet impact
+        ("dairy", "dairy", None),  # correct
+        ("meat", "fish", "unsafe"),  # pescatarians would get meat
+    ],
+)
+def test_diet_severity(expected, predicted, severity):
+    item = ItemResult("1", "x", expected, None, False, predicted, None)
+    assert item.diet_severity == severity
+
+
+def test_diet_metrics_in_report():
+    items = [
+        ItemResult("1", "Jamón", "meat", None, False, "prepared", None),
+        ItemResult("2", "Bebida de avena", "beverages", None, False, "dairy", None),
+    ]
+    m = classification_metrics(items, [])
+    assert (m["diet_unsafe_errors"], m["diet_over_restrictive_errors"]) == (1, 1)
+    assert m["diet_unsafe_items"] == ["Jamón: meat -> prepared"]

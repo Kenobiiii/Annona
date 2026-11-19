@@ -10,7 +10,9 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any
 
+from annona_core.domain import Category
 from annona_core.llm import CallStats
+from annona_core.nutrition import diets_excluding
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,25 @@ class ItemResult:
     @property
     def correct(self) -> bool:
         return self.predicted_category == self.expected_category
+
+    @property
+    def diet_severity(self) -> str | None:
+        """How a wrong category affects diet filtering.
+
+        ``unsafe``: some diet would wrongly ALLOW the product (e.g. ham classified as "prepared"
+        lets a vegetarian get it). ``over_restrictive``: some diet would wrongly EXCLUDE it (e.g.
+        an oat drink classified as dairy hides it from vegans). A skipped item counts as "other",
+        the category an unclassified product gets.
+        """
+        if self.correct:
+            return None
+        expected = diets_excluding(Category(self.expected_category))
+        predicted = diets_excluding(Category(self.predicted_category or Category.OTHER))
+        if expected - predicted:
+            return "unsafe"
+        if predicted - expected:
+            return "over_restrictive"
+        return None
 
 
 def _type_match(expected: str | None, predicted: str | None) -> bool:
@@ -73,6 +94,13 @@ def classification_metrics(
             sum(_type_match(i.expected_type, i.predicted_type) for i in typed), len(typed)
         ),
         "missing": sum(i.predicted_category is None for i in items),
+        "diet_unsafe_errors": sum(i.diet_severity == "unsafe" for i in items),
+        "diet_over_restrictive_errors": sum(i.diet_severity == "over_restrictive" for i in items),
+        "diet_unsafe_items": [
+            f"{i.name}: {i.expected_category} -> {i.predicted_category}"
+            for i in items
+            if i.diet_severity == "unsafe"
+        ],
         "batches": len(calls),
         "valid_first_try_rate": _ratio(sum(not c.repaired for c in calls), len(calls)),
         "repair_rate": _ratio(sum(c.repaired for c in calls), len(calls)),

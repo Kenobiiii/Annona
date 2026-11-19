@@ -8,7 +8,8 @@
     "batch_size": 40,
     "started_at": "2026-11-19T19:16:58+00:00",
     "git_commit": "5c1dbc1",
-    "estimated_cost_usd": "0.004121"
+    "estimated_cost_usd": "0.004121",
+    "rescored": true
   },
   "metrics": {
     "n": 87,
@@ -16,6 +17,9 @@
     "accuracy_unambiguous": 0.9872,
     "type_accuracy": 0.8161,
     "missing": 0,
+    "diet_unsafe_errors": 0,
+    "diet_over_restrictive_errors": 0,
+    "diet_unsafe_items": [],
     "batches": 3,
     "valid_first_try_rate": 1.0,
     "repair_rate": 0.0,
@@ -110,7 +114,8 @@
       "ambiguous": false,
       "predicted_category": "nuts_seeds",
       "predicted_type": "walnuts",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000107947",
@@ -120,7 +125,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "milk",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001024412",
@@ -130,7 +136,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "cream",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000033628",
@@ -140,7 +147,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "orange_juice",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000033635",
@@ -150,7 +158,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "orange_juice",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000865977",
@@ -160,7 +169,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "lasagna",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-5000157024671",
@@ -170,7 +180,8 @@
       "ambiguous": true,
       "predicted_category": "prepared",
       "predicted_type": "baked_beans",
-      "correct": false
+      "correct": false,
+      "diet_severity": null
     },
     {
       "id": "op-8480000053305",
@@ -180,7 +191,8 @@
       "ambiguous": false,
       "predicted_category": "legumes",
       "predicted_type": "lentils",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8425208001406",
@@ -190,7 +202,8 @@
       "ambiguous": false,
       "predicted_category": "vegetables",
       "predicted_type": "onions",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000213587",
@@ -200,7 +213,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "yogurt",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001049132",
@@ -210,7 +224,8 @@
       "ambiguous": false,
       "predicted_category": "condiments",
       "predicted_type": "vinegar",
-      "correct": false
+      "correct": false,
+      "diet_severity": null
     },
     {
       "id": "op-8480000334404",
@@ -220,7 +235,8 @@
       "ambiguous": false,
       "predicted_category": "fruit",
       "predicted_type": "dried_pineapple",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000093493",
@@ -230,7 +246,8 @@
       "ambiguous": true,
       "predicted_category": "grains",
       "predicted_type": "cereal_bar",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001033902",
@@ -240,7 +257,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "chocolate",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8424152013671",
@@ -250,7 +268,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "breaded_chicken",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000056733",
@@ -260,7 +279,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "horchata",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001024092",
@@ -270,7 +290,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "crackers",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8427603144009",
@@ -280,7 +301,8 @@
       "ambiguous": false,
       "predicted_category": "vegetables",
       "predicted_type": "green_beans",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000706522",
@@ -290,7 +312,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "chocolate",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000127280",
@@ -300,7 +323,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "pasta_salad",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-5411188131380",
@@ -310,7 +334,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "coconut_yogurt_alternative",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001019395",
@@ -320,7 +345,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "gazpacho",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000348203",
@@ -330,7 +356,8 @@
       "ambiguous": false,
       "predicted_category": "nuts_seeds",
       "predicted_type": "peanuts",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-2350916002581",
@@ -340,7 +367,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "cheese",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000047182",
@@ -350,7 +378,8 @@
       "ambiguous": false,
       "predicted_category": "oils_fats",
       "predicted_type": "olive_oil",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8005709104839",
@@ -360,7 +389,8 @@
       "ambiguous": false,
       "predicted_category": "grains",
       "predicted_type": "pasta",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001038372",
@@ -370,7 +400,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "cappuccino",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000163172",
@@ -380,7 +411,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "mantecadas",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000242426",
@@ -390,7 +422,8 @@
       "ambiguous": false,
       "predicted_category": "fish",
       "predicted_type": "squid",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000676092",
@@ -400,7 +433,8 @@
       "ambiguous": false,
       "predicted_category": "legumes",
       "predicted_type": "red_beans",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000180308",
@@ -410,7 +444,8 @@
       "ambiguous": false,
       "predicted_category": "fish",
       "predicted_type": "canned_tuna",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000511263",
@@ -420,7 +455,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "mozzarella",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8410783344468",
@@ -430,7 +466,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "turkey_breast",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001043567",
@@ -440,7 +477,8 @@
       "ambiguous": false,
       "predicted_category": "condiments",
       "predicted_type": "mayonnaise",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000808585",
@@ -450,7 +488,8 @@
       "ambiguous": true,
       "predicted_category": "prepared",
       "predicted_type": "hummus",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000038401",
@@ -460,7 +499,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "guacamole",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-4008713713411",
@@ -470,7 +510,8 @@
       "ambiguous": false,
       "predicted_category": "grains",
       "predicted_type": "oats",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001014581",
@@ -480,7 +521,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "oat_drink",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000235626",
@@ -490,7 +532,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "emmental",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000823243",
@@ -500,7 +543,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "sliced_bread",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8436547770137",
@@ -510,7 +554,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "kefir",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000561695",
@@ -520,7 +565,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "chicken_breast",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000590862",
@@ -530,7 +576,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "chorizo",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000168832",
@@ -540,7 +587,8 @@
       "ambiguous": false,
       "predicted_category": "nuts_seeds",
       "predicted_type": "peanut_butter",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000184009",
@@ -550,7 +598,8 @@
       "ambiguous": false,
       "predicted_category": "fish",
       "predicted_type": "anchovy_fillets",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-2314470002548",
@@ -560,7 +609,8 @@
       "ambiguous": false,
       "predicted_category": "fruit",
       "predicted_type": "pear",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000341457",
@@ -570,7 +620,8 @@
       "ambiguous": false,
       "predicted_category": "nuts_seeds",
       "predicted_type": "sunflower_seeds",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000651402",
@@ -580,7 +631,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "chewing_gum",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000232649",
@@ -590,7 +642,8 @@
       "ambiguous": true,
       "predicted_category": "prepared",
       "predicted_type": "instant_mashed_potato",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-03257289",
@@ -600,7 +653,8 @@
       "ambiguous": false,
       "predicted_category": "condiments",
       "predicted_type": "food_colouring",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000064592",
@@ -610,7 +664,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "bread",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8410184040754",
@@ -620,7 +675,8 @@
       "ambiguous": false,
       "predicted_category": "grains",
       "predicted_type": "quinoa",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000341778",
@@ -630,7 +686,8 @@
       "ambiguous": false,
       "predicted_category": "condiments",
       "predicted_type": "cinnamon",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000609632",
@@ -640,7 +697,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "cottage_cheese",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000094889",
@@ -650,7 +708,8 @@
       "ambiguous": false,
       "predicted_category": "grains",
       "predicted_type": "cereal_flakes",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000348654",
@@ -660,7 +719,8 @@
       "ambiguous": false,
       "predicted_category": "nuts_seeds",
       "predicted_type": "almonds",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000823656",
@@ -670,7 +730,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "biscuits",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000145819",
@@ -680,7 +741,8 @@
       "ambiguous": false,
       "predicted_category": "bakery",
       "predicted_type": "biscuits",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001021442",
@@ -690,7 +752,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "kebab_meal",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000239266",
@@ -700,7 +763,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "almond_drink",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001035265",
@@ -710,7 +774,8 @@
       "ambiguous": true,
       "predicted_category": "nuts_seeds",
       "predicted_type": "tahini",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001022449",
@@ -720,7 +785,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "yogurt",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8413556010324",
@@ -730,7 +796,8 @@
       "ambiguous": false,
       "predicted_category": "dairy",
       "predicted_type": "requeson",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000679727",
@@ -740,7 +807,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "turkey_breast",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000158024",
@@ -750,7 +818,8 @@
       "ambiguous": true,
       "predicted_category": "dairy",
       "predicted_type": "protein_mousse",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000226068",
@@ -760,7 +829,8 @@
       "ambiguous": false,
       "predicted_category": "fruit",
       "predicted_type": "dates",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000807717",
@@ -770,7 +840,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "potato_omelette",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000401793",
@@ -780,7 +851,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "detergent",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000159229",
@@ -790,7 +862,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "ground_coffee",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8436559590341",
@@ -800,7 +873,8 @@
       "ambiguous": false,
       "predicted_category": "eggs",
       "predicted_type": "eggs",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-2303024003803",
@@ -810,7 +884,8 @@
       "ambiguous": false,
       "predicted_category": "fruit",
       "predicted_type": "pineapple",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-2307906003516",
@@ -820,7 +895,8 @@
       "ambiguous": true,
       "predicted_category": "meat",
       "predicted_type": "chicken_medallion",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000823526",
@@ -830,7 +906,8 @@
       "ambiguous": true,
       "predicted_category": "bakery",
       "predicted_type": "breadcrumbs",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000336408",
@@ -840,7 +917,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "nachos",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8410789140118",
@@ -850,7 +928,8 @@
       "ambiguous": false,
       "predicted_category": "legumes",
       "predicted_type": "tofu",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-5449000131843",
@@ -860,7 +939,8 @@
       "ambiguous": false,
       "predicted_category": "beverages",
       "predicted_type": "soft_drink",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-2369973001871",
@@ -870,7 +950,8 @@
       "ambiguous": false,
       "predicted_category": "vegetables",
       "predicted_type": "tomato",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000635808",
@@ -880,7 +961,8 @@
       "ambiguous": false,
       "predicted_category": "prepared",
       "predicted_type": "pizza",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8435324003727",
@@ -890,7 +972,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "serrano_ham",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000551085",
@@ -900,7 +983,8 @@
       "ambiguous": false,
       "predicted_category": "meat",
       "predicted_type": "fuet",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8402001009792",
@@ -910,7 +994,8 @@
       "ambiguous": false,
       "predicted_category": "fish",
       "predicted_type": "canned_mussels",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000049575",
@@ -920,7 +1005,8 @@
       "ambiguous": false,
       "predicted_category": "condiments",
       "predicted_type": "apple_vinegar",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000124760",
@@ -930,7 +1016,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": "white_chocolate",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000476203",
@@ -940,7 +1027,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": null,
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000331786",
@@ -950,7 +1038,8 @@
       "ambiguous": true,
       "predicted_category": "vegetables",
       "predicted_type": "olives",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-8480000260291",
@@ -960,7 +1049,8 @@
       "ambiguous": false,
       "predicted_category": "legumes",
       "predicted_type": "chickpeas",
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     },
     {
       "id": "op-9789505739738",
@@ -970,7 +1060,8 @@
       "ambiguous": false,
       "predicted_category": "other",
       "predicted_type": null,
-      "correct": true
+      "correct": true,
+      "diet_severity": null
     }
   ]
 }

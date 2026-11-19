@@ -55,14 +55,15 @@ def _fmt(value, pct: bool = False, money: bool = False) -> str:
 
 def compare() -> None:
     header = f"{'run':16} {'model':26} {'prompt':9} {'acc':>6} {'clear':>6} {'type':>6} "
-    header += f"{'repair':>6} {'cost $':>10} {'p50 ms':>7}"
+    header += f"{'unsafe':>6} {'restr':>5} {'repair':>6} {'cost $':>10} {'p50 ms':>7}"
     print(header)
     for r in load_reports():
         m, meta = r["metrics"], r["meta"]
         print(
             f"{r['_file'][:15]:16} {meta['model'][:26]:26} {(meta['prompt'] or '-'):9} "
             f"{_fmt(m['accuracy'], True):>6} {_fmt(m['accuracy_unambiguous'], True):>6} "
-            f"{_fmt(m['type_accuracy'], True):>6} {_fmt(m['repair_rate'], True):>6} "
+            f"{_fmt(m['type_accuracy'], True):>6} {_fmt(m.get('diet_unsafe_errors')):>6} "
+            f"{_fmt(m.get('diet_over_restrictive_errors')):>5} {_fmt(m['repair_rate'], True):>6} "
             f"{_fmt(m['cost_usd'], money=True):>10} {_fmt(m['latency_ms_p50']):>7}"
         )
 
