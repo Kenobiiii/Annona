@@ -10,6 +10,7 @@ this for it means you accept its notice (see annona_providers.mercadona.NOTICE).
 import argparse
 import json
 import shutil
+from itertools import islice
 from pathlib import Path
 
 from annona_providers.http import PoliteTransport
@@ -50,8 +51,10 @@ def main() -> None:
     print("unknown product:", provider.get_product(scenario["unknown"]))
     print("prices:", provider.get_prices([known]))
     if not provider.info.opt_in:
-        first = next(iter(provider.iter_catalog()), None)
-        print("catalog first item:", first)
+        first_two = [p.store_sku for p in islice(provider.iter_catalog(), 2)]
+        print("catalog first items:", first_two)
+        # Used by server/tests/test_ingest.py (catalogue ingestion with limit=2).
+        print("catalog prices:", provider.get_prices(first_two))
     provider.close()
     trim_price_pages(target)
     print(f"recorded into {target}")

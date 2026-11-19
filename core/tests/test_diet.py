@@ -88,3 +88,11 @@ def test_multiple_reasons_are_reported():
         product(Category.DAIRY, [Allergen.MILK]), profile(Diet.VEGAN, [Allergen.MILK])
     )
     assert d.reasons == (R.CONTAINS_ALLERGEN, R.NOT_IN_DIET)
+
+
+def test_allergy_notice_only_for_people_with_allergies():
+    from annona_core.nutrition import ALLERGY_NOTICE, allergy_notice
+
+    assert allergy_notice(profile(allergies=[Allergen.MILK])) == ALLERGY_NOTICE
+    assert allergy_notice(profile()) is None
+    assert "unknown" in ALLERGY_NOTICE and "yourself" in ALLERGY_NOTICE

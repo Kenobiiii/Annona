@@ -18,6 +18,19 @@ from pydantic import BaseModel, ConfigDict
 from annona_core.domain.enums import Allergen, Category, Diet
 from annona_core.domain.models import Product, UserProfile
 
+ALLERGY_NOTICE = (
+    "Because you have allergies, Annona will NOT suggest products whose allergens are unknown "
+    "(for example, products missing from Open Food Facts, or listed there without allergen "
+    "information). If you know a product is safe, open it and set its allergens yourself, "
+    "including 'contains none'. Your manual entry always wins over automatic data. Always check "
+    "the label: this is informational, not medical advice."
+)
+
+
+def allergy_notice(profile: UserProfile) -> str | None:
+    """The notice to show when a profile has allergies (``None`` otherwise)."""
+    return ALLERGY_NOTICE if profile.allergies else None
+
 
 class ExclusionReason(StrEnum):
     CONTAINS_ALLERGEN = "contains_allergen"
