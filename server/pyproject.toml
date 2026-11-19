@@ -6,8 +6,10 @@ readme = "README.md"
 license = "AGPL-3.0-or-later"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.20.1",
     "annona-core",
     "annona-providers",
+    "sqlmodel>=0.0.50",
 ]
 
 [build-system]
