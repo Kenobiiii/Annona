@@ -60,3 +60,29 @@ uv run python -m annona_server.evals rescore    # re-apply fixed labels to old r
 
 `v1_role` won every run at the same cost, so it became the default. Remaining errors: sour gummy
 sweets read as a condiment once, and two ambiguous items (protein mousse, canned baked beans).
+
+## Second experiment: cheaper output (2026-11-19, off-peak, 3 runs per variant)
+
+Hypothesis: output tokens are ~90 % of the cost, so an ordered `[category, type]` format
+(`v2_compact`) should halve cost without hurting accuracy. Schemas sent to the model were also
+cleaned (no titles/docstrings), so `v1_role` was re-run as the control.
+
+| Variant | Accuracy per run | Mean | Clear items | Output tokens/item | Cost/run |
+|---|---|---|---|---|---|
+| `v1_role`, batch 20 (control) | 97.7 / 96.5 / 98.9 % | 97.7 % | 98.3 % | 16.4 | $0.00107 |
+| `v2_compact`, batch 20 | 95.4 / 95.4 / 96.5 % | 95.8 % | 98.7 % | 8.4 | $0.00065 (-39 %) |
+| `v2_compact`, batch 40 | 97.7 / 95.4 / 97.7 % | 96.9 % | 98.7 % | 8.9 | $0.00058 (-46 %) |
+
+Findings:
+
+- Output tokens halved as expected; cost fell 39-46 %. DeepSeek served ~2/3 of input tokens from
+  its prompt cache in every variant.
+- On clear items the variants are equal; the overall gap comes from ambiguous items (baked beans,
+  protein mousse, marinated chicken), within run-to-run noise (the control itself moved from a
+  99.2 % mean earlier to 97.7 % now).
+- One safety-relevant error appeared only with `v2_compact` (1 of 6 runs): a plant-based coconut
+  yogurt classified as dairy, which matters for vegan diets.
+- Absolute savings are tiny at today's volume (~$0.0005 per 87 products).
+
+Decision: keep `v1_role` as the default for now (quality and diet safety over a negligible
+saving); revisit `v2_compact` when volumes grow, with a larger dataset that has more diet traps.

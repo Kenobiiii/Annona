@@ -1,0 +1,984 @@
+{
+  "meta": {
+    "task": "product_classification",
+    "dataset_hash": "322c9968c3af",
+    "classifier": "llm",
+    "model": "deepseek/deepseek-flash",
+    "prompt": "v2_compact",
+    "batch_size": 20,
+    "started_at": "2026-11-19T19:15:37+00:00",
+    "git_commit": "5c1dbc1",
+    "estimated_cost_usd": "0.004615"
+  },
+  "metrics": {
+    "n": 87,
+    "accuracy": 0.954,
+    "accuracy_unambiguous": 0.9872,
+    "type_accuracy": 0.8621,
+    "missing": 0,
+    "batches": 5,
+    "valid_first_try_rate": 1.0,
+    "repair_rate": 0.0,
+    "model_calls": 5,
+    "input_tokens": 4156,
+    "output_tokens": 723,
+    "cached_input_tokens": 2304,
+    "output_tokens_per_item": 8.3,
+    "cost_usd": "0.00071851199999999997",
+    "cost_per_item_usd": "0.00000826",
+    "latency_ms_p50": 1110,
+    "latency_ms_p95": 1620,
+    "per_category": {
+      "bakery": {
+        "n": 7,
+        "recall": 1.0
+      },
+      "beverages": {
+        "n": 8,
+        "recall": 1.0
+      },
+      "condiments": {
+        "n": 4,
+        "recall": 1.0
+      },
+      "dairy": {
+        "n": 11,
+        "recall": 0.9091
+      },
+      "eggs": {
+        "n": 1,
+        "recall": 1.0
+      },
+      "fish": {
+        "n": 4,
+        "recall": 1.0
+      },
+      "fruit": {
+        "n": 4,
+        "recall": 1.0
+      },
+      "grains": {
+        "n": 5,
+        "recall": 1.0
+      },
+      "legumes": {
+        "n": 5,
+        "recall": 0.8
+      },
+      "meat": {
+        "n": 7,
+        "recall": 0.8571
+      },
+      "nuts_seeds": {
+        "n": 6,
+        "recall": 1.0
+      },
+      "oils_fats": {
+        "n": 1,
+        "recall": 1.0
+      },
+      "other": {
+        "n": 10,
+        "recall": 1.0
+      },
+      "prepared": {
+        "n": 10,
+        "recall": 0.9
+      },
+      "vegetables": {
+        "n": 4,
+        "recall": 1.0
+      }
+    },
+    "top_confusions": [
+      [
+        "legumes -> prepared",
+        1
+      ],
+      [
+        "prepared -> meat",
+        1
+      ],
+      [
+        "dairy -> other",
+        1
+      ],
+      [
+        "meat -> prepared",
+        1
+      ]
+    ]
+  },
+  "items": [
+    {
+      "id": "op-8480000340245",
+      "name": "Nuez natural pelada",
+      "expected_category": "nuts_seeds",
+      "expected_type": "walnuts",
+      "ambiguous": false,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "walnuts",
+      "correct": true
+    },
+    {
+      "id": "op-8480000107947",
+      "name": "Leche semidesnatada",
+      "expected_category": "dairy",
+      "expected_type": "milk",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "semi_skimmed_milk",
+      "correct": true
+    },
+    {
+      "id": "op-8402001024412",
+      "name": "Nata Montada Chantilly",
+      "expected_category": "dairy",
+      "expected_type": "cream",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "whipped_cream",
+      "correct": true
+    },
+    {
+      "id": "op-8480000033628",
+      "name": "Zumo de naranja",
+      "expected_category": "beverages",
+      "expected_type": "juice",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "orange_juice",
+      "correct": true
+    },
+    {
+      "id": "op-8480000033635",
+      "name": "Sumo de laranja",
+      "expected_category": "beverages",
+      "expected_type": "juice",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "orange_juice",
+      "correct": true
+    },
+    {
+      "id": "op-8480000865977",
+      "name": "Lasaña boloñesa",
+      "expected_category": "prepared",
+      "expected_type": "lasagna",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "lasagna",
+      "correct": true
+    },
+    {
+      "id": "op-5000157024671",
+      "name": "Beanz in a rich tomato sauce",
+      "expected_category": "legumes",
+      "expected_type": "beans",
+      "ambiguous": true,
+      "predicted_category": "prepared",
+      "predicted_type": "baked_beans",
+      "correct": false
+    },
+    {
+      "id": "op-8480000053305",
+      "name": "Lenteja Pardina categoría extra",
+      "expected_category": "legumes",
+      "expected_type": "lentils",
+      "ambiguous": false,
+      "predicted_category": "legumes",
+      "predicted_type": "lentils",
+      "correct": true
+    },
+    {
+      "id": "op-8425208001406",
+      "name": "Cebollas",
+      "expected_category": "vegetables",
+      "expected_type": "onion",
+      "ambiguous": false,
+      "predicted_category": "vegetables",
+      "predicted_type": "onions",
+      "correct": true
+    },
+    {
+      "id": "op-8480000213587",
+      "name": "Griego Ligero Natural",
+      "expected_category": "dairy",
+      "expected_type": "yogurt",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "greek_yogurt",
+      "correct": true
+    },
+    {
+      "id": "op-8402001049132",
+      "name": "Llaves Súper Ácidas",
+      "expected_category": "other",
+      "expected_type": "sweets",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": null,
+      "correct": true
+    },
+    {
+      "id": "op-8480000334404",
+      "name": "Piña deshidratada",
+      "expected_category": "fruit",
+      "expected_type": "pineapple",
+      "ambiguous": false,
+      "predicted_category": "fruit",
+      "predicted_type": "dried_pineapple",
+      "correct": true
+    },
+    {
+      "id": "op-8480000093493",
+      "name": "Barritas Muesli Chocolate",
+      "expected_category": "grains",
+      "expected_type": "cereal_bar",
+      "ambiguous": true,
+      "predicted_category": "grains",
+      "predicted_type": "cereal_bar",
+      "correct": true
+    },
+    {
+      "id": "op-8402001033902",
+      "name": "Chocolate 0% Azúcares Añadidos",
+      "expected_category": "other",
+      "expected_type": "chocolate",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "chocolate",
+      "correct": true
+    },
+    {
+      "id": "op-8424152013671",
+      "name": "Pollo y setas empanada",
+      "expected_category": "prepared",
+      "expected_type": "empanada",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "breaded_chicken",
+      "correct": false
+    },
+    {
+      "id": "op-8480000056733",
+      "name": "Horchata de chufa",
+      "expected_category": "beverages",
+      "expected_type": "horchata",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "horchata",
+      "correct": true
+    },
+    {
+      "id": "op-8402001024092",
+      "name": "Crackers Com Sal",
+      "expected_category": "bakery",
+      "expected_type": "crackers",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "crackers",
+      "correct": true
+    },
+    {
+      "id": "op-8427603144009",
+      "name": "Judía plana",
+      "expected_category": "vegetables",
+      "expected_type": "green_beans",
+      "ambiguous": false,
+      "predicted_category": "vegetables",
+      "predicted_type": "flat_green_beans",
+      "correct": true
+    },
+    {
+      "id": "op-8480000706522",
+      "name": "Chocolate Negro 55%",
+      "expected_category": "other",
+      "expected_type": "chocolate",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "dark_chocolate",
+      "correct": true
+    },
+    {
+      "id": "op-8480000127280",
+      "name": "Ensalada Pasta Listo Para Comer",
+      "expected_category": "prepared",
+      "expected_type": "pasta_salad",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "pasta_salad",
+      "correct": true
+    },
+    {
+      "id": "op-5411188131380",
+      "name": "Alpro Fermentiertes Kokosnussprodukt, Natur, Absolutely 350g",
+      "expected_category": "other",
+      "expected_type": "yogurt_alternative",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "coconut_yogurt_alternative",
+      "correct": true
+    },
+    {
+      "id": "op-8402001019395",
+      "name": "Gazpacho Tradicional",
+      "expected_category": "prepared",
+      "expected_type": "gazpacho",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "gazpacho",
+      "correct": true
+    },
+    {
+      "id": "op-8480000348203",
+      "name": "Cacahuete frito con sal",
+      "expected_category": "nuts_seeds",
+      "expected_type": "peanuts",
+      "ambiguous": false,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "peanuts",
+      "correct": true
+    },
+    {
+      "id": "op-2350916002581",
+      "name": "Queso tierno cuñitas",
+      "expected_category": "dairy",
+      "expected_type": "cheese",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "cheese",
+      "correct": true
+    },
+    {
+      "id": "op-8480000047182",
+      "name": "Aceite de oliva virgen extra",
+      "expected_category": "oils_fats",
+      "expected_type": "olive_oil",
+      "ambiguous": false,
+      "predicted_category": "oils_fats",
+      "predicted_type": "olive_oil",
+      "correct": true
+    },
+    {
+      "id": "op-8005709104839",
+      "name": "Tortiglioni",
+      "expected_category": "grains",
+      "expected_type": "pasta",
+      "ambiguous": false,
+      "predicted_category": "grains",
+      "predicted_type": "pasta",
+      "correct": true
+    },
+    {
+      "id": "op-8402001038372",
+      "name": "cappuccino",
+      "expected_category": "beverages",
+      "expected_type": "coffee",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "cappuccino",
+      "correct": true
+    },
+    {
+      "id": "op-8480000163172",
+      "name": "Mantecadas",
+      "expected_category": "bakery",
+      "expected_type": "pastry",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "pastries",
+      "correct": true
+    },
+    {
+      "id": "op-8480000242426",
+      "name": "Calamar limpio",
+      "expected_category": "fish",
+      "expected_type": "squid",
+      "ambiguous": false,
+      "predicted_category": "fish",
+      "predicted_type": "squid",
+      "correct": true
+    },
+    {
+      "id": "op-8480000676092",
+      "name": "Alubia roja",
+      "expected_category": "legumes",
+      "expected_type": "beans",
+      "ambiguous": false,
+      "predicted_category": "legumes",
+      "predicted_type": "red_beans",
+      "correct": true
+    },
+    {
+      "id": "op-8480000180308",
+      "name": "Atún en aceite de oliva",
+      "expected_category": "fish",
+      "expected_type": "tuna",
+      "ambiguous": false,
+      "predicted_category": "fish",
+      "predicted_type": "tuna",
+      "correct": true
+    },
+    {
+      "id": "op-8480000511263",
+      "name": "Mozzarella",
+      "expected_category": "dairy",
+      "expected_type": "cheese",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "mozzarella",
+      "correct": true
+    },
+    {
+      "id": "op-8410783344468",
+      "name": "Delizias pechuga de pavo",
+      "expected_category": "meat",
+      "expected_type": "turkey",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "turkey_breast",
+      "correct": true
+    },
+    {
+      "id": "op-8402001043567",
+      "name": "Light Mayonnaise",
+      "expected_category": "condiments",
+      "expected_type": "mayonnaise",
+      "ambiguous": false,
+      "predicted_category": "condiments",
+      "predicted_type": "mayonnaise",
+      "correct": true
+    },
+    {
+      "id": "op-8480000808585",
+      "name": "Hummus Classic",
+      "expected_category": "prepared",
+      "expected_type": "hummus",
+      "ambiguous": true,
+      "predicted_category": "prepared",
+      "predicted_type": "hummus",
+      "correct": true
+    },
+    {
+      "id": "op-8480000038401",
+      "name": "Guacamole",
+      "expected_category": "prepared",
+      "expected_type": "guacamole",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "guacamole",
+      "correct": true
+    },
+    {
+      "id": "op-4008713713411",
+      "name": "Copos de avena extra suaves",
+      "expected_category": "grains",
+      "expected_type": "oats",
+      "ambiguous": false,
+      "predicted_category": "grains",
+      "predicted_type": "oats",
+      "correct": true
+    },
+    {
+      "id": "op-8402001014581",
+      "name": "Bebida de avena 0% azúcar",
+      "expected_category": "beverages",
+      "expected_type": "oat_drink",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "oat_drink",
+      "correct": true
+    },
+    {
+      "id": "op-8480000235626",
+      "name": "Emmental",
+      "expected_category": "dairy",
+      "expected_type": "cheese",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "cheese",
+      "correct": true
+    },
+    {
+      "id": "op-8480000823243",
+      "name": "Pan de molde blanco familiar",
+      "expected_category": "bakery",
+      "expected_type": "bread",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "bread",
+      "correct": true
+    },
+    {
+      "id": "op-8436547770137",
+      "name": "Kéfir natural sabor suave",
+      "expected_category": "dairy",
+      "expected_type": "kefir",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "kefir",
+      "correct": true
+    },
+    {
+      "id": "op-8480000561695",
+      "name": "Pechuga pollo braseada finas lonchas",
+      "expected_category": "meat",
+      "expected_type": "chicken",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "chicken_breast",
+      "correct": true
+    },
+    {
+      "id": "op-8480000590862",
+      "name": "Chorizo extra",
+      "expected_category": "meat",
+      "expected_type": "chorizo",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "chorizo",
+      "correct": true
+    },
+    {
+      "id": "op-8480000168832",
+      "name": "Crema de cacahuetes 100%",
+      "expected_category": "nuts_seeds",
+      "expected_type": "peanut_butter",
+      "ambiguous": false,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "peanut_butter",
+      "correct": true
+    },
+    {
+      "id": "op-8480000184009",
+      "name": "Filetes de Anchoa",
+      "expected_category": "fish",
+      "expected_type": "anchovies",
+      "ambiguous": false,
+      "predicted_category": "fish",
+      "predicted_type": "anchovies",
+      "correct": true
+    },
+    {
+      "id": "op-2314470002548",
+      "name": "Pera conferencia",
+      "expected_category": "fruit",
+      "expected_type": "pear",
+      "ambiguous": false,
+      "predicted_category": "fruit",
+      "predicted_type": "pear",
+      "correct": true
+    },
+    {
+      "id": "op-8480000341457",
+      "name": "Pipas fritas peladas",
+      "expected_category": "nuts_seeds",
+      "expected_type": "sunflower_seeds",
+      "ambiguous": false,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "sunflower_seeds",
+      "correct": true
+    },
+    {
+      "id": "op-8480000651402",
+      "name": "Chicles sandía",
+      "expected_category": "other",
+      "expected_type": "chewing_gum",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "chewing_gum",
+      "correct": true
+    },
+    {
+      "id": "op-8480000232649",
+      "name": "Puré de patatas en copos instantáneo preparado",
+      "expected_category": "prepared",
+      "expected_type": "mashed_potato",
+      "ambiguous": true,
+      "predicted_category": "prepared",
+      "predicted_type": "instant_mashed_potato",
+      "correct": true
+    },
+    {
+      "id": "op-03257289",
+      "name": "Colorante alimentario",
+      "expected_category": "condiments",
+      "expected_type": "food_colouring",
+      "ambiguous": false,
+      "predicted_category": "condiments",
+      "predicted_type": "food_colouring",
+      "correct": true
+    },
+    {
+      "id": "op-8480000064592",
+      "name": "Chapata Cristal",
+      "expected_category": "bakery",
+      "expected_type": "bread",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "bread",
+      "correct": true
+    },
+    {
+      "id": "op-8410184040754",
+      "name": "QUINOA REAL BLANCA Y ROJA",
+      "expected_category": "grains",
+      "expected_type": "quinoa",
+      "ambiguous": false,
+      "predicted_category": "grains",
+      "predicted_type": "quinoa",
+      "correct": true
+    },
+    {
+      "id": "op-8480000341778",
+      "name": "Canela molida",
+      "expected_category": "condiments",
+      "expected_type": "cinnamon",
+      "ambiguous": false,
+      "predicted_category": "condiments",
+      "predicted_type": "cinnamon",
+      "correct": true
+    },
+    {
+      "id": "op-8480000609632",
+      "name": "Queso fresco cottage",
+      "expected_category": "dairy",
+      "expected_type": "cheese",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "cottage_cheese",
+      "correct": true
+    },
+    {
+      "id": "op-8480000094889",
+      "name": "Copos de trigo integral y arroz 0% azúcares añadidos",
+      "expected_category": "grains",
+      "expected_type": "breakfast_cereal",
+      "ambiguous": false,
+      "predicted_category": "grains",
+      "predicted_type": "breakfast_cereal",
+      "correct": true
+    },
+    {
+      "id": "op-8480000348654",
+      "name": "Almendra al natural - Hacendado",
+      "expected_category": "nuts_seeds",
+      "expected_type": "almonds",
+      "ambiguous": false,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "almonds",
+      "correct": true
+    },
+    {
+      "id": "op-8480000823656",
+      "name": "REGAÑA",
+      "expected_category": "bakery",
+      "expected_type": "breadsticks",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "breadsticks",
+      "correct": true
+    },
+    {
+      "id": "op-8480000145819",
+      "name": "Belgas 18% mantequilla",
+      "expected_category": "bakery",
+      "expected_type": "biscuits",
+      "ambiguous": false,
+      "predicted_category": "bakery",
+      "predicted_type": "biscuits",
+      "correct": true
+    },
+    {
+      "id": "op-8402001021442",
+      "name": "Plato Kebab Preparado",
+      "expected_category": "prepared",
+      "expected_type": "kebab",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "kebab",
+      "correct": true
+    },
+    {
+      "id": "op-8480000239266",
+      "name": "Bebida de almendra 0% azúcares",
+      "expected_category": "beverages",
+      "expected_type": "almond_drink",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "almond_drink",
+      "correct": true
+    },
+    {
+      "id": "op-8402001035265",
+      "name": "Tahini",
+      "expected_category": "nuts_seeds",
+      "expected_type": "tahini",
+      "ambiguous": true,
+      "predicted_category": "nuts_seeds",
+      "predicted_type": "tahini",
+      "correct": true
+    },
+    {
+      "id": "op-8402001022449",
+      "name": "Bífidus Probióticos Mango",
+      "expected_category": "dairy",
+      "expected_type": "yogurt",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "kefir",
+      "correct": true
+    },
+    {
+      "id": "op-8413556010324",
+      "name": "Requesón",
+      "expected_category": "dairy",
+      "expected_type": "cheese",
+      "ambiguous": false,
+      "predicted_category": "dairy",
+      "predicted_type": "cheese",
+      "correct": true
+    },
+    {
+      "id": "op-8480000679727",
+      "name": "Pechuga de pavo finas lonchas",
+      "expected_category": "meat",
+      "expected_type": "turkey",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "turkey_breast",
+      "correct": true
+    },
+    {
+      "id": "op-8480000158024",
+      "name": "Mousse Chocolate Proteínas",
+      "expected_category": "dairy",
+      "expected_type": "dessert",
+      "ambiguous": true,
+      "predicted_category": "other",
+      "predicted_type": "protein_mousse",
+      "correct": false
+    },
+    {
+      "id": "op-8480000226068",
+      "name": "Dátiles en rama Deglet Nour",
+      "expected_category": "fruit",
+      "expected_type": "dates",
+      "ambiguous": false,
+      "predicted_category": "fruit",
+      "predicted_type": "dates",
+      "correct": true
+    },
+    {
+      "id": "op-8480000807717",
+      "name": "Tortilla de patata sin cebolla",
+      "expected_category": "prepared",
+      "expected_type": "potato_omelette",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "potato_omelette",
+      "correct": true
+    },
+    {
+      "id": "op-8480000401793",
+      "name": "Detergente Frescura Azul",
+      "expected_category": "other",
+      "expected_type": "non_food",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "detergent",
+      "correct": true
+    },
+    {
+      "id": "op-8480000159229",
+      "name": "Café molido mezcla",
+      "expected_category": "beverages",
+      "expected_type": "coffee",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "ground_coffee",
+      "correct": true
+    },
+    {
+      "id": "op-8436559590341",
+      "name": "Huevos gallinas sueltas en gallinero",
+      "expected_category": "eggs",
+      "expected_type": "egg",
+      "ambiguous": false,
+      "predicted_category": "eggs",
+      "predicted_type": "eggs",
+      "correct": true
+    },
+    {
+      "id": "op-2303024003803",
+      "name": "Piña natural en rodajas",
+      "expected_category": "fruit",
+      "expected_type": "pineapple",
+      "ambiguous": false,
+      "predicted_category": "fruit",
+      "predicted_type": "pineapple",
+      "correct": true
+    },
+    {
+      "id": "op-2307906003516",
+      "name": "Medallón de pollo al ajillo",
+      "expected_category": "meat",
+      "expected_type": "chicken",
+      "ambiguous": true,
+      "predicted_category": "prepared",
+      "predicted_type": "chicken_medallion",
+      "correct": false
+    },
+    {
+      "id": "op-8480000823526",
+      "name": "Pan rallado casero",
+      "expected_category": "bakery",
+      "expected_type": "breadcrumbs",
+      "ambiguous": true,
+      "predicted_category": "bakery",
+      "predicted_type": "breadcrumbs",
+      "correct": true
+    },
+    {
+      "id": "op-8480000336408",
+      "name": "Nachos",
+      "expected_category": "other",
+      "expected_type": "snacks",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "nachos",
+      "correct": true
+    },
+    {
+      "id": "op-8410789140118",
+      "name": "Tofu firme",
+      "expected_category": "legumes",
+      "expected_type": "tofu",
+      "ambiguous": false,
+      "predicted_category": "legumes",
+      "predicted_type": "tofu",
+      "correct": true
+    },
+    {
+      "id": "op-5449000131843",
+      "name": "Coca-Cola Zero",
+      "expected_category": "beverages",
+      "expected_type": "soft_drink",
+      "ambiguous": false,
+      "predicted_category": "beverages",
+      "predicted_type": "soft_drink",
+      "correct": true
+    },
+    {
+      "id": "op-2369973001871",
+      "name": "Tomate ensalada",
+      "expected_category": "vegetables",
+      "expected_type": "tomato",
+      "ambiguous": false,
+      "predicted_category": "vegetables",
+      "predicted_type": "tomato",
+      "correct": true
+    },
+    {
+      "id": "op-8480000635808",
+      "name": "Pizza 4 quesos",
+      "expected_category": "prepared",
+      "expected_type": "pizza",
+      "ambiguous": false,
+      "predicted_category": "prepared",
+      "predicted_type": "pizza",
+      "correct": true
+    },
+    {
+      "id": "op-8435324003727",
+      "name": "Jamón Serrano",
+      "expected_category": "meat",
+      "expected_type": "ham",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "serrano_ham",
+      "correct": true
+    },
+    {
+      "id": "op-8480000551085",
+      "name": "Fuet Espetec",
+      "expected_category": "meat",
+      "expected_type": "sausage",
+      "ambiguous": false,
+      "predicted_category": "meat",
+      "predicted_type": "fuet",
+      "correct": true
+    },
+    {
+      "id": "op-8402001009792",
+      "name": "Mejillones picantes en escabeche",
+      "expected_category": "fish",
+      "expected_type": "mussels",
+      "ambiguous": false,
+      "predicted_category": "fish",
+      "predicted_type": "canned_mussels",
+      "correct": true
+    },
+    {
+      "id": "op-8480000049575",
+      "name": "Vinagre de manzana",
+      "expected_category": "condiments",
+      "expected_type": "vinegar",
+      "ambiguous": false,
+      "predicted_category": "condiments",
+      "predicted_type": "vinegar",
+      "correct": true
+    },
+    {
+      "id": "op-8480000124760",
+      "name": "Chocolate blanco",
+      "expected_category": "other",
+      "expected_type": "chocolate",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": "white_chocolate",
+      "correct": true
+    },
+    {
+      "id": "op-8480000476203",
+      "name": "Pañuelos Extra Suaves",
+      "expected_category": "other",
+      "expected_type": "non_food",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": null,
+      "correct": true
+    },
+    {
+      "id": "op-8480000331786",
+      "name": "Aceitunas verdes rellenas de jalapeño",
+      "expected_category": "vegetables",
+      "expected_type": "olives",
+      "ambiguous": true,
+      "predicted_category": "vegetables",
+      "predicted_type": "green_olives",
+      "correct": true
+    },
+    {
+      "id": "op-8480000260291",
+      "name": "Garbanzos Bote",
+      "expected_category": "legumes",
+      "expected_type": "chickpeas",
+      "ambiguous": false,
+      "predicted_category": "legumes",
+      "predicted_type": "chickpeas",
+      "correct": true
+    },
+    {
+      "id": "op-9789505739738",
+      "name": "Teléfono Inteligente",
+      "expected_category": "other",
+      "expected_type": "non_food",
+      "ambiguous": false,
+      "predicted_category": "other",
+      "predicted_type": null,
+      "correct": true
+    }
+  ]
+}
