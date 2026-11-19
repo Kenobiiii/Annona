@@ -3,7 +3,7 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 0 — scaffolding).** Nothing usable yet. Follow the project to see it grow.
+> **Status: pre-alpha (Phase 1 — domain model and database).** Nothing usable yet. Follow the project to see it grow.
 
 ## Vision
 
@@ -50,6 +50,7 @@ uv sync                  # create .venv with all workspace packages + dev tools
 uv run ruff check .      # lint
 uv run ruff format .     # format
 uv run pytest            # tests
+uv run python -m annona_server.seed   # create ./data/annona.db and load sample foods
 
 cd app && npm ci         # app dependencies
 npm run lint && npm run typecheck && npm test
@@ -67,6 +68,7 @@ Copy `.env.example` to `.env` for local configuration. Never commit `.env`.
   complying with each store's terms of service** and local law when you enable one. The project is
   not affiliated with any supermarket.
 - Prices and nutrition values may be outdated or estimated; estimated values are always flagged.
+- Bundled sample nutrition data comes from USDA FoodData Central (public domain).
 
 ## Contributing
 

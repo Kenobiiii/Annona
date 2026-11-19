@@ -58,6 +58,8 @@ to date (receipt scanning).
 | `app/`       | `annona-app` (npm) | —                  | server (over HTTP)    |
 
 `core` must stay free of network, disk and database access so it can be tested exhaustively.
+It declares repository *interfaces*; the SQLite implementation (SQLModel + Alembic) lives in
+`server/annona_server/db/`.
 
 ## Key technical choices
 
@@ -74,12 +76,11 @@ to date (receipt scanning).
   `eslint`, `tsc`, `jest`.
 - **CI:** GitHub Actions runs lint, format check and tests for Python and the app.
 
-## Domain model (initial)
+## Domain model
 
-`Product`, `Price` (source: scrape | receipt | manual, observed_at), `PantryItem` (quantity, unit,
-expires_at), `UserProfile` (sex, age, height, weight, activity, goal, weekly_budget, currency,
-allergies, diet), `Equipment`, `MealPlan`, `PlannedMeal`, `Recipe`, `ShoppingList`, `ShoppingItem`,
-`Receipt`, `ReceiptLine`. Refined in Phase 1.
+A `Household` owns the shared things (budget, pantry, kitchen, plans, shopping lists, receipts) and
+has one or more `UserProfile` members. See [data-model.md](data-model.md) for entities, relations
+and rules.
 
 ## Legal and safety
 
