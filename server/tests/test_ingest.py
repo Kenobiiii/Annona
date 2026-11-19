@@ -185,3 +185,35 @@ def test_open_prices_ingestion_with_real_off_data(session):
     assert (milk.category, milk.type) == (Category.DAIRY, "milk")
     assert milk.nutrition.protein_g == Decimal("3.1")
     assert SqlPriceRepository(session).latest(milk.id).amount_cents == 164
+
+
+def test_llm_classifies_what_the_rules_miss(session, mercadona):
+    """Rules recognise the milk; a product they miss would go to the (fake) LLM."""
+    from annona_core.llm import FakeLLM, LLMClient, Tier
+    from annona_server.ingest.llm_classify import LLMClassifier
+
+    fake = FakeLLM(['{"items": [{"index": 0, "category": "beverages", "type": "milk"}]}'])
+    llm = LLMClient(fake, {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"})
+    # Force the rules to miss by giving the classifier list no rule classifier.
+    report = ingest(
+        session,
+        mercadona,
+        skus=["10381"],
+        off=None,
+        classifiers=(),
+        llm_classifier=LLMClassifier(llm),
+    )
+    assert report.unclassified == []
+    product = SqlProductRepository(session).get_by_store_sku("mercadona", "10381")
+    assert (product.category, product.category_source) == (Category.BEVERAGES, CategorySource.LLM)
+    assert len(fake.requests) == 1
+
+
+def test_rules_first_llm_not_called_when_rules_classify(session, mercadona):
+    from annona_core.llm import FakeLLM, LLMClient, Tier
+    from annona_server.ingest.llm_classify import LLMClassifier
+
+    fake = FakeLLM([])
+    llm = LLMClient(fake, {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"})
+    ingest(session, mercadona, skus=["10381"], off=None, llm_classifier=LLMClassifier(llm))
+    assert fake.requests == []  # the store path rule already classified it

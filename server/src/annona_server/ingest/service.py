@@ -30,12 +30,14 @@ from annona_providers.base import (
 
 from ..db.repositories import SqlPriceRepository, SqlProductRepository
 from .classify import (
+    Classification,
     ClassificationInput,
     Classifier,
     LLMClassifierStub,
     RuleClassifier,
     classify,
 )
+from .llm_classify import LLMClassifier
 from .off import OffProduct, OpenFoodFactsClient
 
 OPT_IN_MAX_ITEMS = 50
@@ -66,16 +68,32 @@ def ingest(
     limit: int | None = None,
     off: OpenFoodFactsClient | None = None,
     classifiers: Sequence[Classifier] = DEFAULT_CLASSIFIERS,
+    llm_classifier: LLMClassifier | None = None,
 ) -> IngestReport:
-    """Ingest the given products (by sku, by search query and/or the whole catalogue)."""
+    """Ingest the given products (by sku, by search query and/or the whole catalogue).
+
+    Rules classify first; products they miss go to ``llm_classifier`` in batches, if given.
+    """
     report = IngestReport()
     items = _collect(provider, skus, queries, catalog, limit)
+    off_products = [_lookup_off(off, item, report) for item in items]
+    inputs = [
+        ClassificationInput(i.name, i.category_path, o.categories if o else ())
+        for i, o in zip(items, off_products, strict=True)
+    ]
+    classifications = [classify(x, classifiers) for x in inputs]
+    missing = [n for n, c in enumerate(classifications) if c is None]
+    if llm_classifier is not None and missing:
+        for n, result in zip(
+            missing, llm_classifier.classify_batch([inputs[n] for n in missing]), strict=True
+        ):
+            classifications[n] = result
+
     products = SqlProductRepository(session)
     stored: dict[str, Product] = {}
-    for item in items:
-        off_product = _lookup_off(off, item, report)
+    for item, off_product, result in zip(items, off_products, classifications, strict=True):
         stored[item.store_sku] = _upsert(
-            products, item, provider.store_id, off_product, classifiers, report
+            products, item, provider.store_id, off_product, result, report
         )
 
     prices = SqlPriceRepository(session)
@@ -143,7 +161,7 @@ def _upsert(
     item: ProviderProduct,
     store_id: str,
     off_product: OffProduct | None,
-    classifiers: Sequence[Classifier],
+    result: Classification | None,
     report: IngestReport,
 ) -> Product:
     existing = repo.get_by_store_sku(store_id, item.store_sku)
@@ -160,12 +178,6 @@ def _upsert(
         data["package_amount"] = item.package_amount
         data["package_unit"] = item.package_unit
 
-    result = classify(
-        ClassificationInput(
-            item.name, item.category_path, off_product.categories if off_product else ()
-        ),
-        classifiers,
-    )
     if result is None:
         if data.get("category_source") is None:
             report.unclassified.append(f"{store_id}:{item.store_sku} {item.name}")

@@ -38,6 +38,9 @@ def main() -> None:
     parser.add_argument("--warehouse", help="mercadona: warehouse code")
     parser.add_argument("--accept-notice", action="store_true", help="accept an opt-in notice")
     parser.add_argument("--no-off", action="store_true", help="skip Open Food Facts lookups")
+    parser.add_argument(
+        "--llm", action="store_true", help="classify products the rules miss with the AI"
+    )
     args = parser.parse_args()
 
     config = {
@@ -61,6 +64,12 @@ def main() -> None:
     try:
         with session_scope(engine) as session:
             off = None if args.no_off else OpenFoodFactsClient(session)
+            llm_classifier = None
+            if args.llm:
+                from ..llm import make_llm_client
+                from .llm_classify import LLMClassifier
+
+                llm_classifier = LLMClassifier(make_llm_client(session))
             report = ingest(
                 session,
                 provider,
@@ -69,6 +78,7 @@ def main() -> None:
                 catalog=args.catalog,
                 limit=args.limit,
                 off=off,
+                llm_classifier=llm_classifier,
             )
             if off:
                 off.close()
