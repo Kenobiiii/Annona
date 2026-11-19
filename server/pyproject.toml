@@ -1,0 +1,22 @@
+[project]
+name = "annona-server"
+version = "0.0.0"
+description = "FastAPI REST API and MCP server for self-hosting."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.12"
+dependencies = [
+    "annona-core",
+    "annona-providers",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/annona_server"]
+
+[tool.uv.sources]
+annona-core = { workspace = true }
+annona-providers = { workspace = true }

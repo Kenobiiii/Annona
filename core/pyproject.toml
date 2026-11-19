@@ -1,0 +1,15 @@
+[project]
+name = "annona-core"
+version = "0.0.0"
+description = "Domain models, nutrition targets, optimiser and pantry logic (pure, no I/O)."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/annona_core"]

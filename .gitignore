@@ -1,0 +1,83 @@
+# ---------- Secrets and local config (NEVER commit) ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+secrets/
+credentials.json
+
+# ---------- Local data (pantry, receipts, caches) ----------
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+data/
+uploads/
+receipts/
+.cache/
+llm_cache/
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+# uv.lock SHOULD be committed (do not ignore it)
+
+# ---------- Node / Expo / React Native ----------
+node_modules/
+.expo/
+.expo-shared/
+web-build/
+npm-debug.*
+yarn-error.log
+*.tsbuildinfo
+coverage/
+
+# ---------- Android build output ----------
+*.apk
+*.aab
+*.ap_
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+.gradle/
+local.properties
+# Expo prebuild folders (regenerated), uncomment if you do not commit them:
+# android/
+# ios/
+
+# ---------- Docker ----------
+docker-compose.override.yml
+
+# ---------- Editors and OS ----------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---------- Claude Code (personal settings) ----------
+.claude/settings.local.json
+# CLAUDE.md SHOULD be committed. ROADMAP.md is kept private for now.
+docs/ROADMAP.md
+
+# ---------- Windows/WSL metadata ----------
+*:Zone.Identifier

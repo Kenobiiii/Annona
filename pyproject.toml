@@ -1,0 +1,57 @@
+# Workspace root. Not a distributable package: it only ties the members together
+# and holds the shared tooling configuration.
+[project]
+name = "annona"
+version = "0.0.0"
+description = "Open-source, self-hosted weekly meal planner driven by budget, real prices and your pantry."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.12"
+dependencies = [
+    "annona-core",
+    "annona-providers",
+    "annona-server",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "ruff>=0.14",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["core", "providers", "server"]
+
+[tool.uv.sources]
+annona-core = { workspace = true }
+annona-providers = { workspace = true }
+annona-server = { workspace = true }
+
+# ---------- ruff ----------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["app"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["annona_core", "annona_providers", "annona_server"]
+
+# ---------- pytest ----------
+[tool.pytest.ini_options]
+testpaths = ["tests", "core/tests", "providers/tests", "server/tests"]
+addopts = ["--import-mode=importlib", "--strict-markers", "-ra"]
+filterwarnings = ["error"]
