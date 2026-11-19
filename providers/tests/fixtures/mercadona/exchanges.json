@@ -1,0 +1,31 @@
+{
+  "GET https://tienda.mercadona.es/api/products/10381/?lang=es&wh=mad3 -": {
+    "file": "38c76670931c.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://tienda.mercadona.es/api/products/99999999/?lang=es&wh=mad3 -": {
+    "file": "04af58d1f7b1.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 404
+  },
+  "POST https://7uzjkl1dj0-dsn.algolia.net/1/indexes/products_prod_mad3_es/query ef6c23712e59a841": {
+    "file": "178579af08f4.json",
+    "headers": {
+      "content-type": "application/json; charset=UTF-8"
+    },
+    "status": 200
+  },
+  "PUT https://tienda.mercadona.es/api/postal-codes/actions/change-pc/ 78d93cd5fc7f5987": {
+    "file": "15a746b0d626.json",
+    "headers": {
+      "content-type": "application/json",
+      "x-customer-wh": "mad3"
+    },
+    "status": 200
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": 1965779,
+      "code": "8480000229670",
+      "source": "off",
+      "source_last_synced": "2026-09-22T17:04:47.856617Z",
+      "product_name": "Batido cacao 0% azúcares añadidos",
+      "image_url": "https://images.openfoodfacts.org/images/products/848/000/022/9670/front_es.83.400.jpg",
+      "product_quantity": 1200,
+      "product_quantity_unit": "ml",
+      "quantity": "6 x 20 cl",
+      "categories_tags": [
+        "en:beverages-and-beverages-preparations",
+        "en:beverages",
+        "en:dairies",
+        "en:dairy-drinks",
+        "en:flavoured-milks",
+        "en:chocolate-milks"
+      ],
+      "brands": "MERCADONA",
+      "brands_tags": [
+        "MERCADONA"
+      ],
+      "labels_tags": [
+        "en:low-or-no-fat",
+        "en:no-added-sugar",
+        "en:no-fat",
+        "en:no-lactose"
+      ],
+      "nutriscore_grade": "d",
+      "ecoscore_grade": "d",
+      "nova_group": 4,
+      "creator": "kiliweb",
+      "unique_scans_n": 55,
+      "price_count": 1,
+      "price_currency_count": 1,
+      "location_count": 1,
+      "location_type_osm_country_count": 1,
+      "user_count": 1,
+      "proof_count": 1,
+      "created": "2024-01-11T06:29:08.354851Z",
+      "updated": "2026-09-22T17:04:47.859601Z"
+    }
+  ],
+  "page": 1,
+  "pages": 1,
+  "size": 1,
+  "total": 1
+}

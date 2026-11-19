@@ -1,0 +1,600 @@
+{
+  "hits": [
+    {
+      "score": 38107.0,
+      "id": "10381",
+      "slug": "leche-semidesnatada-hacendado-pack-6",
+      "brand": "Hacendado",
+      "limit": 999,
+      "badges": {
+        "is_water": false,
+        "requires_age_check": false
+      },
+      "packaging": null,
+      "published": true,
+      "share_url": "https://tienda.mercadona.es/product/10381/leche-semidesnatada-hacendado-pack-6",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/b91d8b8bafd5eabab8961aabbe16c28b.jpg?fit=crop&h=300&w=300",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Huevos, leche y mantequilla",
+          "level": 0,
+          "order": 373,
+          "categories": [
+            {
+              "id": 72,
+              "name": "Leche y bebidas vegetales",
+              "level": 1,
+              "order": 373,
+              "categories": [
+                {
+                  "id": 343,
+                  "name": "Leche semidesnatada",
+                  "level": 2,
+                  "order": 373
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "Leche semidesnatada Hacendado",
+      "unavailable_from": null,
+      "price_instructions": {
+        "iva": null,
+        "is_new": false,
+        "is_pack": true,
+        "pack_size": 1.0,
+        "unit_name": "briks",
+        "unit_size": 6.0,
+        "bulk_price": "0.83",
+        "unit_price": "4.98",
+        "approx_size": false,
+        "size_format": "l",
+        "total_units": 6,
+        "unit_selector": true,
+        "bunch_selector": false,
+        "drained_weight": null,
+        "selling_method": 0,
+        "tax_percentage": "4.000",
+        "price_decreased": false,
+        "reference_price": "0.830",
+        "min_bunch_amount": 1.0,
+        "reference_format": "L",
+        "previous_unit_price": null,
+        "increment_bunch_amount": 1.0
+      },
+      "unavailable_weekdays": [],
+      "status": null,
+      "objectID": "10381",
+      "_highlightResult": {
+        "brand": {
+          "value": "Hacendado",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "categories": [
+          {
+            "categories": [
+              {
+                "name": {
+                  "value": "<em>Leche</em> y bebidas vegetales",
+                  "matchLevel": "full",
+                  "fullyHighlighted": false,
+                  "matchedWords": [
+                    "leche"
+                  ]
+                },
+                "categories": [
+                  {
+                    "name": {
+                      "value": "<em>Leche</em> semidesnatada",
+                      "matchLevel": "full",
+                      "fullyHighlighted": false,
+                      "matchedWords": [
+                        "leche"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "display_name": {
+          "value": "<em>Leche</em> semidesnatada Hacendado",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "leche"
+          ]
+        }
+      }
+    },
+    {
+      "score": 34469.0,
+      "id": "10379",
+      "slug": "leche-entera-hacendado-pack-6",
+      "brand": "Hacendado",
+      "limit": 999,
+      "badges": {
+        "is_water": false,
+        "requires_age_check": false
+      },
+      "packaging": "Pack-6",
+      "published": true,
+      "share_url": "https://tienda.mercadona.es/product/10379/leche-entera-hacendado-pack-6",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/b4db71bda48058bb37cd556c55b2fc64.jpg?fit=crop&h=300&w=300",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Huevos, leche y mantequilla",
+          "level": 0,
+          "order": 373,
+          "categories": [
+            {
+              "id": 72,
+              "name": "Leche y bebidas vegetales",
+              "level": 1,
+              "order": 373,
+              "categories": [
+                {
+                  "id": 342,
+                  "name": "Leche entera",
+                  "level": 2,
+                  "order": 373
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "Leche entera Hacendado",
+      "unavailable_from": null,
+      "price_instructions": {
+        "iva": null,
+        "is_new": false,
+        "is_pack": true,
+        "pack_size": 1.0,
+        "unit_name": "briks",
+        "unit_size": 6.0,
+        "bulk_price": "0.96",
+        "unit_price": "5.76",
+        "approx_size": false,
+        "size_format": "l",
+        "total_units": 6,
+        "unit_selector": true,
+        "bunch_selector": false,
+        "drained_weight": null,
+        "selling_method": 0,
+        "tax_percentage": "4.000",
+        "price_decreased": false,
+        "reference_price": "0.960",
+        "min_bunch_amount": 1.0,
+        "reference_format": "L",
+        "previous_unit_price": null,
+        "increment_bunch_amount": 1.0
+      },
+      "unavailable_weekdays": [],
+      "status": null,
+      "objectID": "10379",
+      "_highlightResult": {
+        "brand": {
+          "value": "Hacendado",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "packaging": {
+          "value": "Pack-6",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "categories": [
+          {
+            "categories": [
+              {
+                "name": {
+                  "value": "<em>Leche</em> y bebidas vegetales",
+                  "matchLevel": "full",
+                  "fullyHighlighted": false,
+                  "matchedWords": [
+                    "leche"
+                  ]
+                },
+                "categories": [
+                  {
+                    "name": {
+                      "value": "<em>Leche</em> entera",
+                      "matchLevel": "full",
+                      "fullyHighlighted": false,
+                      "matchedWords": [
+                        "leche"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "display_name": {
+          "value": "<em>Leche</em> entera Hacendado",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "leche"
+          ]
+        }
+      }
+    },
+    {
+      "score": 16324.0,
+      "id": "10721",
+      "slug": "leche-semidesnatada-sin-lactosa-hacendado-pack-6",
+      "brand": "Hacendado",
+      "limit": 999,
+      "badges": {
+        "is_water": false,
+        "requires_age_check": false
+      },
+      "packaging": null,
+      "published": true,
+      "share_url": "https://tienda.mercadona.es/product/10721/leche-semidesnatada-sin-lactosa-hacendado-pack-6",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/6b8cf0ba135f7e717632541922c5791d.jpg?fit=crop&h=300&w=300",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Huevos, leche y mantequilla",
+          "level": 0,
+          "order": 373,
+          "categories": [
+            {
+              "id": 72,
+              "name": "Leche y bebidas vegetales",
+              "level": 1,
+              "order": 373,
+              "categories": [
+                {
+                  "id": 343,
+                  "name": "Leche semidesnatada",
+                  "level": 2,
+                  "order": 373
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "Leche semidesnatada sin lactosa Hacendado",
+      "unavailable_from": null,
+      "price_instructions": {
+        "iva": null,
+        "is_new": false,
+        "is_pack": true,
+        "pack_size": 1.0,
+        "unit_name": "briks",
+        "unit_size": 6.0,
+        "bulk_price": "0.94",
+        "unit_price": "5.64",
+        "approx_size": false,
+        "size_format": "l",
+        "total_units": 6,
+        "unit_selector": true,
+        "bunch_selector": false,
+        "drained_weight": null,
+        "selling_method": 0,
+        "tax_percentage": "4.000",
+        "price_decreased": false,
+        "reference_price": "0.940",
+        "min_bunch_amount": 1.0,
+        "reference_format": "L",
+        "previous_unit_price": null,
+        "increment_bunch_amount": 1.0
+      },
+      "unavailable_weekdays": [],
+      "status": null,
+      "objectID": "10721",
+      "_highlightResult": {
+        "brand": {
+          "value": "Hacendado",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "categories": [
+          {
+            "categories": [
+              {
+                "name": {
+                  "value": "<em>Leche</em> y bebidas vegetales",
+                  "matchLevel": "full",
+                  "fullyHighlighted": false,
+                  "matchedWords": [
+                    "leche"
+                  ]
+                },
+                "categories": [
+                  {
+                    "name": {
+                      "value": "<em>Leche</em> semidesnatada",
+                      "matchLevel": "full",
+                      "fullyHighlighted": false,
+                      "matchedWords": [
+                        "leche"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "display_name": {
+          "value": "<em>Leche</em> semidesnatada sin lactosa Hacendado",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "leche"
+          ]
+        }
+      }
+    },
+    {
+      "score": 12110.0,
+      "id": "10383",
+      "slug": "leche-desnatada-hacendado-pack-6",
+      "brand": "Hacendado",
+      "limit": 999,
+      "badges": {
+        "is_water": false,
+        "requires_age_check": false
+      },
+      "packaging": "Pack-6",
+      "published": true,
+      "share_url": "https://tienda.mercadona.es/product/10383/leche-desnatada-hacendado-pack-6",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/3b2cde7125f13d701043eef134149fe3.jpg?fit=crop&h=300&w=300",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Huevos, leche y mantequilla",
+          "level": 0,
+          "order": 373,
+          "categories": [
+            {
+              "id": 72,
+              "name": "Leche y bebidas vegetales",
+              "level": 1,
+              "order": 373,
+              "categories": [
+                {
+                  "id": 344,
+                  "name": "Leche desnatada",
+                  "level": 2,
+                  "order": 373
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "Leche desnatada Hacendado",
+      "unavailable_from": null,
+      "price_instructions": {
+        "iva": null,
+        "is_new": false,
+        "is_pack": true,
+        "pack_size": 1.0,
+        "unit_name": "briks",
+        "unit_size": 6.0,
+        "bulk_price": "0.81",
+        "unit_price": "4.86",
+        "approx_size": false,
+        "size_format": "l",
+        "total_units": 6,
+        "unit_selector": true,
+        "bunch_selector": false,
+        "drained_weight": null,
+        "selling_method": 0,
+        "tax_percentage": "4.000",
+        "price_decreased": false,
+        "reference_price": "0.810",
+        "min_bunch_amount": 1.0,
+        "reference_format": "L",
+        "previous_unit_price": null,
+        "increment_bunch_amount": 1.0
+      },
+      "unavailable_weekdays": [],
+      "status": null,
+      "objectID": "10383",
+      "_highlightResult": {
+        "brand": {
+          "value": "Hacendado",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "packaging": {
+          "value": "Pack-6",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "categories": [
+          {
+            "categories": [
+              {
+                "name": {
+                  "value": "<em>Leche</em> y bebidas vegetales",
+                  "matchLevel": "full",
+                  "fullyHighlighted": false,
+                  "matchedWords": [
+                    "leche"
+                  ]
+                },
+                "categories": [
+                  {
+                    "name": {
+                      "value": "<em>Leche</em> desnatada",
+                      "matchLevel": "full",
+                      "fullyHighlighted": false,
+                      "matchedWords": [
+                        "leche"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "display_name": {
+          "value": "<em>Leche</em> desnatada Hacendado",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "leche"
+          ]
+        }
+      }
+    },
+    {
+      "score": 8924.0,
+      "id": "10730",
+      "slug": "leche-desnatada-sin-lactosa-hacendado-pack-6",
+      "brand": "Hacendado",
+      "limit": 999,
+      "badges": {
+        "is_water": false,
+        "requires_age_check": false
+      },
+      "packaging": "Pack-6",
+      "published": true,
+      "share_url": "https://tienda.mercadona.es/product/10730/leche-desnatada-sin-lactosa-hacendado-pack-6",
+      "thumbnail": "https://prod-mercadona.imgix.net/images/84271adfb6b8db545c2f7c32ce09e1ed.jpg?fit=crop&h=300&w=300",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Huevos, leche y mantequilla",
+          "level": 0,
+          "order": 373,
+          "categories": [
+            {
+              "id": 72,
+              "name": "Leche y bebidas vegetales",
+              "level": 1,
+              "order": 373,
+              "categories": [
+                {
+                  "id": 344,
+                  "name": "Leche desnatada",
+                  "level": 2,
+                  "order": 373
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "Leche desnatada sin lactosa Hacendado",
+      "unavailable_from": null,
+      "price_instructions": {
+        "iva": null,
+        "is_new": false,
+        "is_pack": true,
+        "pack_size": 1.0,
+        "unit_name": "briks",
+        "unit_size": 6.0,
+        "bulk_price": "0.91",
+        "unit_price": "5.46",
+        "approx_size": false,
+        "size_format": "l",
+        "total_units": 6,
+        "unit_selector": true,
+        "bunch_selector": false,
+        "drained_weight": null,
+        "selling_method": 0,
+        "tax_percentage": "4.000",
+        "price_decreased": false,
+        "reference_price": "0.910",
+        "min_bunch_amount": 1.0,
+        "reference_format": "L",
+        "previous_unit_price": null,
+        "increment_bunch_amount": 1.0
+      },
+      "unavailable_weekdays": [],
+      "status": null,
+      "objectID": "10730",
+      "_highlightResult": {
+        "brand": {
+          "value": "Hacendado",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "packaging": {
+          "value": "Pack-6",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "categories": [
+          {
+            "categories": [
+              {
+                "name": {
+                  "value": "<em>Leche</em> y bebidas vegetales",
+                  "matchLevel": "full",
+                  "fullyHighlighted": false,
+                  "matchedWords": [
+                    "leche"
+                  ]
+                },
+                "categories": [
+                  {
+                    "name": {
+                      "value": "<em>Leche</em> desnatada",
+                      "matchLevel": "full",
+                      "fullyHighlighted": false,
+                      "matchedWords": [
+                        "leche"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "display_name": {
+          "value": "<em>Leche</em> desnatada sin lactosa Hacendado",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "leche"
+          ]
+        }
+      }
+    }
+  ],
+  "nbHits": 235,
+  "page": 0,
+  "nbPages": 47,
+  "hitsPerPage": 5,
+  "exhaustiveNbHits": true,
+  "exhaustiveTypo": true,
+  "exhaustive": {
+    "nbHits": true,
+    "typo": true
+  },
+  "query": "leche",
+  "queryAfterRemoval": "leche",
+  "params": "query=leche&page=0&hitsPerPage=5&optionalFilters=%5B%22categories.categories.categories.name%3ALeche+semidesnatada%22%2C%22categories.categories.categories.name%3ALeche+entera%22%2C%22categories.categories.categories.name%3ALeche+desnatada%22%2C%22brand%3AHacendado%22%5D",
+  "renderingContent": {},
+  "extensions": {
+    "queryCategorization": {}
+  },
+  "processingTimeMS": 2,
+  "processingTimingsMS": {
+    "_request": {
+      "roundTrip": 46
+    },
+    "extensions": 1,
+    "total": 2
+  },
+  "serverTimeMS": 3
+}

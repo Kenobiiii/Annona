@@ -7,6 +7,8 @@ license = "AGPL-3.0-or-later"
 requires-python = ">=3.12"
 dependencies = [
     "annona-core",
+    "httpx>=0.28,<1",
+    "mercapy>=2.4,<3",
 ]
 
 [build-system]
@@ -18,3 +20,10 @@ packages = ["src/annona_providers"]
 
 [tool.uv.sources]
 annona-core = { workspace = true }
+
+[project.optional-dependencies]
+testing = ["pytest>=8.4"]
+
+[project.entry-points."annona.providers"]
+open_prices = "annona_providers.open_prices:OpenPricesProvider"
+mercadona = "annona_providers.mercadona:MercadonaProvider"
