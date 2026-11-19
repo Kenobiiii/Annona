@@ -189,3 +189,54 @@ def test_missing_tier_configuration():
 
 def test_parse_json_accepts_code_fences():
     assert parse_json('```json\n{"category": "x", "confidence": 0}\n```', Answer).category == "x"
+
+
+def test_prompt_schema_strips_titles_and_docstrings():
+    from enum import StrEnum
+
+    from annona_core.llm import prompt_schema
+
+    class Kind(StrEnum):
+        """Internal note that must not reach the model."""
+
+        A = "a"
+
+    class Out(BaseModel):
+        """Another internal docstring."""
+
+        kind: Kind
+        title: str  # a real field called "title" must survive
+
+    text = str(prompt_schema(Out))
+    assert "Internal note" not in text and "Another internal" not in text
+    assert "'title': {" in text  # the field, not a title annotation
+    assert "'Kind'" in text  # $defs key kept
+
+
+def test_check_hook_triggers_repair():
+    fake = FakeLLM(['{"category": "x", "confidence": 1}', '{"category": "y", "confidence": 1}'])
+
+    def must_be_y(answer):
+        if answer.category != "y":
+            raise ValueError("category must be y")
+
+    stats = CallStats()
+    result = client(fake).complete_json(request(), Answer, stats=stats, check=must_be_y)
+    assert result.category == "y" and stats.repaired
+    assert "category must be y" in fake.requests[1][1].messages[-1].text
+
+
+def test_cached_input_tokens_are_accumulated():
+    from annona_core.llm import Completion
+
+    class Cached:
+        def complete(self, model, request, *, json_mode):
+            return Completion(
+                '{"category": "x", "confidence": 1}', model, 900, 300, cached_input_tokens=766
+            )
+
+    stats = CallStats()
+    sink = ListSink()
+    client(Cached(), usage=sink).complete_json(request(), Answer, stats=stats)
+    assert stats.cached_input_tokens == 766
+    assert sink.records[0].cached_input_tokens == 766

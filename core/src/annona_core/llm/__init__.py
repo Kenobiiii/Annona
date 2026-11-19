@@ -2,7 +2,7 @@
 """Provider-agnostic LLM layer: interface, JSON validation with one repair, caching hooks,
 usage accounting and a fake backend for tests. No I/O here; backends live in the server."""
 
-from .client import LLMClient, LLMError, LLMOutputError, cache_key, parse_json
+from .client import LLMClient, LLMError, LLMOutputError, cache_key, parse_json, prompt_schema
 from .fake import FakeLLM
 from .types import (
     CallStats,
@@ -34,4 +34,5 @@ __all__ = [
     "UsageSink",
     "cache_key",
     "parse_json",
+    "prompt_schema",
 ]

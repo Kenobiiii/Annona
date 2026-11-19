@@ -109,3 +109,37 @@ def test_rules_baseline_and_report_files(tmp_path):
     [loaded] = load_reports(tmp_path)
     assert loaded["_file"] == path.name
     assert 0 < loaded["metrics"]["accuracy"] < 1
+
+
+def compact_oracle(request) -> str:
+    by_name = {r["name"]: r for r in ROWS}
+    lines = request.messages[-1].text.splitlines()[1:]  # first line: "N products:"
+    pairs = []
+    for line in lines:
+        name = re.match(r"\d+: (.*)", line).group(1)
+        pairs.append([by_name[name]["expected_category"], by_name[name]["expected_type"]])
+    return json.dumps({"items": pairs})
+
+
+def test_compact_prompt_scores_and_uses_fewer_output_tokens():
+    full = run_classification(
+        ROWS, classifier="llm", llm=LLMClient(FakeLLM(responder=oracle), MODELS)
+    )
+    compact = run_classification(
+        ROWS,
+        classifier="llm",
+        prompt="v2_compact",
+        llm=LLMClient(FakeLLM(responder=compact_oracle), MODELS),
+    )
+    assert compact["metrics"]["accuracy"] == 1.0
+    assert compact["metrics"]["output_tokens"] < full["metrics"]["output_tokens"] / 1.5
+
+
+def test_compact_count_mismatch_is_repaired():
+    good = '{"items": [["dairy", "milk"], ["grains", "rice"]]}'
+    fake = FakeLLM(['{"items": [["dairy", "milk"]]}', good])
+    result = LLMClassifier(LLMClient(fake, MODELS), prompt="v2_compact").classify_batch(
+        [ClassificationInput("Leche"), ClassificationInput("Arroz")]
+    )
+    assert [r.category for r in result] == ["dairy", "grains"]
+    assert "expected exactly 2" in fake.requests[1][1].messages[-1].text

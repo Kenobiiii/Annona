@@ -39,6 +39,7 @@ class LiteLLMBackend:
             model=model,
             input_tokens=getattr(usage, "prompt_tokens", None),
             output_tokens=getattr(usage, "completion_tokens", None),
+            cached_input_tokens=_cached_tokens(usage),
             cost_usd=_cost(response),
             latency_ms=latency_ms,
         )
@@ -79,3 +80,10 @@ def _cost(response: Any) -> Decimal | None:
     except Exception:  # unknown model price: report unknown, never guess
         return None
     return Decimal(str(value)) if value is not None else None
+
+
+def _cached_tokens(usage: Any) -> int | None:
+    """Input tokens the provider served from its prompt cache (OpenAI-style usage details)."""
+    details = getattr(usage, "prompt_tokens_details", None)
+    value = getattr(details, "cached_tokens", None) if details is not None else None
+    return int(value) if value is not None else None

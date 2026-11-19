@@ -20,6 +20,7 @@ import json
 import re
 from collections.abc import Callable
 from datetime import UTC, datetime
+from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
@@ -80,6 +81,27 @@ def parse_json(text: str, schema: type[BaseModel]) -> BaseModel:
         raise ValueError(f"schema validation failed: {problems}") from error
 
 
+def prompt_schema(schema: type[BaseModel]) -> dict[str, Any]:
+    """The JSON Schema shown to the model, without ``title``/``description`` noise.
+
+    Pydantic copies class names and docstrings into the schema; they cost tokens and can leak
+    internal notes. Intent belongs in the prompt, not in docstrings.
+    """
+
+    def strip(node: Any) -> Any:
+        if isinstance(node, dict):
+            return {
+                k: strip(v)
+                for k, v in node.items()
+                if k not in ("title", "description") or isinstance(v, dict)
+            }
+        if isinstance(node, list):
+            return [strip(v) for v in node]
+        return node
+
+    return strip(schema.model_json_schema())
+
+
 def cache_key(model: str, request: LLMRequest, schema: type[BaseModel] | None) -> str:
     payload = {
         "model": model,
@@ -89,9 +111,18 @@ def cache_key(model: str, request: LLMRequest, schema: type[BaseModel] | None) -
             {"role": m.role, "text": m.text, "images": [i.digest() for i in m.images]}
             for m in request.messages
         ],
-        "schema": schema.model_json_schema() if schema else None,
+        "schema": prompt_schema(schema) if schema else None,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+
+
+def _parse_checked[T: BaseModel](
+    text: str, schema: type[T], check: Callable[[T], None] | None
+) -> T:
+    result = parse_json(text, schema)
+    if check is not None:
+        check(result)  # type: ignore[arg-type]
+    return result  # type: ignore[return-value]
 
 
 class LLMClient:
@@ -120,10 +151,13 @@ class LLMClient:
         *,
         use_cache: bool = True,
         stats: CallStats | None = None,
+        check: Callable[[T], None] | None = None,
     ) -> T:
+        """``check`` may raise ``ValueError`` for problems the schema cannot express (e.g. "one
+        answer per input"); it is treated like a validation error and triggers the repair."""
         stats = stats if stats is not None else CallStats()
         model = self.models[request.tier]
-        schema_json = json.dumps(schema.model_json_schema(), separators=(",", ":"))
+        schema_json = json.dumps(prompt_schema(schema), separators=(",", ":"))
         system = f"{request.system}\n\n{JSON_INSTRUCTION.format(schema=schema_json)}".strip()
         prepared = LLMRequest(
             tier=request.tier,
@@ -138,7 +172,7 @@ class LLMClient:
             hit = self.cache.get(key)
             if hit is not None:
                 try:
-                    result = parse_json(hit, schema)
+                    result = _parse_checked(hit, schema, check)
                 except ValueError:
                     pass  # stale or corrupt entry: ask the model again
                 else:
@@ -147,7 +181,7 @@ class LLMClient:
 
         first = self._call(request, model, prepared, stats=stats)
         try:
-            result = parse_json(first.text, schema)
+            result = _parse_checked(first.text, schema, check)
         except ValueError as error:
             self._record(stats, request, model, first, error=str(error))
             repair_request = LLMRequest(
@@ -164,7 +198,7 @@ class LLMClient:
             stats.repaired = True
             second = self._call(request, model, repair_request, stats=stats, repair=True)
             try:
-                result = parse_json(second.text, schema)
+                result = _parse_checked(second.text, schema, check)
             except ValueError as final_error:
                 self._record(stats, request, model, second, repair=True, error=str(final_error))
                 raise LLMOutputError(
@@ -214,6 +248,7 @@ class LLMClient:
             model=model,
             input_tokens=completion.input_tokens if completion else (0 if cached else None),
             output_tokens=completion.output_tokens if completion else (0 if cached else None),
+            cached_input_tokens=completion.cached_input_tokens if completion else None,
             cost_usd=completion.cost_usd if completion else None,
             latency_ms=completion.latency_ms if completion else None,
             cached=cached,

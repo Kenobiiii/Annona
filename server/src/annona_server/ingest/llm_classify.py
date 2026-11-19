@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Annotated
 
 from pydantic import BaseModel, Field, StringConstraints
@@ -53,21 +54,32 @@ INPUT_FORMAT = (
     "and Open Food Facts tags. Names may be Spanish, Portuguese or English, and abbreviated."
 )
 
-PROMPTS: dict[str, str] = {
-    "v1_plain": (
-        "Classify supermarket products into food categories.\n"
-        f"{INPUT_FORMAT}\n\n{CATEGORY_GUIDE}\n\n"
-        "Return one item per product, keeping its index."
+_TASK_LINE = "Classify supermarket products into food categories."
+_ROLE_LINE = "You are an expert in Spanish supermarket products and food categorisation."
+_INDEXED = "Return one item per product, keeping its index."
+_COMPACT = (
+    'Return {"items": [[category, type], ...]} with exactly one [category, type] pair per '
+    "product, in the same order as the input. Never skip or merge products."
+)
+
+
+@dataclass(frozen=True)
+class Prompt:
+    system: str
+    compact: bool  # compact output: ordered [category, type] pairs instead of indexed objects
+
+
+PROMPTS: dict[str, Prompt] = {
+    "v1_plain": Prompt(f"{_TASK_LINE}\n{INPUT_FORMAT}\n\n{CATEGORY_GUIDE}\n\n{_INDEXED}", False),
+    "v1_role": Prompt(
+        f"{_ROLE_LINE}\n{_TASK_LINE}\n{INPUT_FORMAT}\n\n{CATEGORY_GUIDE}\n\n{_INDEXED}", False
     ),
-    "v1_role": (
-        "You are an expert in Spanish supermarket products and food categorisation.\n"
-        "Classify supermarket products into food categories.\n"
-        f"{INPUT_FORMAT}\n\n{CATEGORY_GUIDE}\n\n"
-        "Return one item per product, keeping its index."
+    "v2_compact": Prompt(
+        f"{_ROLE_LINE}\n{_TASK_LINE}\n{INPUT_FORMAT}\n\n{CATEGORY_GUIDE}\n\n{_COMPACT}", True
     ),
 }
 # Chosen by eval (2026-11-19, deepseek-flash, 87 items x 3 runs): v1_role 99.2% mean accuracy vs
-# v1_plain 97.3%, same cost. See evals/results/.
+# v1_plain 97.3%, same cost. See evals/results/ and docs/evals.md.
 DEFAULT_PROMPT = "v1_role"
 
 TypeLabel = Annotated[str, StringConstraints(strip_whitespace=True, to_lower=True, max_length=40)]
@@ -81,6 +93,14 @@ class ClassifiedItem(BaseModel):
 
 class ClassifiedBatch(BaseModel):
     items: list[ClassifiedItem]
+
+
+class CompactBatch(BaseModel):
+    items: list[tuple[Category, TypeLabel | None]]
+
+
+def schema_for(prompt: str) -> type[BaseModel]:
+    return CompactBatch if PROMPTS[prompt].compact else ClassifiedBatch
 
 
 def _line(index: int, item: ClassificationInput) -> str:
@@ -124,25 +144,34 @@ class LLMClassifier:
     ) -> list[Classification | None]:
         """One prediction per input (``None`` if the model skipped it)."""
         results: list[Classification | None] = []
+        spec = PROMPTS[self.prompt]
         for start in range(0, len(items), self.batch_size):
             chunk = items[start : start + self.batch_size]
+            lines = "\n".join(_line(i, x) for i, x in enumerate(chunk))
+            if spec.compact:
+                lines = f"{len(chunk)} products:\n{lines}"
             call = CallStats()
             answer = self.llm.complete_json(
                 LLMRequest(
                     tier=Tier.SMALL,
                     task=task,
-                    system=PROMPTS[self.prompt],
-                    messages=(
-                        Message("user", "\n".join(_line(i, x) for i, x in enumerate(chunk))),
-                    ),
+                    system=spec.system,
+                    messages=(Message("user", lines),),
                     max_tokens=60 * len(chunk) + 200,
                 ),
-                ClassifiedBatch,
+                schema_for(self.prompt),
                 use_cache=use_cache,
                 stats=call,
+                check=_expect_count(len(chunk)) if spec.compact else None,
             )
             if stats is not None:
                 stats.append(call)
+            if isinstance(answer, CompactBatch):
+                results.extend(
+                    Classification(category, _clean_type(kind), self.source)
+                    for category, kind in answer.items
+                )
+                continue
             by_index: dict[int, ClassifiedItem] = {}
             for got in answer.items:
                 if got.index < len(chunk) and got.index not in by_index:
@@ -154,3 +183,12 @@ class LLMClassifier:
                 for i in range(len(chunk))
             )
         return results
+
+
+def _expect_count(n: int):
+    def check(answer: BaseModel) -> None:
+        got = len(answer.items)  # type: ignore[attr-defined]
+        if got != n:
+            raise ValueError(f"expected exactly {n} pairs (one per product, in order), got {got}")
+
+    return check

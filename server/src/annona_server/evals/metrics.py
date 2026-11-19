@@ -79,6 +79,10 @@ def classification_metrics(
         "model_calls": sum(c.calls for c in calls),
         "input_tokens": sum(c.input_tokens for c in calls),
         "output_tokens": sum(c.output_tokens for c in calls),
+        "cached_input_tokens": sum(c.cached_input_tokens for c in calls),
+        "output_tokens_per_item": (
+            round(sum(c.output_tokens for c in calls) / len(items), 1) if calls and items else None
+        ),
         "cost_usd": None if total_cost is None else str(total_cost),
         "cost_per_item_usd": (
             None if total_cost is None or not items else str(round(total_cost / len(items), 8))

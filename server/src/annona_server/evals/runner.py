@@ -21,11 +21,11 @@ from typing import Any
 
 from sqlmodel import Session
 
-from annona_core.llm import CallStats, LLMClient, Tier
+from annona_core.llm import CallStats, LLMClient, Tier, prompt_schema
 from annona_core.llm.client import JSON_INSTRUCTION
 
 from ..ingest.classify import ClassificationInput, RuleClassifier
-from ..ingest.llm_classify import PROMPTS, ClassifiedBatch, LLMClassifier
+from ..ingest.llm_classify import PROMPTS, LLMClassifier, schema_for
 from ..llm.storage import spent_usd
 from .metrics import ItemResult, classification_metrics
 
@@ -63,8 +63,8 @@ def estimate_cost_usd(
     rows: list[dict[str, Any]], prompt: str, batch_size: int, price_in: Decimal, price_out: Decimal
 ) -> Decimal:
     """Upper-bound estimate at the given per-token prices (use peak prices)."""
-    schema = json.dumps(ClassifiedBatch.model_json_schema(), separators=(",", ":"))
-    fixed = len(PROMPTS[prompt]) + len(JSON_INSTRUCTION.format(schema=schema))
+    schema = json.dumps(prompt_schema(schema_for(prompt)), separators=(",", ":"))
+    fixed = len(PROMPTS[prompt].system) + len(JSON_INSTRUCTION.format(schema=schema))
     batches = [rows[i : i + batch_size] for i in range(0, len(rows), batch_size)]
     chars_in = sum(fixed + sum(len(r["name"]) + 8 for r in b) for b in batches)
     tokens_in = Decimal(chars_in) / CHARS_PER_TOKEN
@@ -197,6 +197,8 @@ _RUN_FIELDS = {
     "model_calls",
     "input_tokens",
     "output_tokens",
+    "cached_input_tokens",
+    "output_tokens_per_item",
     "cost_usd",
     "cost_per_item_usd",
     "latency_ms_p50",

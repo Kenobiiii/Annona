@@ -272,6 +272,7 @@ class LlmUsageRow(SQLModel, table=True):
     model: str
     input_tokens: int | None = None
     output_tokens: int | None = None
+    cached_input_tokens: int | None = None
     cost_usd: Decimal | None = dec(nullable=True)
     latency_ms: int | None = None
     cached: bool = False

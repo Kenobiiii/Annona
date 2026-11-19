@@ -53,6 +53,7 @@ class Completion:
     model: str
     input_tokens: int | None = None
     output_tokens: int | None = None
+    cached_input_tokens: int | None = None  # input tokens served from the provider's cache
     cost_usd: Decimal | None = None  # None = unknown, never guessed
     latency_ms: int | None = None
 
@@ -67,6 +68,7 @@ class UsageRecord:
     output_tokens: int | None
     cost_usd: Decimal | None
     latency_ms: int | None
+    cached_input_tokens: int | None = None
     cached: bool = False
     repair: bool = False
     success: bool = True
@@ -82,6 +84,7 @@ class CallStats:
     repaired: bool = False
     input_tokens: int = 0
     output_tokens: int = 0
+    cached_input_tokens: int = 0
     cost_usd: Decimal | None = Decimal(0)
     latency_ms: int = 0
     records: list[UsageRecord] = field(default_factory=list)
@@ -94,6 +97,7 @@ class CallStats:
         self.calls += 1
         self.input_tokens += record.input_tokens or 0
         self.output_tokens += record.output_tokens or 0
+        self.cached_input_tokens += record.cached_input_tokens or 0
         self.latency_ms += record.latency_ms or 0
         if record.cost_usd is None or self.cost_usd is None:
             self.cost_usd = None

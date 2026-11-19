@@ -87,3 +87,11 @@ def test_db_cache_and_usage_log(session):
     assert [(r.cached, r.model) for r in rows] == [(False, "fake/s"), (True, "fake/s")]
     assert spent_usd(session) == Decimal("0.0005")
     assert spent_usd(session, "eval:") == 0
+
+
+def test_cached_tokens_are_read_from_usage_details():
+    from types import SimpleNamespace
+
+    usage = SimpleNamespace(prompt_tokens_details=SimpleNamespace(cached_tokens=766))
+    assert litellm_backend._cached_tokens(usage) == 766
+    assert litellm_backend._cached_tokens(SimpleNamespace()) is None
