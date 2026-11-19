@@ -3,7 +3,7 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 2 — nutrition targets).** Nothing usable yet. Follow the project to see it grow.
+> **Status: pre-alpha (Phase 3 — supermarket plugins).** Nothing usable yet. Follow the project to see it grow.
 
 ## Vision
 
@@ -68,9 +68,17 @@ Copy `.env.example` to `.env` for local configuration. Never commit `.env`.
   complying with each store's terms of service** and local law when you enable one. The project is
   not affiliated with any supermarket.
 - Prices and nutrition values may be outdated or estimated; estimated values are always flagged.
+- **Mercadona plugin (opt-in).** Mercadona has no public API and its `robots.txt` disallows the
+  endpoints the plugin uses. It is disabled by default; enabling it means accepting a notice that
+  you use it for your own, personal requests and are responsible for complying with its terms.
+  It never downloads the whole catalogue. See [adding-a-supermarket.md](docs/adding-a-supermarket.md).
+- Crowdsourced prices from [Open Prices](https://prices.openfoodfacts.org) (Open Food Facts
+  contributors) are used under the ODbL 1.0 licence.
 - Bundled sample nutrition data comes from USDA FoodData Central (public domain).
 
 ## Contributing
+
+Want to add a supermarket? Start with [docs/adding-a-supermarket.md](docs/adding-a-supermarket.md).
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) (commits need a DCO sign-off)
 and our [Code of Conduct](CODE_OF_CONDUCT.md).
