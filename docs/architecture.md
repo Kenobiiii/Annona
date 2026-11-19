@@ -76,6 +76,14 @@ It declares repository *interfaces*; the SQLite implementation (SQLModel + Alemb
   `eslint`, `tsc`, `jest`.
 - **CI:** GitHub Actions runs lint, format check and tests for Python and the app.
 
+## AI layer
+
+`annona_core.llm` defines a provider-agnostic `LLMClient` (tiers `small`/`large`, JSON answers
+validated with Pydantic and one repair attempt, caching and usage hooks, `FakeLLM` for tests).
+`annona_server.llm` wires it to LiteLLM (the only module importing it, pinned exact version), a
+database response cache and a usage log with tokens and cost. Quality is measured with evals:
+see [evals.md](evals.md).
+
 ## Domain model
 
 A `Household` owns the shared things (budget, pantry, kitchen, plans, shopping lists, receipts) and

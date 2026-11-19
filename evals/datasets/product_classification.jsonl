@@ -1,0 +1,87 @@
+{"id": "op-8480000340245", "name": "Nuez natural pelada", "expected_category": "nuts_seeds", "expected_type": "walnuts", "ambiguous": false, "note": null, "source": "open_prices:8480000340245"}
+{"id": "op-8480000107947", "name": "Leche semidesnatada", "expected_category": "dairy", "expected_type": "milk", "ambiguous": false, "note": null, "source": "open_prices:8480000107947"}
+{"id": "op-8402001024412", "name": "Nata Montada Chantilly", "expected_category": "dairy", "expected_type": "cream", "ambiguous": false, "note": null, "source": "open_prices:8402001024412"}
+{"id": "op-8480000033628", "name": "Zumo de naranja", "expected_category": "beverages", "expected_type": "juice", "ambiguous": false, "note": null, "source": "open_prices:8480000033628"}
+{"id": "op-8480000033635", "name": "Sumo de laranja", "expected_category": "beverages", "expected_type": "juice", "ambiguous": false, "note": "Portuguese name", "source": "open_prices:8480000033635"}
+{"id": "op-8480000865977", "name": "Lasaña boloñesa", "expected_category": "prepared", "expected_type": "lasagna", "ambiguous": false, "note": null, "source": "open_prices:8480000865977"}
+{"id": "op-5000157024671", "name": "Beanz in a rich tomato sauce", "expected_category": "legumes", "expected_type": "beans", "ambiguous": true, "note": "canned baked beans in sauce: legumes or prepared", "source": "open_prices:5000157024671"}
+{"id": "op-8480000053305", "name": "Lenteja Pardina categoría extra", "expected_category": "legumes", "expected_type": "lentils", "ambiguous": false, "note": null, "source": "open_prices:8480000053305"}
+{"id": "op-8425208001406", "name": "Cebollas", "expected_category": "vegetables", "expected_type": "onion", "ambiguous": false, "note": null, "source": "open_prices:8425208001406"}
+{"id": "op-8480000213587", "name": "Griego Ligero Natural", "expected_category": "dairy", "expected_type": "yogurt", "ambiguous": false, "note": "'Griego' = Greek yogurt", "source": "open_prices:8480000213587"}
+{"id": "op-8402001049132", "name": "Llaves Súper Ácidas", "expected_category": "other", "expected_type": "sweets", "ambiguous": false, "note": "gummy sweets", "source": "open_prices:8402001049132"}
+{"id": "op-8480000334404", "name": "Piña deshidratada", "expected_category": "fruit", "expected_type": "pineapple", "ambiguous": false, "note": null, "source": "open_prices:8480000334404"}
+{"id": "op-8480000093493", "name": "Barritas Muesli Chocolate", "expected_category": "grains", "expected_type": "cereal_bar", "ambiguous": true, "note": "cereal bar with chocolate: grains or other", "source": "open_prices:8480000093493"}
+{"id": "op-8402001033902", "name": "Chocolate 0% Azúcares Añadidos", "expected_category": "other", "expected_type": "chocolate", "ambiguous": false, "note": null, "source": "open_prices:8402001033902"}
+{"id": "op-8424152013671", "name": "Pollo y setas empanada", "expected_category": "prepared", "expected_type": "empanada", "ambiguous": false, "note": null, "source": "open_prices:8424152013671"}
+{"id": "op-8480000056733", "name": "Horchata de chufa", "expected_category": "beverages", "expected_type": "horchata", "ambiguous": false, "note": null, "source": "open_prices:8480000056733"}
+{"id": "op-8402001024092", "name": "Crackers Com Sal", "expected_category": "bakery", "expected_type": "crackers", "ambiguous": false, "note": "Portuguese 'com sal'", "source": "open_prices:8402001024092"}
+{"id": "op-8427603144009", "name": "Judía plana", "expected_category": "vegetables", "expected_type": "green_beans", "ambiguous": false, "note": "trap: 'judia' sounds like a legume", "source": "open_prices:8427603144009"}
+{"id": "op-8480000706522", "name": "Chocolate Negro 55%", "expected_category": "other", "expected_type": "chocolate", "ambiguous": false, "note": null, "source": "open_prices:8480000706522"}
+{"id": "op-8480000127280", "name": "Ensalada Pasta Listo Para Comer", "expected_category": "prepared", "expected_type": "pasta_salad", "ambiguous": false, "note": null, "source": "open_prices:8480000127280"}
+{"id": "op-5411188131380", "name": "Alpro Fermentiertes Kokosnussprodukt, Natur, Absolutely 350g", "expected_category": "other", "expected_type": "yogurt_alternative", "ambiguous": false, "note": "plant-based: must not be dairy", "source": "open_prices:5411188131380"}
+{"id": "op-8402001019395", "name": "Gazpacho Tradicional", "expected_category": "prepared", "expected_type": "gazpacho", "ambiguous": false, "note": null, "source": "open_prices:8402001019395"}
+{"id": "op-8480000348203", "name": "Cacahuete frito con sal", "expected_category": "nuts_seeds", "expected_type": "peanuts", "ambiguous": false, "note": null, "source": "open_prices:8480000348203"}
+{"id": "op-2350916002581", "name": "Queso tierno cuñitas", "expected_category": "dairy", "expected_type": "cheese", "ambiguous": false, "note": null, "source": "open_prices:2350916002581"}
+{"id": "op-8480000047182", "name": "Aceite de oliva virgen extra", "expected_category": "oils_fats", "expected_type": "olive_oil", "ambiguous": false, "note": null, "source": "open_prices:8480000047182"}
+{"id": "op-8005709104839", "name": "Tortiglioni", "expected_category": "grains", "expected_type": "pasta", "ambiguous": false, "note": "no keyword: pasta shape name", "source": "open_prices:8005709104839"}
+{"id": "op-8402001038372", "name": "cappuccino", "expected_category": "beverages", "expected_type": "coffee", "ambiguous": false, "note": null, "source": "open_prices:8402001038372"}
+{"id": "op-8480000163172", "name": "Mantecadas", "expected_category": "bakery", "expected_type": "pastry", "ambiguous": false, "note": null, "source": "open_prices:8480000163172"}
+{"id": "op-8480000242426", "name": "Calamar limpio", "expected_category": "fish", "expected_type": "squid", "ambiguous": false, "note": null, "source": "open_prices:8480000242426"}
+{"id": "op-8480000676092", "name": "Alubia roja", "expected_category": "legumes", "expected_type": "beans", "ambiguous": false, "note": null, "source": "open_prices:8480000676092"}
+{"id": "op-8480000180308", "name": "Atún en aceite de oliva", "expected_category": "fish", "expected_type": "tuna", "ambiguous": false, "note": null, "source": "open_prices:8480000180308"}
+{"id": "op-8480000511263", "name": "Mozzarella", "expected_category": "dairy", "expected_type": "cheese", "ambiguous": false, "note": null, "source": "open_prices:8480000511263"}
+{"id": "op-8410783344468", "name": "Delizias pechuga de pavo", "expected_category": "meat", "expected_type": "turkey", "ambiguous": false, "note": null, "source": "open_prices:8410783344468"}
+{"id": "op-8402001043567", "name": "Light Mayonnaise", "expected_category": "condiments", "expected_type": "mayonnaise", "ambiguous": false, "note": null, "source": "open_prices:8402001043567"}
+{"id": "op-8480000808585", "name": "Hummus Classic", "expected_category": "prepared", "expected_type": "hummus", "ambiguous": true, "note": "chickpea dip: prepared or legumes", "source": "open_prices:8480000808585"}
+{"id": "op-8480000038401", "name": "Guacamole", "expected_category": "prepared", "expected_type": "guacamole", "ambiguous": false, "note": null, "source": "open_prices:8480000038401"}
+{"id": "op-4008713713411", "name": "Copos de avena extra suaves", "expected_category": "grains", "expected_type": "oats", "ambiguous": false, "note": null, "source": "open_prices:4008713713411"}
+{"id": "op-8402001014581", "name": "Bebida de avena 0% azúcar", "expected_category": "beverages", "expected_type": "oat_drink", "ambiguous": false, "note": "trap: plant drink, never dairy", "source": "open_prices:8402001014581"}
+{"id": "op-8480000235626", "name": "Emmental", "expected_category": "dairy", "expected_type": "cheese", "ambiguous": false, "note": "no keyword: cheese name", "source": "open_prices:8480000235626"}
+{"id": "op-8480000823243", "name": "Pan de molde blanco familiar", "expected_category": "bakery", "expected_type": "bread", "ambiguous": false, "note": null, "source": "open_prices:8480000823243"}
+{"id": "op-8436547770137", "name": "Kéfir natural sabor suave", "expected_category": "dairy", "expected_type": "kefir", "ambiguous": false, "note": null, "source": "open_prices:8436547770137"}
+{"id": "op-8480000561695", "name": "Pechuga pollo braseada finas lonchas", "expected_category": "meat", "expected_type": "chicken", "ambiguous": false, "note": null, "source": "open_prices:8480000561695"}
+{"id": "op-8480000590862", "name": "Chorizo extra", "expected_category": "meat", "expected_type": "chorizo", "ambiguous": false, "note": null, "source": "open_prices:8480000590862"}
+{"id": "op-8480000168832", "name": "Crema de cacahuetes 100%", "expected_category": "nuts_seeds", "expected_type": "peanut_butter", "ambiguous": false, "note": null, "source": "open_prices:8480000168832"}
+{"id": "op-8480000184009", "name": "Filetes de Anchoa", "expected_category": "fish", "expected_type": "anchovies", "ambiguous": false, "note": null, "source": "open_prices:8480000184009"}
+{"id": "op-2314470002548", "name": "Pera conferencia", "expected_category": "fruit", "expected_type": "pear", "ambiguous": false, "note": null, "source": "open_prices:2314470002548"}
+{"id": "op-8480000341457", "name": "Pipas fritas peladas", "expected_category": "nuts_seeds", "expected_type": "sunflower_seeds", "ambiguous": false, "note": null, "source": "open_prices:8480000341457"}
+{"id": "op-8480000651402", "name": "Chicles sandía", "expected_category": "other", "expected_type": "chewing_gum", "ambiguous": false, "note": null, "source": "open_prices:8480000651402"}
+{"id": "op-8480000232649", "name": "Puré de patatas en copos instantáneo preparado", "expected_category": "prepared", "expected_type": "mashed_potato", "ambiguous": true, "note": "instant mash: prepared or vegetables", "source": "open_prices:8480000232649"}
+{"id": "op-03257289", "name": "Colorante alimentario", "expected_category": "condiments", "expected_type": "food_colouring", "ambiguous": false, "note": null, "source": "open_prices:03257289"}
+{"id": "op-8480000064592", "name": "Chapata Cristal", "expected_category": "bakery", "expected_type": "bread", "ambiguous": false, "note": "no keyword: 'chapata'", "source": "open_prices:8480000064592"}
+{"id": "op-8410184040754", "name": "QUINOA REAL BLANCA Y ROJA", "expected_category": "grains", "expected_type": "quinoa", "ambiguous": false, "note": null, "source": "open_prices:8410184040754"}
+{"id": "op-8480000341778", "name": "Canela molida", "expected_category": "condiments", "expected_type": "cinnamon", "ambiguous": false, "note": null, "source": "open_prices:8480000341778"}
+{"id": "op-8480000609632", "name": "Queso fresco cottage", "expected_category": "dairy", "expected_type": "cheese", "ambiguous": false, "note": null, "source": "open_prices:8480000609632"}
+{"id": "op-8480000094889", "name": "Copos de trigo integral y arroz 0% azúcares añadidos", "expected_category": "grains", "expected_type": "breakfast_cereal", "ambiguous": false, "note": null, "source": "open_prices:8480000094889"}
+{"id": "op-8480000348654", "name": "Almendra al natural - Hacendado", "expected_category": "nuts_seeds", "expected_type": "almonds", "ambiguous": false, "note": null, "source": "open_prices:8480000348654"}
+{"id": "op-8480000823656", "name": "REGAÑA", "expected_category": "bakery", "expected_type": "breadsticks", "ambiguous": false, "note": "'regaña' = Andalusian crispbread", "source": "open_prices:8480000823656"}
+{"id": "op-8480000145819", "name": "Belgas 18% mantequilla", "expected_category": "bakery", "expected_type": "biscuits", "ambiguous": false, "note": "trap: 'mantequilla' (butter) in a biscuit name", "source": "open_prices:8480000145819"}
+{"id": "op-8402001021442", "name": "Plato Kebab Preparado", "expected_category": "prepared", "expected_type": "kebab", "ambiguous": false, "note": null, "source": "open_prices:8402001021442"}
+{"id": "op-8480000239266", "name": "Bebida de almendra 0% azúcares", "expected_category": "beverages", "expected_type": "almond_drink", "ambiguous": false, "note": "trap: 'almendra' but it is a drink", "source": "open_prices:8480000239266"}
+{"id": "op-8402001035265", "name": "Tahini", "expected_category": "nuts_seeds", "expected_type": "tahini", "ambiguous": true, "note": "sesame paste: nuts_seeds or condiments", "source": "open_prices:8402001035265"}
+{"id": "op-8402001022449", "name": "Bífidus Probióticos Mango", "expected_category": "dairy", "expected_type": "yogurt", "ambiguous": false, "note": null, "source": "open_prices:8402001022449"}
+{"id": "op-8413556010324", "name": "Requesón", "expected_category": "dairy", "expected_type": "cheese", "ambiguous": false, "note": "no keyword: 'requesón' = ricotta-like cheese", "source": "open_prices:8413556010324"}
+{"id": "op-8480000679727", "name": "Pechuga de pavo finas lonchas", "expected_category": "meat", "expected_type": "turkey", "ambiguous": false, "note": null, "source": "open_prices:8480000679727"}
+{"id": "op-8480000158024", "name": "Mousse Chocolate Proteínas", "expected_category": "dairy", "expected_type": "dessert", "ambiguous": true, "note": "dairy-based protein mousse: dairy or other", "source": "open_prices:8480000158024"}
+{"id": "op-8480000226068", "name": "Dátiles en rama Deglet Nour", "expected_category": "fruit", "expected_type": "dates", "ambiguous": false, "note": null, "source": "open_prices:8480000226068"}
+{"id": "op-8480000807717", "name": "Tortilla de patata sin cebolla", "expected_category": "prepared", "expected_type": "potato_omelette", "ambiguous": false, "note": null, "source": "open_prices:8480000807717"}
+{"id": "op-8480000401793", "name": "Detergente Frescura Azul", "expected_category": "other", "expected_type": "non_food", "ambiguous": false, "note": "detergent", "source": "open_prices:8480000401793"}
+{"id": "op-8480000159229", "name": "Café molido mezcla", "expected_category": "beverages", "expected_type": "coffee", "ambiguous": false, "note": null, "source": "open_prices:8480000159229"}
+{"id": "op-8436559590341", "name": "Huevos gallinas sueltas en gallinero", "expected_category": "eggs", "expected_type": "egg", "ambiguous": false, "note": null, "source": "open_prices:8436559590341"}
+{"id": "op-2303024003803", "name": "Piña natural en rodajas", "expected_category": "fruit", "expected_type": "pineapple", "ambiguous": false, "note": null, "source": "open_prices:2303024003803"}
+{"id": "op-2307906003516", "name": "Medallón de pollo al ajillo", "expected_category": "meat", "expected_type": "chicken", "ambiguous": true, "note": "marinated raw chicken: meat or prepared", "source": "open_prices:2307906003516"}
+{"id": "op-8480000823526", "name": "Pan rallado casero", "expected_category": "bakery", "expected_type": "breadcrumbs", "ambiguous": true, "note": "bakery or grains", "source": "open_prices:8480000823526"}
+{"id": "op-8480000336408", "name": "Nachos", "expected_category": "other", "expected_type": "snacks", "ambiguous": false, "note": null, "source": "open_prices:8480000336408"}
+{"id": "op-8410789140118", "name": "Tofu firme", "expected_category": "legumes", "expected_type": "tofu", "ambiguous": false, "note": null, "source": "open_prices:8410789140118"}
+{"id": "op-5449000131843", "name": "Coca-Cola Zero", "expected_category": "beverages", "expected_type": "soft_drink", "ambiguous": false, "note": null, "source": "open_prices:5449000131843"}
+{"id": "op-2369973001871", "name": "Tomate ensalada", "expected_category": "vegetables", "expected_type": "tomato", "ambiguous": false, "note": null, "source": "open_prices:2369973001871"}
+{"id": "op-8480000635808", "name": "Pizza 4 quesos", "expected_category": "prepared", "expected_type": "pizza", "ambiguous": false, "note": null, "source": "open_prices:8480000635808"}
+{"id": "op-8435324003727", "name": "Jamón Serrano", "expected_category": "meat", "expected_type": "ham", "ambiguous": false, "note": null, "source": "open_prices:8435324003727"}
+{"id": "op-8480000551085", "name": "Fuet Espetec", "expected_category": "meat", "expected_type": "sausage", "ambiguous": false, "note": null, "source": "open_prices:8480000551085"}
+{"id": "op-8402001009792", "name": "Mejillones picantes en escabeche", "expected_category": "fish", "expected_type": "mussels", "ambiguous": false, "note": null, "source": "open_prices:8402001009792"}
+{"id": "op-8480000049575", "name": "Vinagre de manzana", "expected_category": "condiments", "expected_type": "vinegar", "ambiguous": false, "note": null, "source": "open_prices:8480000049575"}
+{"id": "op-8480000124760", "name": "Chocolate blanco", "expected_category": "other", "expected_type": "chocolate", "ambiguous": false, "note": null, "source": "open_prices:8480000124760"}
+{"id": "op-8480000476203", "name": "Pañuelos Extra Suaves", "expected_category": "other", "expected_type": "non_food", "ambiguous": false, "note": "tissues", "source": "open_prices:8480000476203"}
+{"id": "op-8480000331786", "name": "Aceitunas verdes rellenas de jalapeño", "expected_category": "vegetables", "expected_type": "olives", "ambiguous": true, "note": "olives: vegetables or other", "source": "open_prices:8480000331786"}
+{"id": "op-8480000260291", "name": "Garbanzos Bote", "expected_category": "legumes", "expected_type": "chickpeas", "ambiguous": false, "note": null, "source": "open_prices:8480000260291"}
+{"id": "op-9789505739738", "name": "Teléfono Inteligente", "expected_category": "other", "expected_type": "non_food", "ambiguous": false, "note": "smartphone", "source": "open_prices:9789505739738"}
