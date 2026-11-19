@@ -53,7 +53,10 @@ can drive it through an MCP server. Anyone can add a supermarket (e.g. Walmart) 
 - PRIVACY. Pantry, receipts and profile stay on the user's own server. No telemetry.
 - LEGAL/ETHICS. Scrapers are optional plugins: respect robots.txt and rate limits, identify the
   client, cache aggressively, and document in the README that users are responsible for complying
-  with each store's terms. Nutrition advice is informational, not medical advice.
+  with each store's terms. Exception to robots.txt: opt-in plugins that act only on explicit user
+  requests, for personal use, querying small numbers of items (never bulk catalogue downloads),
+  disabled by default and documented with a responsibility notice the user must accept.
+  Nutrition advice is informational, not medical advice.
 - COOKING EQUIPMENT. Do NOT look up hob power by model (data is unreliable). Use a user equipment
   profile (hob type, burners, power-level scale, oven yes/no, ...) plus a one-time calibration
   (e.g. minutes to boil 1 L at level N) to adapt times. Recipes speak in "low/medium/high heat".
