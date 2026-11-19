@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 from annona_core.domain import (
     ActivityLevel,
+    CategorySource,
     Equipment,
     Household,
     MealPlan,
@@ -18,6 +19,7 @@ from annona_core.domain import (
     Sex,
     Unit,
     UserProfile,
+    category_source_may_replace,
     nutrition_source_may_replace,
 )
 
@@ -141,3 +143,17 @@ def test_nutrition_basis_must_be_mass_or_volume():
     assert NutritionFacts(**base, basis=Unit.ML).basis == Unit.ML
     with pytest.raises(ValidationError):
         NutritionFacts(**base, basis=Unit.UNIT)
+
+
+@pytest.mark.parametrize(
+    ("current", "new", "allowed"),
+    [
+        (None, CategorySource.LLM, True),
+        (CategorySource.LLM, CategorySource.RULE, True),
+        (CategorySource.RULE, CategorySource.LLM, False),
+        (CategorySource.RULE, CategorySource.MANUAL, True),
+        (CategorySource.MANUAL, CategorySource.RULE, False),
+    ],
+)
+def test_category_source_priority(current, new, allowed):
+    assert category_source_may_replace(current, new) is allowed

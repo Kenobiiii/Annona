@@ -86,6 +86,7 @@ class ProductRow(SQLModel, table=True):
     brand: str | None = None
     ean: str | None = Field(default=None, index=True)
     category: str
+    category_source: str | None = None
     type: str | None = None
     store_id: str | None = None
     store_sku: str | None = None
@@ -94,6 +95,7 @@ class ProductRow(SQLModel, table=True):
     unit_weight_g: Decimal | None = dec(nullable=True)
     density_g_per_ml: Decimal | None = dec(nullable=True)
     allergens: list[str] | None = Field(default=None, sa_type=JSON)  # NULL = unknown
+    allergens_source: str | None = None
     # Nutrition per 100 g/ml, flattened (all NULL when unknown).
     nutrition_basis: str | None = None
     nutrition_energy_kcal: Decimal | None = dec(nullable=True)
@@ -234,3 +236,14 @@ class ReceiptLineRow(SQLModel, table=True):
     )
     confidence: Decimal | None = dec(nullable=True)
     status: str
+
+
+class OffCacheRow(SQLModel, table=True):
+    """Cached Open Food Facts lookups by barcode, including "not found" answers."""
+
+    __tablename__ = "off_cache"
+
+    ean: str = Field(primary_key=True)
+    found: bool
+    payload: dict | None = Field(default=None, sa_type=JSON)
+    fetched_at: datetime = utc()

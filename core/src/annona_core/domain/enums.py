@@ -79,7 +79,7 @@ class Category(StrEnum):
 
 
 class NutritionSource(StrEnum):
-    """Where nutrition values come from. See :data:`NUTRITION_SOURCE_PRIORITY`."""
+    """Where nutrition values (or allergens) come from. See :data:`NUTRITION_SOURCE_PRIORITY`."""
 
     MANUAL = "manual"
     LABEL_SCAN = "label_scan"
@@ -104,6 +104,28 @@ def nutrition_source_may_replace(current: NutritionSource | None, new: Nutrition
     if current is None:
         return True
     return NUTRITION_SOURCE_PRIORITY[new] >= NUTRITION_SOURCE_PRIORITY[current]
+
+
+class CategorySource(StrEnum):
+    """Who set a product's category. See :data:`CATEGORY_SOURCE_PRIORITY`."""
+
+    MANUAL = "manual"
+    RULE = "rule"
+    LLM = "llm"
+
+
+# Higher wins; manual corrections are never overwritten by automatic classification.
+CATEGORY_SOURCE_PRIORITY: dict[CategorySource, int] = {
+    CategorySource.MANUAL: 30,
+    CategorySource.RULE: 20,
+    CategorySource.LLM: 10,
+}
+
+
+def category_source_may_replace(current: CategorySource | None, new: CategorySource) -> bool:
+    if current is None:
+        return True
+    return CATEGORY_SOURCE_PRIORITY[new] >= CATEGORY_SOURCE_PRIORITY[current]
 
 
 class PriceSource(StrEnum):

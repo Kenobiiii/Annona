@@ -15,7 +15,13 @@ from typing import Any
 
 from sqlmodel import Session
 
-from annona_core.domain import NutritionFacts, Product, nutrition_source_may_replace
+from annona_core.domain import (
+    CategorySource,
+    NutritionFacts,
+    NutritionSource,
+    Product,
+    nutrition_source_may_replace,
+)
 from annona_server.db.repositories import SqlProductRepository
 
 
@@ -35,8 +41,10 @@ def _to_product(food: dict[str, Any]) -> Product:
     return Product(
         name=food["name"],
         category=food["category"],
+        category_source=CategorySource.RULE,
         type=food["type"],
         allergens=food["allergens"],
+        allergens_source=NutritionSource.SAMPLE,
         unit_weight_g=food.get("unit_weight_g"),
         density_g_per_ml=food.get("density_g_per_ml"),
         nutrition=NutritionFacts.model_validate(food["nutrition"]),

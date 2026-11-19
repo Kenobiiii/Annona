@@ -2,10 +2,12 @@
 """Pure domain layer: models, enums, units and money. No I/O."""
 
 from .enums import (
+    CATEGORY_SOURCE_PRIORITY,
     NUTRITION_SOURCE_PRIORITY,
     ActivityLevel,
     Allergen,
     Category,
+    CategorySource,
     Diet,
     Goal,
     HobType,
@@ -17,6 +19,7 @@ from .enums import (
     ReceiptStatus,
     RecipeSource,
     Sex,
+    category_source_may_replace,
     nutrition_source_may_replace,
 )
 from .models import (
@@ -40,10 +43,12 @@ from .money import Money, UnitPrice, unit_price
 from .units import Quantity, Unit, UnitConversionError
 
 __all__ = [
+    "CATEGORY_SOURCE_PRIORITY",
     "NUTRITION_SOURCE_PRIORITY",
     "ActivityLevel",
     "Allergen",
     "Category",
+    "CategorySource",
     "Diet",
     "Equipment",
     "Goal",
@@ -75,6 +80,7 @@ __all__ = [
     "UnitConversionError",
     "UnitPrice",
     "UserProfile",
+    "category_source_may_replace",
     "nutrition_source_may_replace",
     "unit_price",
 ]

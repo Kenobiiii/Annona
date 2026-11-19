@@ -22,6 +22,7 @@ EXPECTED_TABLES = {
     "shopping_item",
     "receipt",
     "receipt_line",
+    "off_cache",
 }
 
 

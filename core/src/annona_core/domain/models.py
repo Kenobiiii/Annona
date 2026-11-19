@@ -32,6 +32,7 @@ from .enums import (
     ActivityLevel,
     Allergen,
     Category,
+    CategorySource,
     Diet,
     Goal,
     HobType,
@@ -170,6 +171,7 @@ class Product(DomainModel):
         default=None, pattern=r"^\d{8,14}$", description="barcode (EAN/UPC/GTIN)"
     )
     category: Category = Category.OTHER
+    category_source: CategorySource | None = None
     type: str | None = Field(
         default=None, max_length=100, description="finer grouping, e.g. 'rice'"
     )
@@ -181,6 +183,9 @@ class Product(DomainModel):
     density_g_per_ml: Decimal | None = Field(default=None, gt=0)
     allergens: list[Allergen] | None = Field(
         default=None, description="None = unknown; [] = known to contain none of the EU 14"
+    )
+    allergens_source: NutritionSource | None = Field(
+        default=None, description="who set the allergens; same priority as nutrition sources"
     )
     nutrition: NutritionFacts | None = None
 
