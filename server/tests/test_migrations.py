@@ -53,3 +53,41 @@ def test_migrations_match_models(db_url):
     finally:
         engine.dispose()
     assert diff == []
+
+
+def test_0002_maps_activity_levels_and_keeps_data(db_url):
+    from sqlalchemy import text
+
+    migrate.upgrade(db_url, "0001")
+    engine = make_engine(db_url)
+    try:
+        with engine.begin() as conn:
+            conn.execute(
+                text(
+                    "INSERT INTO household (id, name, weekly_budget_cents, currency) "
+                    "VALUES (1, 'Home', 5000, 'EUR')"
+                )
+            )
+            for i, level in enumerate(["sedentary", "light", "moderate", "active", "very_active"]):
+                conn.execute(
+                    text(
+                        "INSERT INTO user_profile (household_id, name, sex, birth_date, height_cm,"
+                        " weight_kg, activity, goal, diet, allergies) VALUES (1, :n, 'male',"
+                        " '1990-01-01', '180', '80', :a, 'maintain', 'omnivore', '[]')"
+                    ),
+                    {"n": f"p{i}", "a": level},
+                )
+        migrate.upgrade(db_url)
+        with engine.connect() as conn:
+            rows = conn.execute(
+                text("SELECT activity, allergies_confirmed FROM user_profile ORDER BY id")
+            ).all()
+        assert [r[0] for r in rows] == ["inactive", "low_active", "active", "active", "very_active"]
+        assert all(r[1] == 0 for r in rows)  # existing users must confirm allergies
+
+        migrate.downgrade(db_url, "0001")
+        with engine.connect() as conn:
+            back = conn.execute(text("SELECT activity FROM user_profile ORDER BY id")).scalars()
+            assert list(back) == ["sedentary", "light", "moderate", "moderate", "very_active"]
+    finally:
+        engine.dispose()

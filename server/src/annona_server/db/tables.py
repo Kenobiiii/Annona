@@ -59,6 +59,7 @@ class UserProfileRow(SQLModel, table=True):
     goal: str
     diet: str
     allergies: list[str] = Field(default_factory=list, sa_type=JSON)
+    allergies_confirmed: bool = False
 
 
 class EquipmentRow(SQLModel, table=True):
@@ -92,7 +93,7 @@ class ProductRow(SQLModel, table=True):
     package_unit: str | None = None
     unit_weight_g: Decimal | None = dec(nullable=True)
     density_g_per_ml: Decimal | None = dec(nullable=True)
-    allergens: list[str] = Field(default_factory=list, sa_type=JSON)
+    allergens: list[str] | None = Field(default=None, sa_type=JSON)  # NULL = unknown
     # Nutrition per 100 g/ml, flattened (all NULL when unknown).
     nutrition_basis: str | None = None
     nutrition_energy_kcal: Decimal | None = dec(nullable=True)

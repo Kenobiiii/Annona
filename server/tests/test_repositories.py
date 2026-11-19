@@ -72,10 +72,18 @@ def test_product_round_trip_keeps_decimals_and_nutrition(session, rice):
     assert loaded.nutrition.sugars_g is None
 
 
-def test_product_without_nutrition(session):
+def test_product_without_nutrition_and_unknown_allergens(session):
     repo = r.SqlProductRepository(session)
     p = repo.add(Product(name="Mystery"))
-    assert repo.get(p.id).nutrition is None
+    session.expire_all()
+    loaded = repo.get(p.id)
+    assert loaded.nutrition is None
+    assert loaded.allergens is None  # unknown is kept distinct from "none"
+
+
+def test_known_empty_allergens_round_trip(session, rice):
+    session.expire_all()
+    assert r.SqlProductRepository(session).get(rice.id).allergens == []
 
 
 def test_product_lookups(session, rice):
@@ -149,7 +157,7 @@ def test_household_members_kitchen_and_pantry(session, household, rice):
             birth_date=date(1990, 1, 1),
             height_cm=Decimal("165.5"),
             weight_kg=Decimal("60.2"),
-            activity=ActivityLevel.LIGHT,
+            activity=ActivityLevel.LOW_ACTIVE,
             allergies=[Allergen.GLUTEN, Allergen.MILK],
         )
     )

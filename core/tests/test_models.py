@@ -84,7 +84,7 @@ def test_profile_age():
         birth_date=date(1995, 6, 15),
         height_cm=Decimal(178),
         weight_kg=Decimal(75),
-        activity=ActivityLevel.MODERATE,
+        activity=ActivityLevel.ACTIVE,
     )
     assert p.age_on(date(2026, 6, 14)) == 30
     assert p.age_on(date(2026, 6, 15)) == 31

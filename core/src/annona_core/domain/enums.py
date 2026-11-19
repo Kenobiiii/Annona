@@ -12,9 +12,16 @@ class Sex(StrEnum):
 
 
 class ActivityLevel(StrEnum):
-    SEDENTARY = "sedentary"
-    LIGHT = "light"
-    MODERATE = "moderate"
+    """Physical activity level categories for adults.
+
+    The four categories of the National Academies' *Dietary Reference Intakes for Energy* (2023),
+    which EFSA (2013) also uses with almost the same values. Factors live in
+    :mod:`annona_core.nutrition.settings`; :mod:`annona_core.nutrition.activity_quiz` helps a user
+    pick one.
+    """
+
+    INACTIVE = "inactive"
+    LOW_ACTIVE = "low_active"
     ACTIVE = "active"
     VERY_ACTIVE = "very_active"
 

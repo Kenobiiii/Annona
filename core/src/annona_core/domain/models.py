@@ -87,6 +87,11 @@ class UserProfile(DomainModel):
     goal: Goal = Goal.MAINTAIN
     diet: Diet = Diet.OMNIVORE
     allergies: list[Allergen] = Field(default_factory=list)
+    allergies_confirmed: bool = Field(
+        default=False,
+        description="True once the user explicitly answered the allergy question "
+        "(an empty list then really means 'no allergies')",
+    )
 
     def age_on(self, day: date) -> int:
         """Age in whole years on ``day``."""
@@ -174,7 +179,9 @@ class Product(DomainModel):
     package_unit: Unit | None = None
     unit_weight_g: Decimal | None = Field(default=None, gt=0)
     density_g_per_ml: Decimal | None = Field(default=None, gt=0)
-    allergens: list[Allergen] = Field(default_factory=list)
+    allergens: list[Allergen] | None = Field(
+        default=None, description="None = unknown; [] = known to contain none of the EU 14"
+    )
     nutrition: NutritionFacts | None = None
 
     @model_validator(mode="after")
