@@ -175,8 +175,10 @@ def _upsert(
     if off_product is not None:
         current = data["nutrition"]["source"] if data.get("nutrition") else None
         if off_product.nutrition and nutrition_source_may_replace(current, NutritionSource.OFF):
-            data["nutrition"] = off_product.nutrition.model_dump()
-            report.nutrition_from_off += 1
+            new_nutrition = off_product.nutrition.model_dump()
+            if data.get("nutrition") != new_nutrition:
+                data["nutrition"] = new_nutrition
+                report.nutrition_from_off += 1
         if off_product.allergens is not None and nutrition_source_may_replace(
             data.get("allergens_source"), NutritionSource.OFF
         ):

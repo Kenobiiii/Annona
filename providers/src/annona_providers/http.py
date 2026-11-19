@@ -4,9 +4,10 @@
 :class:`PoliteTransport` wraps any ``httpx`` transport and
 
 * identifies the client with a descriptive User-Agent;
-* checks ``robots.txt`` before every request and refuses disallowed URLs, unless the provider is an
-  opt-in, personal-use plugin (``robots_exception=True``; see CLAUDE.md), in which case the
-  exception is logged;
+* checks ``robots.txt`` before every request and refuses disallowed URLs, unless one of the two
+  exceptions in CLAUDE.md applies (``robots_exception=True`` plus an ``exception_reason``): an
+  opt-in, personal-use plugin, or a service whose official documentation invites API clients while
+  its robots.txt only keeps crawlers out (e.g. Open Food Facts). Exempted requests are logged;
 * waits a minimum interval between requests to the same host;
 * caches successful GET/POST responses in memory for ``cache_ttl`` seconds.
 """
@@ -54,6 +55,8 @@ class PoliteTransport(httpx.BaseTransport):
     min_interval: float = 1.0  # seconds between requests to one host
     cache_ttl: float = 3600.0
     robots_exception: bool = False
+    # Why the exception applies; logged with every exempted request.
+    exception_reason: str = "opt-in personal-use request"
     agent: str = field(default_factory=user_agent)
     clock: Callable[[], float] = time.monotonic
     sleep: Callable[[float], None] = time.sleep
@@ -105,7 +108,7 @@ class PoliteTransport(httpx.BaseTransport):
         if parser.can_fetch(self.agent, str(url)):
             return
         if self.robots_exception:
-            log.info("robots.txt disallows %s; allowed as an opt-in personal-use request", url)
+            log.info("robots.txt disallows %s; allowed as %s", url, self.exception_reason)
             return
         raise RobotsDisallowedError(f"robots.txt disallows {url}")
 

@@ -1,0 +1,30 @@
+{
+  "GET https://world.openfoodfacts.org/api/v2/product/8402001002090?fields=code%2Cproduct_name%2Cbrands%2Cnutrition_data_per%2Cproduct_quantity_unit%2Cnutriments%2Callergens_tags%2Ccategories_tags -": {
+    "file": "aa2d6eb3e708.json",
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "status": 404
+  },
+  "GET https://world.openfoodfacts.org/api/v2/product/8480000107947?fields=code%2Cproduct_name%2Cbrands%2Cnutrition_data_per%2Cproduct_quantity_unit%2Cnutriments%2Callergens_tags%2Ccategories_tags -": {
+    "file": "c691a7d36e9e.json",
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "status": 200
+  },
+  "GET https://world.openfoodfacts.org/api/v2/product/8480000229670?fields=code%2Cproduct_name%2Cbrands%2Cnutrition_data_per%2Cproduct_quantity_unit%2Cnutriments%2Callergens_tags%2Ccategories_tags -": {
+    "file": "d156110a6918.json",
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "status": 200
+  },
+  "GET https://world.openfoodfacts.org/api/v2/product/8480000340245?fields=code%2Cproduct_name%2Cbrands%2Cnutrition_data_per%2Cproduct_quantity_unit%2Cnutriments%2Callergens_tags%2Ccategories_tags -": {
+    "file": "27aee540d863.json",
+    "headers": {
+      "content-type": "application/json; charset=utf-8"
+    },
+    "status": 200
+  }
+}

@@ -97,6 +97,7 @@ def test_ingest_is_idempotent(session, mercadona, off):
     again = ingest(session, mercadona, skus=["10381"], off=off)
     assert (again.products_created, again.products_updated, again.products_unchanged) == (0, 0, 1)
     assert (again.prices_added, again.prices_unchanged) == (0, 1)
+    assert again.nutrition_from_off == 0
     assert len(SqlProductRepository(session).list()) == 1
     assert len(SqlPriceRepository(session).list()) == 1
 
@@ -156,3 +157,31 @@ def test_open_prices_catalogue_ingestion(session):
 def test_opt_in_providers_are_limited(session, mercadona):
     with pytest.raises(ValueError, match="personal-use"):
         ingest(session, mercadona, skus=[str(i) for i in range(51)], off=None)
+
+
+def test_open_prices_ingestion_with_real_off_data(session):
+    """Real Open Prices + real Open Food Facts responses (recorded fixtures)."""
+    from annona_server.ingest.off import OpenFoodFactsClient
+
+    provider = OpenPricesProvider(
+        brand="Mercadona", transport=FixtureTransport(PROVIDER_FIXTURES / "open_prices")
+    )
+    off_client = OpenFoodFactsClient(
+        session,
+        transport=FixtureTransport(
+            __import__("pathlib").Path(__file__).parent / "fixtures" / "off"
+        ),
+    )
+    report = ingest(session, provider, catalog=True, limit=2, off=off_client)
+    assert report.nutrition_from_off == 2 and report.unclassified == []
+
+    repo = SqlProductRepository(session)
+    walnuts = repo.get_by_store_sku("open_prices:mercadona", "8480000340245")
+    assert (walnuts.category, walnuts.type) == (Category.NUTS_SEEDS, "walnuts")
+    assert walnuts.allergens == [Allergen.NUTS]
+    assert walnuts.nutrition.energy_kcal == 716
+
+    milk = repo.get_by_store_sku("open_prices:mercadona", "8480000107947")
+    assert (milk.category, milk.type) == (Category.DAIRY, "milk")
+    assert milk.nutrition.protein_g == Decimal("3.1")
+    assert SqlPriceRepository(session).latest(milk.id).amount_cents == 164

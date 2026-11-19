@@ -22,7 +22,13 @@ def main() -> None:
     SQLModel.metadata.create_all(engine)
     transport = RecordingTransport(
         TARGET,
-        PoliteTransport(min_interval=MIN_INTERVAL_SECONDS, cache_ttl=0, agent=off_user_agent()),
+        PoliteTransport(
+            min_interval=MIN_INTERVAL_SECONDS,
+            cache_ttl=0,
+            agent=off_user_agent(),
+            robots_exception=True,
+            exception_reason="documented Open Food Facts API",
+        ),
     )
     with Session(engine) as session:
         client = OpenFoodFactsClient(session, transport=transport)

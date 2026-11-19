@@ -113,6 +113,7 @@ OFF_TAGS: Sequence[tuple[str, Category]] = (
     ("en:vegetable-oils", C.OILS_FATS),
     ("en:fats", C.OILS_FATS),
     ("en:nuts", C.NUTS_SEEDS),
+    ("en:nuts-and-their-products", C.NUTS_SEEDS),
     ("en:sauces", C.CONDIMENTS),
     ("en:condiments", C.CONDIMENTS),
     ("en:meals", C.PREPARED),

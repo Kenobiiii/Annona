@@ -27,6 +27,7 @@ from ..config import contact_email
 from ..db.tables import OffCacheRow
 
 API = "https://world.openfoodfacts.org/api/v2/product"
+DOCS = "https://openfoodfacts.github.io/openfoodfacts-server/api/"
 FIELDS = (
     "code,product_name,brands,nutrition_data_per,product_quantity_unit,nutriments,"
     "allergens_tags,categories_tags"
@@ -91,7 +92,14 @@ class OpenFoodFactsClient:
         self._now = now or (lambda: datetime.now(UTC))
         self._client = httpx.Client(
             transport=transport
-            or PoliteTransport(min_interval=MIN_INTERVAL_SECONDS, agent=off_user_agent()),
+            or PoliteTransport(
+                min_interval=MIN_INTERVAL_SECONDS,
+                agent=off_user_agent(),
+                # Documented-API exception (CLAUDE.md): robots.txt disallows /api for crawlers,
+                # the official docs invite identified clients under 15 reads/minute.
+                robots_exception=True,
+                exception_reason=f"documented Open Food Facts API ({DOCS})",
+            ),
             timeout=20.0,
         )
 

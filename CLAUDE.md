@@ -56,6 +56,9 @@ can drive it through an MCP server. Anyone can add a supermarket (e.g. Walmart) 
   with each store's terms. Exception to robots.txt: opt-in plugins that act only on explicit user
   requests, for personal use, querying small numbers of items (never bulk catalogue downloads),
   disabled by default and documented with a responsibility notice the user must accept.
+  Second exception: a service whose official documentation invites API clients, while its
+  robots.txt only keeps crawlers out, may be used following that documentation's rules
+  (identification, rate limits). Each such service is listed in the docs with a link to its terms.
   Nutrition advice is informational, not medical advice.
 - COOKING EQUIPMENT. Do NOT look up hob power by model (data is unreliable). Use a user equipment
   profile (hob type, burners, power-level scale, oven yes/no, ...) plus a one-time calibration

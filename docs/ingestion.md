@@ -56,3 +56,14 @@ uv run python -m annona_server.products category 12 dairy --type milk
 
 Allergen names: `gluten crustaceans eggs fish peanuts soybeans milk nuts celery mustard sesame
 sulphites lupin molluscs` (the EU 14). Always check the label.
+
+## robots.txt exceptions in use
+
+CLAUDE.md allows a service whose official documentation invites API clients, while its
+robots.txt only keeps crawlers out, to be used following that documentation's rules.
+
+| Service | robots.txt | Official terms followed |
+|---|---|---|
+| Open Food Facts | `Disallow: /api` for all user agents | [API docs](https://openfoodfacts.github.io/openfoodfacts-server/api/): identify with `AppName/Version (ContactEmail)`, max 15 product reads/min (Annona: 1 every 4 s, 30-day cache) |
+
+Every exempted request is logged with its reason.
