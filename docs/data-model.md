@@ -18,9 +18,9 @@ Product 1─N Price ─(optional)─ ReceiptLine
 | Entity | Notes |
 |---|---|
 | `Household` | Owns everything shared: weekly budget (cents + currency), pantry, kitchen, plans, lists, receipts. Today one household with one member; ready for more. |
-| `UserProfile` | A member: sex, birth date, height, weight, activity, goal, diet, allergies (EU 14). |
+| `UserProfile` | A member: sex, birth date, height, weight, activity (4 levels, see [nutrition.md](nutrition.md)), goal, diet, allergies (EU 14) and `allergies_confirmed`. |
 | `Equipment` | Hob type, burners, power levels, oven/microwave/air fryer, calibration (minutes to boil 1 L at level N). |
-| `Product` | Something you can buy. Store products carry `store_id` + `store_sku`; generic foods have neither. Optional `ean` (barcode), package size, weight per unit, density, allergens, nutrition. |
+| `Product` | Something you can buy. Store products carry `store_id` + `store_sku`; generic foods have neither. Optional `ean` (barcode), package size, weight per unit, density, allergens (`None` = unknown, `[]` = none), nutrition. |
 | `NutritionFacts` | Embedded in `Product`. Per 100 g or 100 ml (`basis`). `source` + `source_ref`. |
 | `Price` | One observation: product, store, cents + currency, `source` (scrape/receipt/manual), `observed_at` (UTC). Unit prices are computed, never stored. |
 | `PantryItem` | Product + quantity in a canonical unit, optional expiry. |

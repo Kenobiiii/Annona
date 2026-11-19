@@ -67,7 +67,7 @@ It declares repository *interfaces*; the SQLite implementation (SQLModel + Alemb
 - **Optimiser:** mixed-integer programming with `scipy.optimize.milp` (HiGHS); integer pack counts,
   minimise cost subject to nutrition ranges, budget and variety constraints.
 - **Nutrition targets:** Mifflin-St Jeor BMR × activity factor, adjusted by goal; protein in g/kg.
-  All defaults configurable and documented.
+  All defaults configurable and documented with sources in [nutrition.md](nutrition.md).
 - **Nutrition data:** Open Food Facts by barcode; otherwise an LLM estimate flagged `estimated`.
 - **Money** is never a float (integer cents or `Decimal`). Units are normalised to g, ml or unit.
 - **Cooking equipment:** no hob-power lookups by model. A user equipment profile plus a one-time

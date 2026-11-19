@@ -3,7 +3,7 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 1 — domain model and database).** Nothing usable yet. Follow the project to see it grow.
+> **Status: pre-alpha (Phase 2 — nutrition targets).** Nothing usable yet. Follow the project to see it grow.
 
 ## Vision
 
