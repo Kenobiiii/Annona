@@ -10,6 +10,7 @@ from annona_core.domain import (
     Equipment,
     Household,
     MealPlan,
+    NutritionFacts,
     NutritionSource,
     Price,
     PriceSource,
@@ -126,3 +127,17 @@ def test_meal_plan_starts_on_monday():
 )
 def test_nutrition_source_priority(current, new, allowed):
     assert nutrition_source_may_replace(current, new) is allowed
+
+
+def test_nutrition_basis_must_be_mass_or_volume():
+    base = {
+        "energy_kcal": Decimal(1),
+        "protein_g": Decimal(0),
+        "fat_g": Decimal(0),
+        "carbohydrates_g": Decimal(0),
+        "source": NutritionSource.MANUAL,
+    }
+    assert NutritionFacts(**base).basis == Unit.G
+    assert NutritionFacts(**base, basis=Unit.ML).basis == Unit.ML
+    with pytest.raises(ValidationError):
+        NutritionFacts(**base, basis=Unit.UNIT)

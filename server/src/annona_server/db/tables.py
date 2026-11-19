@@ -94,6 +94,7 @@ class ProductRow(SQLModel, table=True):
     density_g_per_ml: Decimal | None = dec(nullable=True)
     allergens: list[str] = Field(default_factory=list, sa_type=JSON)
     # Nutrition per 100 g/ml, flattened (all NULL when unknown).
+    nutrition_basis: str | None = None
     nutrition_energy_kcal: Decimal | None = dec(nullable=True)
     nutrition_protein_g: Decimal | None = dec(nullable=True)
     nutrition_fat_g: Decimal | None = dec(nullable=True)

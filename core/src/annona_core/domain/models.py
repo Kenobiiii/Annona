@@ -6,7 +6,7 @@ Conventions:
 * ``id`` is ``None`` until the entity is stored.
 * Money is integer cents + ISO 4217 currency; quantities are ``Decimal`` in a canonical
   :class:`~annona_core.domain.units.Unit`.
-* Nutrition values are per 100 g (solids) or per 100 ml (liquids) of the product as sold.
+* Nutrition values are per 100 g or per 100 ml of the product as sold (``NutritionFacts.basis``).
 * Datetimes are timezone-aware UTC.
 * A :class:`Household` owns the shared things (pantry, budget, kitchen, plans, shopping lists,
   receipts); a :class:`UserProfile` is one member with personal nutrition data.
@@ -130,8 +130,9 @@ class Equipment(DomainModel):
 
 
 class NutritionFacts(DomainModel):
-    """Per 100 g (or 100 ml when the product is sold by volume)."""
+    """Nutrient amounts per 100 g (``basis=g``) or per 100 ml (``basis=ml``)."""
 
+    basis: Unit = Unit.G
     energy_kcal: Decimal = Field(ge=0)
     protein_g: Decimal = Field(ge=0)
     fat_g: Decimal = Field(ge=0)
@@ -144,6 +145,13 @@ class NutritionFacts(DomainModel):
     source_ref: str | None = Field(
         default=None, max_length=200, description="e.g. 'usda-fdc:173944'"
     )
+
+    @field_validator("basis")
+    @classmethod
+    def _mass_or_volume(cls, value: Unit) -> Unit:
+        if value == Unit.UNIT:
+            raise ValueError("nutrition basis must be g or ml (per 100 g / 100 ml)")
+        return value
 
 
 class Product(DomainModel):

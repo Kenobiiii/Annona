@@ -3,7 +3,7 @@
 
 Revision ID: 0001
 Revises:
-Create Date: 2026-11-19 16:11:18.588125
+Create Date: 2026-11-19 16:14:34.897133
 """
 
 from collections.abc import Sequence
@@ -47,6 +47,7 @@ def upgrade() -> None:
             "density_g_per_ml", annona_server.db.types.DecimalString(length=40), nullable=True
         ),
         sa.Column("allergens", sa.JSON(), nullable=False),
+        sa.Column("nutrition_basis", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column(
             "nutrition_energy_kcal", annona_server.db.types.DecimalString(length=40), nullable=True
         ),

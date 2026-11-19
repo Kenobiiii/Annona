@@ -115,6 +115,7 @@ ReceiptLineRepository = _repo(ReceiptLine, t.ReceiptLineRow)
 
 
 _NUTRITION_FIELDS = (
+    "basis",
     "energy_kcal",
     "protein_g",
     "fat_g",
