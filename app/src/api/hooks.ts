@@ -180,11 +180,19 @@ export function useDeletePantryItem() {
   );
 }
 
+/** Only the fields given change (the generated type wrongly asks for ``allergens_unknown``). */
+type ProductChanges = Partial<Schemas['ProductPatch']>;
+
 export function usePatchProduct(id: number) {
   const api = useApi();
   return useWrite(
-    (body: Schemas['ProductPatch']) =>
-      unwrap(api.PATCH('/api/v1/products/{product_id}', { params: { path: { product_id: id } }, body })),
+    (changes: ProductChanges) =>
+      unwrap(
+        api.PATCH('/api/v1/products/{product_id}', {
+          params: { path: { product_id: id } },
+          body: { allergens_unknown: false, ...changes },
+        }),
+      ),
     [keys.product(id), ['products'], keys.pantry],
   );
 }

@@ -32,3 +32,20 @@ export const household = { id: 1, name: 'Casa', weekly_budget_cents: 6000, curre
 export function plan(week: string, meals: Schemas['MealOut'][]): Schemas['PlanOut'] {
   return { plan: { id: 7, household_id: 1, week_start: week, status: 'active', created_at: '2026-11-23T10:00:00Z' }, meals };
 }
+
+export function product(extra: Partial<Schemas['Product']> = {}, price: Partial<Schemas['ProductOut']> = {}): Schemas['ProductOut'] {
+  return {
+    product: {
+      id: 5, name: 'Arroz redondo Hacendado', store_id: 'mercadona', store_sku: '5044', brand: 'Hacendado',
+      category: 'grains', type: 'rice', package_amount: '1000.0', package_unit: 'g', allergens: null,
+      allergens_source: null, category_source: 'rule',
+      nutrition: { basis: 'g', energy_kcal: '344', protein_g: '8.2', fat_g: '1', carbohydrates_g: '75', source: 'off' },
+      ...extra,
+    } as Schemas['Product'],
+    latest_price_cents: 115, currency: 'EUR', unit_price_cents: 115, unit_price_per: 'kg', ...price,
+  };
+}
+
+export function pantryItem(id: number, productId: number, name: string, category: string, amount: string, unit = 'g', expires: string | null = null): Schemas['PantryOut'] {
+  return { id, household_id: 1, product_id: productId, amount, unit, name, category, expires_at: expires, added_at: '2026-11-20T10:00:00Z' } as Schemas['PantryOut'];
+}
