@@ -19,15 +19,23 @@ def test_all_scenarios_have_a_feasible_shop():
 
 
 def test_run_metrics_and_menu(tmp_path):
-    prepared = plans.prepare_all(["user_example_five_days"])
+    # A scenario without minimum servings: the naive fake spreads every product thinly.
+    prepared = plans.prepare_all(["vegetarian_woman"])
     report = plans.run_plans(LLMClient(FakeLLM(responder=even_split), MODELS), prepared, "fake/l")
     [entry] = report["scenarios"]
     m = entry["metrics"]
-    assert m["accepted"] and m["accepted_first_try"] and m["meals"] == 12
+    assert m["accepted"] and m["accepted_first_try"] and m["meals"] == 28
     assert 0.9 <= m["purchase_used_ratio"] <= 1.01
     assert "Mon breakfast" in plans.menu_text(entry)
     path = plans.save(report, tmp_path)
     assert json.loads(path.read_text())["meta"]["model"] == "fake/l"
+
+
+def test_naive_plans_miss_the_wanted_servings():
+    prepared = plans.prepare_all(["user_example_five_days"])  # Pablo: meat 3, fish 2
+    report = plans.run_plans(LLMClient(FakeLLM(responder=even_split), MODELS), prepared, "fake/l")
+    [entry] = report["scenarios"]
+    assert entry["metrics"]["final_issue_codes"].get("servings_missing")
 
 
 def test_judge_and_agreement():
