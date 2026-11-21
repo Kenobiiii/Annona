@@ -127,3 +127,29 @@ def patch_product(product_id: int, body: ProductPatch, session: SessionDep) -> P
     if update:
         product = repo.update(product.model_copy(update=update))
     return _out(session, product)
+
+
+class CatalogStore(BaseModel):
+    store_id: str
+    products: int
+    priced: int  # products with at least one price
+
+
+@router.get("/catalog/stores", response_model=list[CatalogStore])
+def catalog_stores(session: SessionDep) -> list[CatalogStore]:
+    """Stores that have products in the database (the ones a plan can be made for)."""
+    from sqlmodel import select
+
+    from ...db.tables import PriceRow
+
+    priced_ids = set(session.exec(select(PriceRow.product_id).distinct()))
+    stores: dict[str, CatalogStore] = {}
+    for product in SqlProductRepository(session).list():
+        if product.store_id is None:
+            continue
+        entry = stores.setdefault(
+            product.store_id, CatalogStore(store_id=product.store_id, products=0, priced=0)
+        )
+        entry.products += 1
+        entry.priced += product.id in priced_ids
+    return sorted(stores.values(), key=lambda s: s.store_id)

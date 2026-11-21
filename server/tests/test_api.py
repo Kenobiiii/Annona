@@ -214,3 +214,8 @@ def test_llm_settings_never_expose_keys(client, monkeypatch):
     assert {m["tier"] for m in data["models"]} == {"small", "large"}
     assert all(m["key_configured"] is True for m in data["models"] if m["provider"] == "deepseek")
     assert "spent_usd" in data
+
+
+def test_catalog_stores_lists_stores_with_products(client, shop):
+    stores = client.get("/api/v1/catalog/stores", headers=AUTH).json()
+    assert stores == [{"store_id": "demo", "products": 9, "priced": 9}]
