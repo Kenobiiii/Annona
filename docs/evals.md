@@ -136,3 +136,21 @@ Lessons: the model drafts "ordinary" portions for people needing 1900-3400 kcal,
 portions must come from code; the cheapest shop (7 products) makes menus valid but monotonous,
 hence the optional variety levels; and one run per scenario is too noisy to compare variants
 reliably (repeat runs before deciding).
+
+### Repeated runs with preferences (2026-11-21, 3 runs per variant, 12 plans each)
+
+The owner's scenarios now ask for less carrot, meat 3 and fish 2 times a week.
+
+| Variety | Accepted | First try | Extra packs bought | LLM cost | Main remaining issues |
+|---|---|---|---|---|---|
+| basic | **11/12 (92 %)** | 9/12 | 1.20 EUR | $0.10 | rare |
+| balanced | 9/12 (75 %) | 3/12 | 13.00 EUR | $0.13 | drafts short of energy (12x) |
+
+The single-run signal (3/4 vs 1/4) pointed the same way, but only repetition makes it
+trustworthy: `basic` is more reliable; `balanced` adds about 1 EUR to the shop but the model's
+drafts with more products miss energy more often, needing repairs and extra packs. Next lever
+for `balanced`: better per-serving guidance or a larger portion range.
+
+Human ratings (iteration 3, before preferences): 3/5 for all four menus ("fine, but too much
+carrot and no meat"). The LLM judge (`deepseek-flash`) gave 2/5 to all four with the same
+complaints: always within one point of the human, never exact (n = 4, too small to calibrate).

@@ -1510,6 +1510,48 @@
       "wall_ms": 38853
     }
   ],
-  "human_ratings": {},
-  "judge": {}
+  "human_ratings": {
+    "single_active_full_week": {
+      "score": 3,
+      "note": "ok but too much carrot, no meat"
+    },
+    "user_example_five_days": {
+      "score": 3,
+      "note": "ok but too much carrot, no meat"
+    },
+    "vegetarian_woman": {
+      "score": 3,
+      "note": "ok but too much carrot, no meat"
+    },
+    "couple_milk_allergy": {
+      "score": 3,
+      "note": "ok but too much carrot, no meat"
+    }
+  },
+  "judge": {
+    "single_active_full_week": {
+      "model": "deepseek/deepseek-flash",
+      "score": 2,
+      "reasons": "Extremely repetitive: carrot appears in nearly every meal and snack, with legumes and pasta/rice repeated daily, so it would feel monotonous and unappetising for a full week. Meals are coherent enough but sparse and odd for a young active man (e.g. lentil stew for breakfast, plain carrot-and-oil snacks, carrot pasta sauce). Lack of protein variety, sauces, spices, fish/meat/eggs, and fresh salads beyond grated carrot makes it hard to sustain. Preparation is simple and equipment fits, but cooking dried chickpeas/beans repeatedly is impractical without planning. Would not happily follow.",
+      "cost_usd": "0.00042825"
+    },
+    "user_example_five_days": {
+      "model": "deepseek/deepseek-flash",
+      "score": 2,
+      "reasons": "Very repetitive and limited: oats+leche+queso every breakfast, carrot/garbanzos/pasta loop at lunches and dinners. Sweet porridge with grated raw carrot is odd for Spanish tastes, and several dinners are starchy soup/pasta without protein or appeal. Dishes are coherent but monotonous; no real variety of proteins, vegetables or familiar lunch/dinner structure. Preparation is simple and portions realistic, but a household would tire of this quickly.",
+      "cost_usd": "0.00024779999999999995"
+    },
+    "vegetarian_woman": {
+      "model": "deepseek/deepseek-flash",
+      "score": 2,
+      "reasons": "Very repetitive: carrot at nearly every meal/snack, legumes (chickpeas/lentils/beans) at lunch and dinner most days, plus milk+cheese constantly. Coherent Spanish-ish dishes but monotony kills appetite. Several odd combos (milk+carrot smoothie, gazpacho-style legume 'ensaladas' with raw onion) feel forced. Heavy legume load daily is impractical and flat. Preparation is simple, but variety is poor.",
+      "cost_usd": "0.00039914999999999997"
+    },
+    "couple_milk_allergy": {
+      "model": "deepseek/deepseek-flash",
+      "score": 2,
+      "reasons": "Repetitive and legume-heavy: lentils, chickpeas and beans recur constantly, carrots in almost every dish, no onion, garlic, tomato or greens, so flavours feel flat. Odd combos for Spain (chickpea pancakes, rice gachas, pasta with lentils, porridge on rice). Dry legume portions are large and meals are listed out of order. Breakfasts sparse. A couple might follow it but not happily.",
+      "cost_usd": "0.000423258"
+    }
+  }
 }
