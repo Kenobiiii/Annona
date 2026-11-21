@@ -58,3 +58,29 @@ def test_word_boundaries_avoid_false_matches():
 def test_unknown_products_fall_through_to_the_llm_stub():
     item = ClassificationInput("Producto misterioso XYZ")
     assert classify(item, [RULES, LLMClassifierStub()]) is None
+
+
+@pytest.mark.parametrize(
+    ("name", "path", "category", "kind"),
+    [
+        # Real Mercadona cases found in the Phase 6 demo.
+        (
+            "Patatas fritas clásicas Hacendado",
+            ("Aperitivos", "Patatas fritas y snacks"),
+            Category.OTHER,
+            "crisps",
+        ),
+        (
+            "Queso fresco batido desnatado 0% MG",
+            (),
+            Category.DAIRY,
+            "cheese",
+        ),
+        ("Brócoli", ("Fruta y verdura", "Verdura"), Category.VEGETABLES, "broccoli"),
+        ("Calabacín verde", ("Fruta y verdura", "Verdura"), Category.VEGETABLES, "zucchini"),
+        ("Pimiento rojo", ("Fruta y verdura", "Verdura"), Category.VEGETABLES, "pepper"),
+    ],
+)
+def test_demo_regressions(name, path, category, kind):
+    result = RULES.classify(ClassificationInput(name, path))
+    assert (result.category, result.type) == (category, kind)

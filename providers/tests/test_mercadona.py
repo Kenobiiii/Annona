@@ -121,9 +121,37 @@ def summary(**price) -> mercapy.ProductSummary:
             ),
             (Decimal("400.0"), Unit.G),
         ),
-        # units ("ud") have no mass/volume
+        # 24 eggs at 5.25 EUR, reference 2.625 EUR per dozen (real case)
         (
-            dict(unit=Decimal(2), unit_size=Decimal(12), size_format="ud", reference=Decimal(2)),
+            dict(
+                unit=Decimal("5.25"),
+                unit_size=Decimal(24),
+                size_format="ud",
+                reference=Decimal("2.625"),
+                reference_format="dz",
+            ),
+            (Decimal(24), Unit.UNIT),
+        ),
+        # one banana of about 160 g at 0.51 EUR, reference 3.20 EUR/kg (rounded prices; real case)
+        (
+            dict(
+                unit=Decimal("0.51"),
+                unit_size=Decimal("0.16"),
+                size_format="kg",
+                reference=Decimal("3.200"),
+                approximate_size=True,
+            ),
+            (Decimal("160.00"), Unit.G),
+        ),
+        # count with a reference that does not match -> unknown
+        (
+            dict(
+                unit=Decimal(2),
+                unit_size=Decimal(12),
+                size_format="ud",
+                reference=Decimal(5),
+                reference_format="ud",
+            ),
             (None, None),
         ),
     ],

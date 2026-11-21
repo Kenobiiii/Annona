@@ -48,6 +48,10 @@ def _matches(keyword: str, text: str) -> bool:
 
 # Spanish store category keywords (accent-insensitive, prefix match on words).
 STORE_KEYWORDS: Sequence[tuple[str, Category]] = (
+    # Snacks first: "Aperitivos > Patatas fritas y snacks" must not become vegetables.
+    ("snack", C.OTHER),
+    ("aperitivo", C.OTHER),
+    ("golosina", C.OTHER),
     ("huevo", C.EGGS),
     ("leche", C.DAIRY),
     ("yogur", C.DAIRY),
@@ -122,6 +126,7 @@ OFF_TAGS: Sequence[tuple[str, Category]] = (
 
 # Name keywords -> (category, type). Spanish and English.
 NAME_KEYWORDS: Sequence[tuple[str, Category, str]] = (
+    ("patatas fritas", C.OTHER, "crisps"),
     ("aceite de oliva", C.OILS_FATS, "olive_oil"),
     ("olive oil", C.OILS_FATS, "olive_oil"),
     ("arroz", C.GRAINS, "rice"),
@@ -136,11 +141,11 @@ NAME_KEYWORDS: Sequence[tuple[str, Category, str]] = (
     ("judia", C.LEGUMES, "beans"),
     ("huevo", C.EGGS, "egg"),
     ("egg", C.EGGS, "egg"),
+    ("queso", C.DAIRY, "cheese"),
+    ("yogur", C.DAIRY, "yogurt"),
     ("batido", C.DAIRY, "milkshake"),
     ("leche", C.DAIRY, "milk"),
     ("milk", C.DAIRY, "milk"),
-    ("yogur", C.DAIRY, "yogurt"),
-    ("queso", C.DAIRY, "cheese"),
     ("mantequilla", C.OILS_FATS, "butter"),
     ("pechuga de pollo", C.MEAT, "chicken"),
     ("pollo", C.MEAT, "chicken"),
@@ -156,6 +161,10 @@ NAME_KEYWORDS: Sequence[tuple[str, Category, str]] = (
     ("tomate", C.VEGETABLES, "tomato"),
     ("zanahoria", C.VEGETABLES, "carrot"),
     ("espinaca", C.VEGETABLES, "spinach"),
+    ("pimiento", C.VEGETABLES, "pepper"),
+    ("brocoli", C.VEGETABLES, "broccoli"),
+    ("calabacin", C.VEGETABLES, "zucchini"),
+    ("lechuga", C.VEGETABLES, "lettuce"),
     ("platano", C.FRUIT, "banana"),
     ("manzana", C.FRUIT, "apple"),
     ("naranja", C.FRUIT, "orange"),

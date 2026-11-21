@@ -130,7 +130,8 @@ class MercadonaProvider:
             raise ProviderError(f"Mercadona product {sku} failed: {error}") from error
 
 
-_SIZE_FORMATS = {"kg", "g", "l", "ml"}
+_MASS_VOLUME = {"kg", "g", "l", "ml"}
+_COUNT = {"ud": Decimal(1), "dz": Decimal(12)}  # reference price per unit or per dozen
 
 
 def _package(
@@ -138,36 +139,46 @@ def _package(
 ) -> tuple[Decimal | None, Unit | None]:
     """Package size, only when the store's own numbers agree.
 
-    ``unit_size`` is the total size of what is sold (a pack of 6 x 1 l bricks has 6 l). It is only
-    trusted when ``unit price / unit_size`` matches the published reference price (per kg / l)
-    within one cent. Canned food is priced per kg of drained weight, so the drained weight is
-    used when it is the one that matches. Otherwise the size is left unknown, never guessed.
+    ``unit_size`` is the total size of what is sold (a pack of 6 x 1 l bricks has 6 l; a box of
+    24 eggs has 24 ud). It is only trusted when the pack price equals the published reference
+    price (per kg, l, unit or dozen) times the size, within one cent of the pack price (prices
+    are rounded to cents, sizes may be approximate). Canned food is priced per kg of drained
+    weight, so the drained weight is used when it is the one that matches. Otherwise the size
+    is left unknown, never guessed.
     """
     price = product.price
     if price.sold_by_weight:
         return Decimal(1000), Unit.G  # priced per kg, see _price
     fmt = (price.size_format or "").lower()
-    if fmt not in _SIZE_FORMATS or not price.unit_size or price.unit is None:
+    ref_fmt = (price.reference_format or "").lower()
+    if not price.unit_size or price.unit is None or price.reference is None:
+        return None, None
+    if fmt in _COUNT or fmt == "ud":
+        per = _COUNT.get(ref_fmt)
+        if per is not None and _matches(price.unit, price.unit_size / per, price.reference):
+            return price.unit_size, Unit.UNIT
+        return None, None
+    if fmt not in _MASS_VOLUME:
         return None, None
     try:
         q = Quantity.parse(price.unit_size, fmt)
     except (UnitConversionError, ValueError):
         return None, None
-    if price.reference is None or q.amount <= 0:
+    if q.amount <= 0:
         return None, None
-    if _matches_reference(price.unit, q.amount, price.reference):
+    if _matches(price.unit, q.amount / 1000, price.reference):
         return q.amount, q.unit
     # Canned food: the store's reference price is per kg of DRAINED weight (what is eaten).
     if price.drained_weight and fmt in ("kg", "g"):
         drained = Quantity.parse(price.drained_weight, fmt)
-        if _matches_reference(price.unit, drained.amount, price.reference):
+        if _matches(price.unit, drained.amount / 1000, price.reference):
             return drained.amount, drained.unit
     return None, None
 
 
-def _matches_reference(unit_price: Decimal, amount: Decimal, reference: Decimal) -> bool:
-    """unit price / amount (in kg or l) equals the published reference price within 1 cent."""
-    return abs(unit_price / (amount / 1000) - reference) <= Decimal("0.01")
+def _matches(pack_price: Decimal, reference_units: Decimal, reference: Decimal) -> bool:
+    """pack price == reference price x size (in kg, l, units or dozens), within one cent."""
+    return abs(pack_price - reference * reference_units) <= Decimal("0.01")
 
 
 def _product(product: mercapy.Product | mercapy.ProductSummary) -> ProviderProduct:
