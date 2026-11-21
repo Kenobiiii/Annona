@@ -13,7 +13,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from decimal import Decimal
 
-from annona_core.domain import Category, PantryItem, Product, Quantity, Unit, UnitConversionError
+from annona_core.domain import (
+    Category,
+    NutritionSource,
+    PantryItem,
+    Product,
+    Quantity,
+    Unit,
+    UnitConversionError,
+)
 from annona_core.nutrition import check_product
 
 from .models import AllergenNote, DataWarning, Problem
@@ -32,6 +40,8 @@ class Candidate:
     protein: Decimal
     fat: Decimal
     carbs: Decimal
+    salt: Decimal | None  # per basis unit; None = unknown
+    saturated_fat: Decimal | None
     fruit_veg: bool
     estimated: bool = False
     not_for: list[AllergenNote] = field(default_factory=list)
@@ -77,7 +87,7 @@ def prepare(problem: Problem) -> tuple[list[Candidate], list[DataWarning]]:
             continue
         basis = product.nutrition.basis
         try:
-            pack_basis, estimated = _to_basis(
+            pack_basis, density_used = _to_basis(
                 product.package, product, basis, settings.assumed_density_g_per_ml
             )
             stock_basis = Decimal(0)
@@ -86,14 +96,30 @@ def prepare(problem: Problem) -> tuple[list[Candidate], list[DataWarning]]:
                     item.quantity, product, basis, settings.assumed_density_g_per_ml
                 )
                 stock_basis += amount
-                estimated = estimated or est
+                density_used = density_used or est
         except UnitConversionError:
             warn("excluded_no_unit_weight", "sold by the unit without a weight per unit: add it")
             continue
         if pack_basis <= 0:
             warn("excluded_no_package", "package size is zero")
             continue
-        if estimated:
+        estimated = density_used
+        if product.store_id is not None and product.nutrition.source == NutritionSource.SAMPLE:
+            estimated = True
+            warn(
+                "nutrition_sample",
+                "approximate nutrition from a generic reference food: scan the label for exact "
+                "values",
+            )
+        if settings.health_limits:
+            if product.nutrition.salt_g is None:
+                warn("salt_unknown", "salt unknown: counted as 0 for the salt limit")
+            if product.nutrition.saturated_fat_g is None:
+                warn(
+                    "saturated_fat_unknown",
+                    "saturated fat unknown: counted as 0 for the saturated-fat limit",
+                )
+        if density_used:
             warn(
                 "density_estimated",
                 f"volume/mass conversion assumed {settings.assumed_density_g_per_ml} g/ml: "
@@ -128,6 +154,8 @@ def prepare(problem: Problem) -> tuple[list[Candidate], list[DataWarning]]:
                 protein=n.protein_g / hundred,
                 fat=n.fat_g / hundred,
                 carbs=n.carbohydrates_g / hundred,
+                salt=None if n.salt_g is None else n.salt_g / hundred,
+                saturated_fat=None if n.saturated_fat_g is None else n.saturated_fat_g / hundred,
                 fruit_veg=product.category in FRUIT_VEG
                 and (product.type or "") not in settings.starchy_types,
                 estimated=estimated,

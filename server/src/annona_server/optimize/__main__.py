@@ -11,7 +11,7 @@ import sys
 from datetime import date
 from decimal import Decimal
 
-from annona_core.optimizer import Result, optimise
+from annona_core.optimizer import OptimizerSettings, Result, optimise
 
 from ..config import load_env
 from ..db import migrate
@@ -47,7 +47,8 @@ def report(result: Result, budget_cents: int) -> str:
         d = result.daily_average
         out.append(
             f"daily average: {d.energy_kcal} kcal, protein {d.protein_g} g, fat {d.fat_g} g,"
-            f" carbs {d.carbohydrates_g} g, fruit+veg {d.fruit_veg_g} g"
+            f" carbs {d.carbohydrates_g} g, fruit+veg {d.fruit_veg_g} g,"
+            f" salt {d.salt_g} g, saturated fat {d.saturated_fat_g} g (known values only)"
         )
     for s in result.shortfalls:
         amount = (
@@ -66,6 +67,11 @@ def main() -> None:
     parser.add_argument("--household", type=int, default=1)
     parser.add_argument("--store", required=True, help="store id, e.g. mercadona")
     parser.add_argument("--budget", type=Decimal, help="weekly budget (default: household's)")
+    parser.add_argument(
+        "--health-limits",
+        action="store_true",
+        help="also limit salt (< 5 g/person/day) and saturated fat (< 10%% kcal), WHO",
+    )
     args = parser.parse_args()
     url = database_url()
     migrate.upgrade(url)
@@ -79,6 +85,7 @@ def main() -> None:
                 store_id=args.store,
                 on_date=date.today(),
                 budget_cents=budget,
+                settings=OptimizerSettings(health_limits=args.health_limits),
             )
             print(report(optimise(problem), problem.budget_cents))
     except (NotFoundError, ValueError) as error:

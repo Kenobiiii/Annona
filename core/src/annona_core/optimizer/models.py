@@ -18,6 +18,8 @@ class OptimizerSettings(BaseModel):
       vegetables a day, excluding potatoes and other starchy roots.
     * ``max_kcal_share_per_product``: project choice for variety (no single product above 20 %
       of the week's calories).
+    * ``health_limits``: optional salt and saturated-fat limits from the WHO healthy-diet fact
+      sheet (see the fields below).
     * ``assumed_density_g_per_ml``: used ONLY when a product sold by volume has nutrition per
       100 g (or the reverse) and no density is known; such lines are flagged ``estimated``.
     """
@@ -31,6 +33,12 @@ class OptimizerSettings(BaseModel):
     max_packs_per_product: int = Field(default=30, ge=1)
     assumed_density_g_per_ml: Decimal = Decimal(1)
     time_limit_s: float = 20.0
+    # Optional health limits (off by default; the user turns them on). WHO healthy-diet fact
+    # sheet: salt < 5 g per day for adults; saturated fat < 10 % of total energy. Free sugars
+    # (< 10 %) are not applied: product labels give total sugars, which include fruit and milk.
+    health_limits: bool = False
+    salt_g_per_person_day: Decimal = Decimal(5)
+    saturated_fat_energy_share: Decimal = Decimal("0.10")
 
 
 class Offer(BaseModel):
@@ -88,6 +96,8 @@ class Totals(BaseModel):
     fat_g: Decimal
     carbohydrates_g: Decimal
     fruit_veg_g: Decimal
+    salt_g: Decimal | None = None  # only products with known salt
+    saturated_fat_g: Decimal | None = None  # only products with known saturated fat
 
 
 class Shortfall(BaseModel):
@@ -108,7 +118,8 @@ class DataWarning(BaseModel):
     product_id: int
     name: str
     issue: str  # excluded_no_nutrition, excluded_no_unit_weight, excluded_no_package,
-    # density_estimated, excluded_nobody_can_eat
+    # density_estimated, excluded_nobody_can_eat, nutrition_sample, salt_unknown,
+    # saturated_fat_unknown
     detail: str
 
 

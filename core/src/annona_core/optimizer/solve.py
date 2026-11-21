@@ -48,6 +48,8 @@ _UNITS = {
     "fat_max": "g",
     "fruit_veg_min": "g",
     "variety": "kcal",
+    "salt_max": "g",
+    "saturated_fat_max": "kcal",
 }
 _DETAILS = {
     "budget": "the cheapest plan that meets every target needs this much more money",
@@ -58,6 +60,8 @@ _DETAILS = {
     "fat_max": "fat above the maximum (35 % of energy)",
     "fruit_veg_min": "fruit and vegetables below 400 g per person and day (WHO)",
     "variety": "one product would exceed the share of calories allowed per product",
+    "salt_max": "salt above 5 g per person and day (WHO; optional health limit)",
+    "saturated_fat_max": "saturated fat above 10 % of energy (WHO; optional health limit)",
 }
 
 
@@ -132,6 +136,18 @@ class _Model:
         fruit_veg = {con[i]: 1.0 for i in range(n) if cands[i].fruit_veg}
         self._row(fruit_veg, fv_min, INF, ("fruit_veg_min", fv_min, NUTRITION_WEIGHT, 1.0, None))
 
+        if s.health_limits:  # optional, WHO: salt < 5 g/person/day, saturated fat < 10 % kcal
+            salt_max = float(s.salt_g_per_person_day * people * s.days)
+            salt = {con[i]: float(cands[i].salt or 0) for i in range(n)}
+            self._row(salt, -INF, salt_max, ("salt_max", salt_max, NUTRITION_WEIGHT, -1.0, None))
+            sf_share = float(s.saturated_fat_energy_share)
+            sat_fat = {
+                con[i]: 9.0 * float(cands[i].saturated_fat or 0) - sf_share * k[i] for i in range(n)
+            }
+            self._row(
+                sat_fat, -INF, 0.0, ("saturated_fat_max", e_max, NUTRITION_WEIGHT, -1.0, None)
+            )
+
         share = float(s.max_kcal_share_per_product)
         for i in range(n):
             coeffs = {con[j]: -share * k[j] for j in range(n)}
@@ -181,7 +197,7 @@ def _dec(value: float, places: str = "0.1") -> Decimal:
 def _lines_and_totals(cands: list[Candidate], x: np.ndarray, problem: Problem):
     n = len(cands)
     lines: list[Line] = []
-    sums = dict.fromkeys(("kcal", "p", "f", "c", "fv"), Decimal(0))
+    sums = dict.fromkeys(("kcal", "p", "f", "c", "fv", "salt", "sf"), Decimal(0))
     for i, cand in enumerate(cands):
         packs = int(round(x[i]))
         available = cand.stock_basis + cand.pack_basis * packs
@@ -195,6 +211,8 @@ def _lines_and_totals(cands: list[Candidate], x: np.ndarray, problem: Problem):
         sums["c"] += used * cand.carbs
         if cand.fruit_veg:
             sums["fv"] += used
+        sums["salt"] += used * (cand.salt or 0)
+        sums["sf"] += used * (cand.saturated_fat or 0)
         product = cand.product
         lines.append(
             Line(
@@ -222,9 +240,13 @@ def _lines_and_totals(cands: list[Candidate], x: np.ndarray, problem: Problem):
         fat_g=q(sums["f"]),
         carbohydrates_g=q(sums["c"]),
         fruit_veg_g=q(sums["fv"]),
+        salt_g=q(sums["salt"]),
+        saturated_fat_g=q(sums["sf"]),
     )
     days = Decimal(problem.settings.days)
-    daily = Totals(**{key: q(value / days) for key, value in period.model_dump().items()})
+    daily = Totals(
+        **{key: q(value / days) for key, value in period.model_dump().items() if value is not None}
+    )
     return lines, period, daily
 
 

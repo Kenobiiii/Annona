@@ -26,6 +26,13 @@ job (Phase 7); the optimiser reports daily *averages*.
 | Variety | no product above 20 % of the week's calories | project choice |
 | Budget | never exceeded | household setting |
 | Pantry | stock is used first and costs nothing | — |
+| *Optional:* salt | < 5 g per person per day (`--health-limits`) | WHO healthy-diet fact sheet |
+| *Optional:* saturated fat | < 10 % of energy (`--health-limits`) | WHO healthy-diet fact sheet |
+
+The health limits are **off by default** (a user choice). Free sugars (WHO < 10 % of energy)
+are not limited: labels give *total* sugars, which include the natural sugars of fruit and milk,
+so a limit on them would penalise fruit. Products with unknown salt or saturated fat count as 0
+and are listed as warnings.
 
 ## When the plan is impossible
 
@@ -45,5 +52,10 @@ The result explains why, in two exact steps:
 - When a product sold by volume has nutrition per 100 g (or the reverse) and no density, 1 g/ml is
   assumed and the line is flagged **estimated**. The result's `complete` flag stays false until
   such data is fixed, and the CLI prints "INCOMPLETE DATA".
+- Store products with no nutrition of their own (fresh produce is rarely in Open Food Facts)
+  take the nutrition, weight per unit and density of the generic USDA reference food of the same
+  category and type (`source: sample`). Every such line is flagged estimated and listed as
+  `nutrition_sample`, until a label scan, Open Food Facts or a manual edit replaces it.
+  Allergens are copied only when they add restrictions, never as "contains none".
 - Money is recomputed with integer cents from the integer pack counts; the solver's floats never
   reach the bill.

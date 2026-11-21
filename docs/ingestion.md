@@ -21,10 +21,14 @@ Automatic daily runs arrive with the Docker setup (Phase 8).
    by barcode. Answers, including "not found", are cached for 30 days; OFF allows 15 reads per
    minute, so lookups are spaced 4 s apart. Set `ANNONA_CONTACT_EMAIL` in your `.env`: OFF asks
    API clients to identify themselves with a contact.
-3. **Category and type** come from rules: the store's category path (deepest level first), OFF
+3. **Generic reference** for data no real source provides (see [optimizer.md](optimizer.md)):
+   nutrition, unit weight and density of the USDA sample food of the same category and type,
+   kept as `source: sample`. `python -m annona_server.products fill-sample` applies it to
+   products already stored.
+4. **Category and type** come from rules: the store's category path (deepest level first), OFF
    category tags, then keywords in the name. Unrecognised products are listed as `unclassified`
    (an LLM classifier arrives in Phase 5).
-4. **Prices**: a new row is stored only when the price changed or was seen on a new day, so the
+5. **Prices**: a new row is stored only when the price changed or was seen on a new day, so the
    table is a price history. Unit prices (per kg / l / unit) are computed, never stored.
 
 Running the same ingestion twice changes nothing.

@@ -265,3 +265,74 @@ def test_budget_is_never_exceeded(budget):
         assert result.total_cost_cents <= budget
     else:
         assert result.shortfalls and result.shortfalls[0].constraint == "budget"
+
+
+def salty_crisps() -> Product:
+    """SYNTHETIC: very cheap calories, very salty and high in saturated fat."""
+    p = food(20, "crisps", C.OTHER, 300, Unit.G, 530, 6, 33, 50)
+    nutrition = p.nutrition.model_copy(
+        update={"salt_g": Decimal("1.5"), "saturated_fat_g": Decimal(15)}
+    )
+    return p.model_copy(update={"nutrition": nutrition})
+
+
+def with_crisps(**settings) -> Problem:
+    offers = [Offer(product=p, price_cents=c) for p, c in CATALOGUE]
+    offers.append(Offer(product=salty_crisps(), price_cents=60))
+    return problem(offers=offers, **settings)
+
+
+def test_health_limits_are_off_by_default():
+    prob = with_crisps()
+    result = optimise(prob)
+    assert not prob.settings.health_limits
+    assert not any(w.issue == "salt_unknown" for w in result.warnings)
+
+
+def test_health_limits_cap_salt_and_saturated_fat():
+    prob = with_crisps(health_limits=True)
+    result = optimise(prob)
+    assert result.status == "optimal"
+    totals = result.period_totals
+    assert totals.salt_g <= Decimal(5) * 7 + Decimal("0.1")
+    assert totals.saturated_fat_g * 9 <= totals.energy_kcal * Decimal("0.10") + 1
+    # Products without salt data are flagged: the limit may be underestimated.
+    assert any(w.issue == "salt_unknown" for w in result.warnings)
+
+
+def test_health_limits_explain_when_impossible():
+    """Only crisps: the calories needed bring far more than 35 g of salt a week.
+
+    The explanation is a trade-off (eat less, or exceed the salt/saturated-fat limits); with
+    other foods available it would instead pick them (see the test above).
+    """
+    only_crisps = [Offer(product=salty_crisps(), price_cents=60)]
+    result = optimise(
+        problem(
+            offers=only_crisps,
+            health_limits=True,
+            max_kcal_share_per_product=Decimal(1),
+            fruit_veg_g_per_person_day=Decimal(0),
+        )
+    )
+    assert result.status == "infeasible"
+    constraints = {s.constraint for s in result.shortfalls}
+    assert constraints & {"salt_max", "saturated_fat_max", "energy_min"}
+
+
+def test_sample_nutrition_on_store_products_is_flagged():
+    rice = CATALOGUE[0][0]
+    sample = rice.model_copy(
+        update={
+            "store_id": "shop",
+            "store_sku": "1",
+            "nutrition": rice.nutrition.model_copy(update={"source": NutritionSource.SAMPLE}),
+        }
+    )
+    offers = [Offer(product=p, price_cents=c) for p, c in CATALOGUE if p.id != 1]
+    offers.append(Offer(product=sample, price_cents=120))
+    result = optimise(problem(offers=offers))
+    assert any(w.issue == "nutrition_sample" and w.name == "rice" for w in result.warnings)
+    for line in result.lines:
+        if line.name == "rice":
+            assert line.estimated
