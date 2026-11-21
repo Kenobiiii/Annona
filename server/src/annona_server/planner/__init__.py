@@ -171,13 +171,14 @@ def store_plan(session: Session, household_id: int, ctx: PlanContext, outcome: P
             )
         )
         assert recipe.id is not None
-        for ing in draft.ingredients:  # one serving as drafted; each member's scale applies
+        # One reference serving with the code-adjusted amounts; each member eats it x servings.
+        for product_id, amount in final.base_amounts.items():
             ingredients.add(
                 RecipeIngredient(
                     recipe_id=recipe.id,
-                    product_id=ing.product_id,
-                    amount=ing.amount,
-                    unit=Unit(basis[ing.product_id]),
+                    product_id=product_id,
+                    amount=max(amount, Decimal("0.1")),
+                    unit=Unit(basis[product_id]),
                 )
             )
         for portion in final.portions:

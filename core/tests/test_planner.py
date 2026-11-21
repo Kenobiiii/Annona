@@ -133,10 +133,10 @@ def test_off_target_portions_are_repaired():
     ctx = context()
     tiny = draft_json(ctx, grams_factor=0.1)  # ten times too small
     outcome, fake = run(ctx, tiny, draft_json(ctx))
-    assert {i.code for i in outcome.first_issues} == {"portions_unrealistic"}
+    assert "portions_unrealistic" in {i.code for i in outcome.first_issues}
     assert outcome.repaired and outcome.accepted
     repair_text = fake.requests[1][1].messages[-1].text
-    assert "too small" in repair_text and "kcal" in repair_text
+    assert "kcal short" in repair_text and "3x the drafted amounts" in repair_text
 
 
 def test_unknown_ingredient_is_rejected():
@@ -182,7 +182,7 @@ def test_allergens_need_skipping():
     assert not [i for i in ok.issues if i.code == "not_allowed"]
 
 
-def test_stock_is_respected():
+def test_stock_is_respected_when_impossible():
     scarce = tuple(
         a.model_copy(update={"available": Decimal(100)}) if a.product.id == 5 else a
         for a in AVAILABLE
@@ -233,3 +233,28 @@ def test_portions_follow_the_energy_actually_bought():
     v = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx)
     target = ctx.members[0].daily.energy_kcal * Decimal("0.95")
     assert all(abs(v.kcal_by_member_day[("Pablo", d)] - target) <= 1 for d in ctx.schedule.days)
+
+
+def test_ingredients_are_adjusted_individually_to_respect_stock():
+    """Scaling a whole day uniformly would overdraw chicken; per-ingredient portions do not."""
+    scarce = tuple(
+        a.model_copy(update={"available": Decimal(700)}) if a.product.id == 5 else a
+        for a in AVAILABLE
+    )
+    ctx = context(available=scarce)
+    v = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx)
+    assert v.ok, v.issues
+    assert v.usage[5] <= Decimal("707")  # 700 + 1 % tolerance
+    target = ctx.members[0].daily.energy_kcal
+    assert all(abs(v.kcal_by_member_day[("Pablo", d)] - target) <= 2 for d in ctx.schedule.days)
+    assert min(v.ingredient_scales) >= Decimal("0.5") and max(v.ingredient_scales) <= 3
+
+
+def test_shared_dishes_scale_per_member():
+    big, small = person("Marc"), person("Ana").model_copy(update={"weight_kg": Decimal(55)})
+    ctx = context(members=[big, small])
+    v = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx)
+    assert v.ok, v.issues
+    for d in ctx.schedule.days:
+        for m in ctx.members:
+            assert abs(v.kcal_by_member_day[(m.profile.name, d)] - m.daily.energy_kcal) <= 2

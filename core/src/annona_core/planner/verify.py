@@ -4,12 +4,10 @@
 1. Structure: every scheduled (day, slot) has exactly one meal; no extra meals.
 2. Ingredients exist; appliances exist in the kitchen (and the summary does not mention an
    oven when there is none); no member eats a product that is not for them.
-3. Portions: for each member and day, all of that day's ingredient amounts are multiplied by
-   one factor so the day's energy equals the member's target x the day's planned share x
-   ``energy_scale`` (the energy actually bought relative to the target). A
-   factor outside [min_scale, max_scale] means the draft's portions were unrealistic.
-4. Totals: weekly protein per member reaches ``protein_min_ratio`` of the target, and the
-   scaled usage of every product stays within what is available (purchase + pantry).
+3-4. Portions: a small linear programme (``portions.py``) adjusts every ingredient amount so
+   each member's daily energy matches their target, weekly protein is reached and no product is
+   used beyond what is available, staying as close as possible to the drafted amounts. When
+   that is impossible, the precise reasons become issues for the repair request.
 """
 
 from __future__ import annotations
@@ -25,6 +23,7 @@ from annona_core.domain import Equipment, HobType, Product, UserProfile
 from annona_core.nutrition import DailyTargets
 
 from .draft import Appliance, DraftMeal, PlanDraft
+from .portions import solve_portions
 from .schedule import MealSchedule
 
 _OVEN_WORDS = re.compile(r"\b(horno|hornear|hornea|gratinar|oven|bake|baked|roast)\b", re.I)
@@ -60,7 +59,7 @@ class PlanContext(BaseModel):
     equipment: Equipment | None
     language: str = "es"
     min_scale: Decimal = Decimal("0.5")
-    max_scale: Decimal = Decimal("2.0")
+    max_scale: Decimal = Decimal("3.0")
     protein_min_ratio: Decimal = Decimal("0.90")
     # Energy actually bought / energy target (the optimiser may land anywhere within +/-5 %);
     # portions are scaled to what was bought so the menu never needs more food than exists.
@@ -88,7 +87,8 @@ class FinalMeal(BaseModel):
 
     day: date
     draft: DraftMeal
-    portions: tuple[Portion, ...]
+    base_amounts: dict[int, Decimal]  # adjusted amounts for one reference serving
+    portions: tuple[Portion, ...]  # per member: reference serving x the member's ratio
 
 
 @dataclass
@@ -98,6 +98,7 @@ class Verification:
     usage: dict[int, Decimal] = field(default_factory=dict)  # product_id -> total amount
     kcal_by_member_day: dict[tuple[str, date], Decimal] = field(default_factory=dict)
     protein_by_member: dict[str, Decimal] = field(default_factory=dict)
+    ingredient_scales: list[Decimal] = field(default_factory=list)  # adjusted / drafted
 
     @property
     def ok(self) -> bool:
@@ -189,85 +190,46 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
     if any(i.code in ("unknown_product", "missing_meal") for i in issues):
         return result  # portions are meaningless without valid ingredients and slots
 
-    # 3. portions per member and day
-    for member in ctx.members:
-        name = member.profile.name
-        protein = Decimal(0)
-        for day in ctx.schedule.days:
-            meals = [
-                (key, meal)
-                for key, meal in sorted(seen.items())
-                if key[0] == day and name not in meal.skipped_by
-            ]
-            drafted = sum(
-                (
-                    ing.amount * by_id[ing.product_id].kcal
-                    for _, meal in meals
-                    for ing in meal.ingredients
-                ),
-                Decimal(0),
-            )
-            share = sum((ctx.schedule.shares[k[1]] for k, _ in meals), Decimal(0))
-            target = member.daily.energy_kcal * share * ctx.energy_scale
-            if drafted <= 0:
-                if target > 0:
-                    issues.append(
-                        Issue(code="empty_day", message=f"{name} has no food on {day:%a %d}")
-                    )
+    # 3-4. portions (linear programme: energy, protein, stock) - see portions.py
+    solution = solve_portions(seen, ctx)
+    issues.extend(Issue(code=code, message=message) for code, message in solution.problems)
+    for key, meal in sorted(seen.items()):
+        base = {}
+        for idx, ing in enumerate(meal.ingredients):
+            multiplier = solution.multipliers.get((key, idx), Decimal(1))
+            result.ingredient_scales.append(multiplier)
+            amount = ing.amount * multiplier
+            base[ing.product_id] = base.get(ing.product_id, Decimal(0)) + amount
+        portions = []
+        for member in ctx.members:
+            name = member.profile.name
+            if name in meal.skipped_by:
                 continue
-            scale = target / drafted
-            if not ctx.min_scale <= scale <= ctx.max_scale:
-                direction = "too small" if scale > 1 else "too large"
-                issues.append(
-                    Issue(
-                        code="portions_unrealistic",
-                        message=f"{name}'s portions on {day:%A} are {direction}: the drafted meals "
-                        f"give {_q(drafted)} kcal for a target of {_q(target)} kcal",
-                    )
+            r = solution.ratios[name]
+            amounts = {pid: amount * r for pid, amount in base.items()}
+            for pid, amount in amounts.items():
+                result.usage[pid] = result.usage.get(pid, Decimal(0)) + amount
+                kcal = amount * by_id[pid].kcal
+                day_key = (name, key[0])
+                result.kcal_by_member_day[day_key] = (
+                    result.kcal_by_member_day.get(day_key, Decimal(0)) + kcal
                 )
-            result.kcal_by_member_day[(name, day)] = _q(drafted * scale)
-            for key, meal in meals:
-                amounts = {}
-                for ing in meal.ingredients:
-                    amount = ing.amount * scale
-                    amounts[ing.product_id] = amounts.get(ing.product_id, Decimal(0)) + amount
-                    result.usage[ing.product_id] = (
-                        result.usage.get(ing.product_id, Decimal(0)) + amount
-                    )
-                    protein += amount * by_id[ing.product_id].protein
-                _add_portion(
-                    result,
-                    key,
-                    meal,
-                    Portion(
-                        member=name,
-                        scale=_q2(scale),
-                        amounts={k: _q(v) for k, v in amounts.items()},
-                    ),
+                result.protein_by_member[name] = (
+                    result.protein_by_member.get(name, Decimal(0)) + amount * by_id[pid].protein
                 )
-        result.protein_by_member[name] = _q(protein)
-        needed = member.daily.protein_g * ctx.schedule.day_equivalents
-        if protein < needed * ctx.protein_min_ratio:
-            issues.append(
-                Issue(
-                    code="protein_low",
-                    message=f"{name} gets {_q(protein)} g protein this week; at least "
-                    f"{_q(needed * ctx.protein_min_ratio)} g is needed: "
-                    "use more protein-rich products",
-                )
+            portions.append(
+                Portion(member=name, scale=_q2(r), amounts={k: _q(v) for k, v in amounts.items()})
             )
-
-    # 4. stock
-    for pid, used in sorted(result.usage.items()):
-        item = by_id[pid]
-        if used > item.available * (1 + ctx.stock_tolerance):
-            issues.append(
-                Issue(
-                    code="stock_exceeded",
-                    message=f"{item.product.name}: the plan uses {_q(used)} {item.basis} but only "
-                    f"{_q(item.available)} {item.basis} are available",
-                )
+        result.meals.append(
+            FinalMeal(
+                day=key[0],
+                draft=meal,
+                base_amounts={k: _q(v) for k, v in base.items()},
+                portions=tuple(portions),
             )
+        )
+    result.kcal_by_member_day = {k: _q(v) for k, v in result.kcal_by_member_day.items()}
+    result.protein_by_member = {k: _q(v) for k, v in result.protein_by_member.items()}
     return result
 
 
@@ -278,14 +240,6 @@ def _q2(value: Decimal) -> Decimal:
 def _label(key: tuple[date, str]) -> str:
     day, slot = key
     return f"{day:%A %d} {slot}"
-
-
-def _add_portion(result: Verification, key, meal: DraftMeal, portion: Portion) -> None:
-    for i, final in enumerate(result.meals):
-        if (final.day, final.draft.slot) == key:
-            result.meals[i] = final.model_copy(update={"portions": (*final.portions, portion)})
-            return
-    result.meals.append(FinalMeal(day=key[0], draft=meal, portions=(portion,)))
 
 
 __all__ = [

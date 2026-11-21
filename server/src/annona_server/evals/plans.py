@@ -146,7 +146,7 @@ def plan_metrics(outcome, ctx: PlanContext) -> dict[str, Any]:
     v = outcome.verification
     titles = [m.title.strip().lower() for m in outcome.draft.meals]
     repeats = Counter(titles)
-    scales = [p.scale for m in v.meals for p in m.portions]
+    scales = v.ingredient_scales  # code-adjusted amount / LLM-drafted amount
     kcal_by_id = {a.product.id: a.kcal for a in ctx.available}
     intended = sum((a.intended * a.kcal for a in ctx.available), Decimal(0))
     used = sum((amount * kcal_by_id[pid] for pid, amount in v.usage.items()), Decimal(0))
@@ -161,8 +161,11 @@ def plan_metrics(outcome, ctx: PlanContext) -> dict[str, Any]:
         "meals": len(outcome.draft.meals),
         "distinct_titles_ratio": round(len(repeats) / len(titles), 3) if titles else None,
         "most_repeated_title": repeats.most_common(1)[0] if repeats else None,
-        "portion_scale_min": str(min(scales)) if scales else None,
-        "portion_scale_max": str(max(scales)) if scales else None,
+        "ingredient_scale_min": str(min(scales)) if scales else None,
+        "ingredient_scale_max": str(max(scales)) if scales else None,
+        "ingredient_scale_mean": (
+            str(round(sum(scales, Decimal(0)) / len(scales), 2)) if scales else None
+        ),
         "purchase_used_ratio": round(float(used / intended), 3) if intended else None,
         "model_calls": sum(c.calls for c in calls),
         "input_tokens": sum(c.input_tokens for c in calls),
