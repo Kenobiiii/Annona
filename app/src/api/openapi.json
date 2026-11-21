@@ -54,6 +54,29 @@
         "title": "AllergenNote",
         "type": "object"
       },
+      "CatalogStore": {
+        "properties": {
+          "priced": {
+            "title": "Priced",
+            "type": "integer"
+          },
+          "products": {
+            "title": "Products",
+            "type": "integer"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_id",
+          "products",
+          "priced"
+        ],
+        "title": "CatalogStore",
+        "type": "object"
+      },
       "Category": {
         "description": "Coarse product category. Finer grouping lives in ``Product.type`` (free text).",
         "enum": [
@@ -2357,6 +2380,60 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/catalog/stores": {
+      "get": {
+        "description": "Stores that have products in the database (the ones a plan can be made for).",
+        "operationId": "catalog_stores_api_v1_catalog_stores_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogStore"
+                  },
+                  "title": "Response Catalog Stores Api V1 Catalog Stores Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Catalog Stores",
+        "tags": [
+          "products"
+        ]
+      }
+    },
     "/api/v1/equipment": {
       "get": {
         "operationId": "get_equipment_api_v1_equipment_get",
