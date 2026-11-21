@@ -65,7 +65,7 @@ It declares repository *interfaces*; the SQLite implementation (SQLModel + Alemb
 
 - **Python 3.12**, `uv` workspace, `ruff` (lint + format), `pytest` (warnings are errors).
 - **Optimiser:** mixed-integer programming with `scipy.optimize.milp` (HiGHS); integer pack counts,
-  minimise cost subject to nutrition ranges, budget and variety constraints.
+  minimise cost subject to nutrition ranges, budget and variety constraints. See [optimizer.md](optimizer.md).
 - **Nutrition targets:** Mifflin-St Jeor BMR × activity factor, adjusted by goal; protein in g/kg.
   All defaults configurable and documented with sources in [nutrition.md](nutrition.md).
 - **Nutrition data:** Open Food Facts by barcode; otherwise an LLM estimate flagged `estimated`.
