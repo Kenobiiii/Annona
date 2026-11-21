@@ -22,8 +22,9 @@ SKIP_DIRS = {
     "android",
     "ios",
 }
-# Generated/config files from third-party templates are exempt.
-SKIP_FILES = {"expo-env.d.ts"}
+# Generated/config files from third-party templates are exempt. schema.d.ts is rewritten by
+# `npm run gen:api` (openapi-typescript), so a header could not survive regeneration.
+SKIP_FILES = {"expo-env.d.ts", "schema.d.ts"}
 HEADER_LINES = 3  # allow a shebang or "use client"-style line before the header
 
 

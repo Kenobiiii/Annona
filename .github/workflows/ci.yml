@@ -51,6 +51,10 @@ jobs:
         run: npm run typecheck
       - name: Tests
         run: npm test -- --ci
+      - name: API types are up to date
+        run: |
+          npm run gen:api
+          git diff --exit-code -- src/api/schema.d.ts
 
   docker:
     name: Docker (build + compose + docs page)
