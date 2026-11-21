@@ -1,61 +1,341 @@
 {
   "notice": "Scenarios for the weekly planner eval. Foods are the USDA sample foods bundled with the server (public domain); package sizes and prices are SYNTHETIC test values, not real store data.",
   "catalogue": {
-    "rice_white": [1000, "g", 120], "pasta_dry": [500, "g", 90], "oats": [500, "g", 110],
-    "bread_white": [450, "g", 95], "lentils": [1000, "g", 180], "chickpeas": [1000, "g", 190],
-    "white_beans": [500, "g", 120], "egg": [12, "unit", 260], "chicken_breast": [1000, "g", 650],
-    "pork_loin": [1000, "g", 590], "tuna_oil": [240, "g", 330], "salmon": [500, "g", 690],
-    "milk_whole": [1000, "ml", 95], "yogurt_plain": [500, "g", 110], "cheese_fresh": [250, "g", 180],
-    "olive_oil": [1000, "ml", 450], "potato": [3000, "g", 330], "onion": [1000, "g", 140],
-    "tomato": [1000, "g", 220], "carrot": [1000, "g", 120], "spinach": [300, "g", 160],
-    "lettuce": [400, "g", 110], "red_pepper": [500, "g", 160], "broccoli": [500, "g", 170],
-    "zucchini": [1000, "g", 180], "banana": [1000, "g", 190], "apple": [1000, "g", 200],
-    "orange": [2000, "g", 300], "almonds": [200, "g", 250]
+    "rice_white": [
+      1000,
+      "g",
+      120
+    ],
+    "pasta_dry": [
+      500,
+      "g",
+      90
+    ],
+    "oats": [
+      500,
+      "g",
+      110
+    ],
+    "bread_white": [
+      450,
+      "g",
+      95
+    ],
+    "lentils": [
+      1000,
+      "g",
+      180
+    ],
+    "chickpeas": [
+      1000,
+      "g",
+      190
+    ],
+    "white_beans": [
+      500,
+      "g",
+      120
+    ],
+    "egg": [
+      12,
+      "unit",
+      260
+    ],
+    "chicken_breast": [
+      1000,
+      "g",
+      650
+    ],
+    "pork_loin": [
+      1000,
+      "g",
+      590
+    ],
+    "tuna_oil": [
+      240,
+      "g",
+      330
+    ],
+    "salmon": [
+      500,
+      "g",
+      690
+    ],
+    "milk_whole": [
+      1000,
+      "ml",
+      95
+    ],
+    "yogurt_plain": [
+      500,
+      "g",
+      110
+    ],
+    "cheese_fresh": [
+      250,
+      "g",
+      180
+    ],
+    "olive_oil": [
+      1000,
+      "ml",
+      450
+    ],
+    "potato": [
+      3000,
+      "g",
+      330
+    ],
+    "onion": [
+      1000,
+      "g",
+      140
+    ],
+    "tomato": [
+      1000,
+      "g",
+      220
+    ],
+    "carrot": [
+      1000,
+      "g",
+      120
+    ],
+    "spinach": [
+      300,
+      "g",
+      160
+    ],
+    "lettuce": [
+      400,
+      "g",
+      110
+    ],
+    "red_pepper": [
+      500,
+      "g",
+      160
+    ],
+    "broccoli": [
+      500,
+      "g",
+      170
+    ],
+    "zucchini": [
+      1000,
+      "g",
+      180
+    ],
+    "banana": [
+      1000,
+      "g",
+      190
+    ],
+    "apple": [
+      1000,
+      "g",
+      200
+    ],
+    "orange": [
+      2000,
+      "g",
+      300
+    ],
+    "almonds": [
+      200,
+      "g",
+      250
+    ]
   },
   "scenarios": [
     {
       "id": "single_active_full_week",
       "description": "One active young man, full week, ceramic hob + microwave + air fryer, no oven",
-      "members": [{"name": "Pablo", "sex": "male", "birth_date": "2005-01-01", "height_cm": 185,
-                   "weight_kg": 85, "activity": "active", "goal": "maintain", "diet": "omnivore",
-                   "allergies": []}],
-      "kitchen": {"hob_type": "ceramic", "oven": false, "microwave": true, "air_fryer": true},
-      "schedule": {"weekdays": [0, 1, 2, 3, 4, 5, 6], "skip_slots": [], "skip": []},
+      "members": [
+        {
+          "name": "Pablo",
+          "sex": "male",
+          "birth_date": "2005-01-01",
+          "height_cm": 185,
+          "weight_kg": 85,
+          "activity": "active",
+          "goal": "maintain",
+          "diet": "omnivore",
+          "allergies": [],
+          "food_preferences": {
+            "carrot": "less"
+          },
+          "weekly_servings": {
+            "meat": 3,
+            "fish": 2
+          }
+        }
+      ],
+      "kitchen": {
+        "hob_type": "ceramic",
+        "oven": false,
+        "microwave": true,
+        "air_fryer": true
+      },
+      "schedule": {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "skip_slots": [],
+        "skip": []
+      },
       "budget_cents": 6000
     },
     {
       "id": "user_example_five_days",
       "description": "The owner's example: Monday-Friday, no dinner on Tue/Thu/Fri, no afternoon snack",
-      "members": [{"name": "Pablo", "sex": "male", "birth_date": "2005-01-01", "height_cm": 185,
-                   "weight_kg": 85, "activity": "active", "goal": "maintain", "diet": "omnivore",
-                   "allergies": []}],
-      "kitchen": {"hob_type": "ceramic", "oven": false, "microwave": true, "air_fryer": true},
-      "schedule": {"weekdays": [0, 1, 2, 3, 4], "skip_slots": ["snack"],
-                   "skip": [[1, "dinner"], [3, "dinner"], [4, "dinner"]]},
+      "members": [
+        {
+          "name": "Pablo",
+          "sex": "male",
+          "birth_date": "2005-01-01",
+          "height_cm": 185,
+          "weight_kg": 85,
+          "activity": "active",
+          "goal": "maintain",
+          "diet": "omnivore",
+          "allergies": [],
+          "food_preferences": {
+            "carrot": "less"
+          },
+          "weekly_servings": {
+            "meat": 3,
+            "fish": 2
+          }
+        }
+      ],
+      "kitchen": {
+        "hob_type": "ceramic",
+        "oven": false,
+        "microwave": true,
+        "air_fryer": true
+      },
+      "schedule": {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "skip_slots": [
+          "snack"
+        ],
+        "skip": [
+          [
+            1,
+            "dinner"
+          ],
+          [
+            3,
+            "dinner"
+          ],
+          [
+            4,
+            "dinner"
+          ]
+        ]
+      },
       "budget_cents": 5000
     },
     {
       "id": "vegetarian_woman",
       "description": "Vegetarian woman cutting, full week, hob only",
-      "members": [{"name": "Lucía", "sex": "female", "birth_date": "1992-05-10", "height_cm": 165,
-                   "weight_kg": 62, "activity": "low_active", "goal": "cut", "diet": "vegetarian",
-                   "allergies": []}],
-      "kitchen": {"hob_type": "ceramic", "oven": false, "microwave": false, "air_fryer": false},
-      "schedule": {"weekdays": [0, 1, 2, 3, 4, 5, 6], "skip_slots": [], "skip": []},
+      "members": [
+        {
+          "name": "Lucía",
+          "sex": "female",
+          "birth_date": "1992-05-10",
+          "height_cm": 165,
+          "weight_kg": 62,
+          "activity": "low_active",
+          "goal": "cut",
+          "diet": "vegetarian",
+          "allergies": []
+        }
+      ],
+      "kitchen": {
+        "hob_type": "ceramic",
+        "oven": false,
+        "microwave": false,
+        "air_fryer": false
+      },
+      "schedule": {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "skip_slots": [],
+        "skip": []
+      },
       "budget_cents": 4500
     },
     {
       "id": "couple_milk_allergy",
       "description": "Couple sharing meals; Ana is allergic to milk. Gas hob and oven",
       "members": [
-        {"name": "Ana", "sex": "female", "birth_date": "1990-03-03", "height_cm": 168,
-         "weight_kg": 60, "activity": "low_active", "goal": "maintain", "diet": "omnivore",
-         "allergies": ["milk"]},
-        {"name": "Marc", "sex": "male", "birth_date": "1988-07-21", "height_cm": 178,
-         "weight_kg": 78, "activity": "active", "goal": "maintain", "diet": "omnivore",
-         "allergies": []}],
-      "kitchen": {"hob_type": "gas", "oven": true, "microwave": true, "air_fryer": false},
-      "schedule": {"weekdays": [0, 1, 2, 3, 4, 5, 6], "skip_slots": ["snack"], "skip": []},
+        {
+          "name": "Ana",
+          "sex": "female",
+          "birth_date": "1990-03-03",
+          "height_cm": 168,
+          "weight_kg": 60,
+          "activity": "low_active",
+          "goal": "maintain",
+          "diet": "omnivore",
+          "allergies": [
+            "milk"
+          ]
+        },
+        {
+          "name": "Marc",
+          "sex": "male",
+          "birth_date": "1988-07-21",
+          "height_cm": 178,
+          "weight_kg": 78,
+          "activity": "active",
+          "goal": "maintain",
+          "diet": "omnivore",
+          "allergies": []
+        }
+      ],
+      "kitchen": {
+        "hob_type": "gas",
+        "oven": true,
+        "microwave": true,
+        "air_fryer": false
+      },
+      "schedule": {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "skip_slots": [
+          "snack"
+        ],
+        "skip": []
+      },
       "budget_cents": 10000
     }
   ]

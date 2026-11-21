@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import (
     AfterValidator,
@@ -76,6 +76,10 @@ class Household(DomainModel):
         return Money(amount_cents=self.weekly_budget_cents, currency=self.currency)
 
 
+FoodPreference = Literal["avoid", "less"]
+ServingGroup = Literal["meat", "fish", "eggs"]
+
+
 class UserProfile(DomainModel):
     id: int | None = None
     household_id: int
@@ -88,11 +92,27 @@ class UserProfile(DomainModel):
     goal: Goal = Goal.MAINTAIN
     diet: Diet = Diet.OMNIVORE
     allergies: list[Allergen] = Field(default_factory=list)
+    food_preferences: dict[str, FoodPreference] = Field(
+        default_factory=dict,
+        description="product type -> 'avoid' (never bought for them) or 'less' (small amounts)",
+    )
+    weekly_servings: dict[ServingGroup, int] = Field(
+        default_factory=dict,
+        description="minimum servings per week, e.g. {'meat': 3, 'fish': 2}",
+    )
     allergies_confirmed: bool = Field(
         default=False,
         description="True once the user explicitly answered the allergy question "
         "(an empty list then really means 'no allergies')",
     )
+
+    @field_validator("weekly_servings")
+    @classmethod
+    def _servings_range(cls, value: dict[str, int]) -> dict[str, int]:
+        for group, count in value.items():
+            if not 0 <= count <= 21:
+                raise ValueError(f"{group}: servings per week must be between 0 and 21")
+        return value
 
     def age_on(self, day: date) -> int:
         """Age in whole years on ``day``."""

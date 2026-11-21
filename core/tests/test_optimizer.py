@@ -368,3 +368,40 @@ def test_lines_expose_pack_size_and_price():
     result = optimise(problem())
     rice = next(line for line in result.lines if line.name == "rice")
     assert rice.pack_basis == 1000 and rice.price_cents == 120
+
+
+def with_prefs(**prefs) -> UserProfile:
+    return member().model_copy(update=prefs)
+
+
+def used(result, name) -> Decimal:
+    return sum((line.used_total for line in result.lines if line.name == name), Decimal(0))
+
+
+def test_less_caps_a_type_and_servings_buy_meat():
+    """The owner's preferences: less carrot, meat 3 times a week (fish needs a fish product)."""
+    pablo = with_prefs(food_preferences={"carrot": "less"}, weekly_servings={"meat": 3})
+    offers = [Offer(product=p, price_cents=c) for p, c in CATALOGUE]
+    carrots = next(o for o in offers if o.product.name == "carrots")
+    offers[offers.index(carrots)] = carrots.model_copy(
+        update={"product": carrots.product.model_copy(update={"type": "carrot"})}
+    )
+    result = optimise(problem(members=[pablo], offers=offers, budget=20_000))
+    assert result.status == "optimal"
+    assert used(result, "carrots") <= 350
+    assert used(result, "chicken") >= 375  # 3 x 125 g
+
+
+def test_servings_without_any_fish_are_explained():
+    pablo = with_prefs(weekly_servings={"fish": 2})
+    result = optimise(problem(members=[pablo], budget=20_000))
+    assert result.status == "infeasible"
+    shortfall = next(s for s in result.shortfalls if s.constraint == "servings_fish")
+    assert shortfall.amount == 250
+
+
+def test_avoided_type_is_never_bought_for_a_single_person():
+    pablo = with_prefs(food_preferences={"rice": "avoid"})
+    result = optimise(problem(members=[pablo]))
+    assert "rice" not in {line.name for line in result.lines}
+    assert any(w.issue == "excluded_avoided" for w in result.warnings)

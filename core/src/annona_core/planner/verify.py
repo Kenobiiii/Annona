@@ -26,6 +26,7 @@ from .draft import Appliance, DraftMeal, PlanDraft
 from .portions import solve_portions
 from .schedule import MealSchedule
 
+SERVING_COUNT_MIN_G = Decimal(50)  # a meal counts as a meat/fish/eggs serving from 50 g
 _OVEN_WORDS = re.compile(r"\b(horno|hornear|hornea|gratinar|oven|bake|baked|roast)\b", re.I)
 
 
@@ -230,6 +231,32 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
                 portions=tuple(portions),
             )
         )
+    # 5. weekly servings wanted by each member (a meal counts with >= 50 g of the group)
+    for member in ctx.members:
+        name = member.profile.name
+        for group, wanted in sorted(member.profile.weekly_servings.items()):
+            got = 0
+            for final in result.meals:
+                for portion in final.portions:
+                    if portion.member != name:
+                        continue
+                    grams = sum(
+                        (
+                            amount
+                            for pid, amount in portion.amounts.items()
+                            if str(by_id[pid].product.category) == group
+                        ),
+                        Decimal(0),
+                    )
+                    got += grams >= SERVING_COUNT_MIN_G
+            if got < wanted:
+                issues.append(
+                    Issue(
+                        code="servings_missing",
+                        message=f"{name} wants {group} at least {wanted} times this week but the "
+                        f"plan has it {got} times: add {group} to more of {name}'s meals",
+                    )
+                )
     result.kcal_by_member_day = {k: _q(v) for k, v in result.kcal_by_member_day.items()}
     result.protein_by_member = {k: _q(v) for k, v in result.protein_by_member.items()}
     return result

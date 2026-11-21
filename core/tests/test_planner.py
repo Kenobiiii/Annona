@@ -214,7 +214,7 @@ def test_prompt_contains_only_what_is_needed():
     ctx = context()
     system, user = build_prompt(ctx)
     assert "Spanish" in system and "never bake" in system
-    assert "1 | oats | g | 3000" in user and "weekday 1 (Tue" in user
+    assert "1 | oats | other | g | 3000" in user and "weekday 1 (Tue" in user
     assert "- Pablo: breakfast ~" in user and "dinner ~" in user
     assert (
         "air_fryer" in user and "oven" not in user.split("Kitchen appliances:")[1].splitlines()[0]
@@ -310,3 +310,32 @@ def test_top_up_respects_the_budget():
     bad = draft_json(ctx)
     outcome = plan_week(LLMClient(FakeLLM([bad, bad]), MODELS), ctx, top_up=top_up)
     assert not outcome.accepted and outcome.repaired and outcome.extra_purchases == []
+
+
+def test_weekly_servings_are_checked_in_the_menu():
+    from annona_core.domain import Category
+
+    meat = tuple(
+        a.model_copy(update={"product": a.product.model_copy(update={"category": Category.MEAT})})
+        if a.product.id == 5
+        else a
+        for a in AVAILABLE
+    )
+    wants_three = person().model_copy(update={"weekly_servings": {"meat": 3}})
+    ctx = context(members=[wants_three], available=meat)  # 2 days: chicken at 2 dinners
+    issues = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx).issues
+    assert [i.code for i in issues] == ["servings_missing"]
+    assert "meat at least 3 times" in issues[0].message and "2 times" in issues[0].message
+
+    wants_two = person().model_copy(update={"weekly_servings": {"meat": 2}})
+    ctx = context(members=[wants_two], available=meat)
+    assert verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx).ok
+
+
+def test_preferences_reach_the_prompt():
+    pablo = person().model_copy(
+        update={"food_preferences": {"carrot": "less"}, "weekly_servings": {"meat": 3, "fish": 2}}
+    )
+    _, user = build_prompt(context(members=[pablo]))
+    assert "wants at least these meals this week: fish 2, meat 3" in user
+    assert "likes little carrot" in user

@@ -54,9 +54,20 @@ def build_prompt(ctx: PlanContext) -> tuple[str, str]:
     for m in ctx.members:
         p = m.profile
         allergies = ", ".join(Allergen(a).value for a in p.allergies) or "none"
+        prefs = []
+        wanted = ", ".join(f"{g} {n}" for g, n in sorted(p.weekly_servings.items()) if n)
+        if wanted:
+            prefs.append(f"wants at least these meals this week: {wanted}")
+        less = sorted(k for k, v in p.food_preferences.items() if v == "less")
+        avoid = sorted(k for k, v in p.food_preferences.items() if v == "avoid")
+        if less:
+            prefs.append(f"likes little {', '.join(less)} (use sparingly)")
+        if avoid:
+            prefs.append(f"does not eat {', '.join(avoid)}")
+        extra = f"; {'; '.join(prefs)}" if prefs else ""
         lines.append(
             f"- {p.name}: {m.daily.energy_kcal} kcal, protein {m.daily.protein_g} g, "
-            f"diet {p.diet}, allergies {allergies}"
+            f"diet {p.diet}, allergies {allergies}{extra}"
         )
 
     lines.append(
@@ -75,12 +86,14 @@ def build_prompt(ctx: PlanContext) -> tuple[str, str]:
     lines.append(f"\nKitchen appliances: {', '.join(tools) or 'none (no cooking)'}")
 
     lines.append(
-        "\nProducts (id | name | unit | available | planned | kcal/100 | protein/100 | not for):"
+        "\nProducts (id | name | group | unit | available | planned | kcal/100 | protein/100"
+        " | not for):"
     )
     for a in ctx.available:
         not_for = ", ".join(a.not_for) or "-"
         lines.append(
-            f"{a.product.id} | {a.product.name} | {a.basis} | {_n(a.available)} | {_n(a.intended)}"
+            f"{a.product.id} | {a.product.name} | {a.product.category} | {a.basis}"
+            f" | {_n(a.available)} | {_n(a.intended)}"
             f" | {_n(a.kcal * 100)} | {_n(a.protein * 100)} | {not_for}"
         )
     return system, "\n".join(lines)

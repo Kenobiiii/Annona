@@ -60,6 +60,8 @@ class UserProfileRow(SQLModel, table=True):
     diet: str
     allergies: list[str] = Field(default_factory=list, sa_type=JSON)
     allergies_confirmed: bool = False
+    food_preferences: dict = Field(default_factory=dict, sa_type=JSON)
+    weekly_servings: dict = Field(default_factory=dict, sa_type=JSON)
 
 
 class EquipmentRow(SQLModel, table=True):

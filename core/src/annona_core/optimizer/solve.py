@@ -61,6 +61,9 @@ _UNITS = {
     "fruit_veg_min": "g",
     "variety": "kcal",
     "variety_fruit_veg": "types",
+    "servings_meat": "g",
+    "servings_fish": "g",
+    "servings_eggs": "g",
     "variety_protein": "types",
     "salt_max": "g",
     "saturated_fat_max": "kcal",
@@ -75,6 +78,9 @@ _DETAILS = {
     "fruit_veg_min": "fruit and vegetables below 400 g per person and day (WHO)",
     "variety": "one product would exceed the share of calories allowed per product",
     "variety_fruit_veg": "too few different fruits and vegetables for the chosen variety",
+    "servings_meat": "not enough meat for the requested weekly servings",
+    "servings_fish": "not enough fish for the requested weekly servings",
+    "servings_eggs": "not enough eggs for the requested weekly servings",
     "variety_protein": "too few different protein sources for the chosen variety",
     "salt_max": "salt above 5 g per person and day (WHO; optional health limit)",
     "saturated_fat_max": "saturated fat above 10 % of energy (WHO; optional health limit)",
@@ -199,6 +205,23 @@ class _Model:
                 self._row(coeffs, 0.0, INF)  # sum c_i >= minimum * y_t
             count = {self._y_col(offset + g): 1.0 for g in range(len(groups))}
             self._row(count, float(need), INF, (name, float(need), VARIETY_WEIGHT, 1.0, None))
+
+        # Preferences: "less" caps a product type; weekly servings set minimum amounts.
+        members = self.problem.members
+        less_types = sorted(
+            {t for m in members for t, pref in m.food_preferences.items() if pref == "less"}
+        )
+        cap = float(s.less_max_g_per_person_day * people * s.days)
+        for kind in less_types:
+            cols = {con[i]: 1.0 for i in range(n) if cands[i].product.type == kind}
+            if cols:
+                self._row(cols, -INF, cap)
+        for group, size in s.serving_g.items():
+            need = float(sum(m.weekly_servings.get(group, 0) for m in members) * size)
+            if need <= 0:
+                continue
+            cols = {con[i]: 1.0 for i in range(n) if str(cands[i].product.category) == group}
+            self._row(cols, need, INF, (f"servings_{group}", need, NUTRITION_WEIGHT, 1.0, None))
 
         share = float(
             self.share_override if self.share_override is not None else s.max_kcal_share_per_product

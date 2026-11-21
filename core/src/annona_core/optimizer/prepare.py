@@ -140,6 +140,16 @@ def prepare(problem: Problem) -> tuple[list[Candidate], list[DataWarning]]:
         if problem.members and len(notes) == len(problem.members):
             warn("excluded_nobody_can_eat", "no household member can eat it")
             continue
+        avoiders = [
+            m.name
+            for m in problem.members
+            if product.type and m.food_preferences.get(product.type) == "avoid"
+        ]
+        if problem.members and len(avoiders) == len(problem.members):
+            warn("excluded_avoided", "every household member avoids this type of food")
+            continue
+        for name in avoiders:
+            notes.append(AllergenNote(member=name, reasons=["avoids: preference"]))
 
         n = product.nutrition
         hundred = Decimal(100)

@@ -44,6 +44,17 @@ class OptimizerSettings(BaseModel):
     #   high     - >= 5 fruits/vegetables, >= 3 protein sources, max 15 % kcal per product
     variety: Literal["basic", "balanced", "high"] = "basic"
     variety_min_amount: Decimal = Decimal(250)
+    # Food preferences (from each member's profile):
+    # "less": at most this much of that product type per person and day (~350 g a week);
+    # weekly servings: grams of one serving, raw weight (project choice, configurable).
+    less_max_g_per_person_day: Decimal = Decimal(50)
+    serving_g: dict[str, Decimal] = Field(
+        default_factory=lambda: {
+            "meat": Decimal(125),
+            "fish": Decimal(125),
+            "eggs": Decimal(100),  # about two eggs
+        }
+    )
     health_limits: bool = False
     salt_g_per_person_day: Decimal = Decimal(5)
     saturated_fat_energy_share: Decimal = Decimal("0.10")

@@ -36,7 +36,7 @@ def even_split(request) -> str:
     text = request.messages[0].text
     products = [
         (int(m.group(1)), Decimal(m.group(2)))
-        for m in re.finditer(r"^(\d+) \| [^|]+ \| \w+ \| \d+ \| (\d+) \|", text, re.M)
+        for m in re.finditer(r"^(\d+) \| [^|]+ \| \w+ \| \w+ \| \d+ \| (\d+) \|", text, re.M)
     ]
     slots = []
     for m in re.finditer(r"^- weekday (\d) \([^)]*\): (.+)$", text, re.M):
