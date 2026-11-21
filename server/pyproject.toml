@@ -9,9 +9,11 @@ dependencies = [
     "alembic>=1.20.1",
     "annona-core",
     "annona-providers",
+    "fastapi==0.162.0",
     "litellm==1.108.0",
     "python-dotenv>=1.1",
     "sqlmodel>=0.0.50",
+    "uvicorn==0.54.0",
 ]
 
 [build-system]

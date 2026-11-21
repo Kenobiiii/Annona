@@ -281,3 +281,19 @@ class LlmUsageRow(SQLModel, table=True):
     repair: bool = False
     success: bool = True
     error: str | None = None
+
+
+class JobRow(SQLModel, table=True):
+    """A long-running operation (plan generation, price refresh) the client polls."""
+
+    __tablename__ = "job"
+
+    id: str = Field(primary_key=True, max_length=32)
+    kind: str = Field(index=True)
+    status: str  # queued | running | done | failed
+    params: dict = Field(default_factory=dict, sa_type=JSON)
+    result: dict | None = Field(default=None, sa_type=JSON)
+    error: str | None = None
+    created_at: datetime = utc()
+    started_at: datetime | None = utc(nullable=True)
+    finished_at: datetime | None = utc(nullable=True)

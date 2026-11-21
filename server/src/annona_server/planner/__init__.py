@@ -18,6 +18,8 @@ from annona_core.domain import (
     Recipe,
     RecipeIngredient,
     RecipeSource,
+    ShoppingItem,
+    ShoppingList,
     Unit,
 )
 from annona_core.llm import LLMClient
@@ -41,6 +43,8 @@ from ..db.repositories import (
     PlannedMealRepository,
     RecipeIngredientRepository,
     RecipeRepository,
+    ShoppingItemRepository,
+    ShoppingListRepository,
     SqlProductRepository,
     UserProfileRepository,
 )
@@ -132,7 +136,38 @@ def plan_and_store(
     week = WeekPlan(shopping=shopping, outcome=outcome, context=ctx)
     if outcome.accepted:
         week.plan_id = store_plan(session, household_id, ctx, outcome)
+        store_shopping_list(session, household_id, store_id, week.plan_id, shopping, outcome)
     return week
+
+
+def store_shopping_list(
+    session: Session,
+    household_id: int,
+    store_id: str,
+    plan_id: int,
+    shopping: Result,
+    outcome: PlanOutcome,
+) -> int:
+    """The purchase behind an accepted plan, including extra packs bought for it."""
+    lists, items = ShoppingListRepository(session), ShoppingItemRepository(session)
+    shopping_list = lists.add(
+        ShoppingList(household_id=household_id, store_id=store_id, plan_id=plan_id)
+    )
+    assert shopping_list.id is not None
+    packs: dict[int, tuple[int, int]] = {}
+    for line in shopping.lines:
+        if line.packs_to_buy:
+            packs[line.product_id] = (line.packs_to_buy, line.price_cents)
+    for extra in outcome.extra_purchases:
+        count, price = packs.get(extra.product_id, (0, extra.cost_cents // max(extra.packs, 1)))
+        packs[extra.product_id] = (count + extra.packs, price)
+    for product_id, (count, price) in sorted(packs.items()):
+        items.add(
+            ShoppingItem(
+                list_id=shopping_list.id, product_id=product_id, packs=count, unit_price_cents=price
+            )
+        )
+    return shopping_list.id
 
 
 def existing_plan(session: Session, household_id: int, week_start: date) -> MealPlan | None:

@@ -25,6 +25,7 @@ EXPECTED_TABLES = {
     "off_cache",
     "llm_cache",
     "llm_usage",
+    "job",
 }
 
 

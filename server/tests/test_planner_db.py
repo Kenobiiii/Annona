@@ -85,6 +85,9 @@ def test_plan_is_generated_verified_and_stored(session, kitchen):
     assert len(session.exec(select(RecipeRow)).all()) == len(schedule.slots) == 19
     assert len(session.exec(select(PlannedMealRow)).all()) == 19  # one member
     assert existing_plan(session, kitchen.id, MONDAY).id == week.plan_id
+    [shopping_list] = r.ShoppingListRepository(session).list(plan_id=week.plan_id)
+    items = r.ShoppingItemRepository(session).list(list_id=shopping_list.id)
+    assert sum(i.packs * i.unit_price_cents for i in items) == week.shopping.total_cost_cents
 
     # Shopping only covers the planned meals: 4.7 day-equivalents, not 7.
     assert schedule.day_equivalents == Decimal("4.7")
