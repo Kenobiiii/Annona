@@ -4,7 +4,7 @@ import { fireEvent, screen } from '@testing-library/react-native';
 import { localISODate, mondayOf } from '@/i18n';
 import TodayScreen from '@/app/(app)/index';
 import { apiError, fakeApi } from '../test-utils/fakeApi';
-import { household, meal, plan, profile } from '../test-utils/fixtures';
+import { meal, plan, profile } from '../test-utils/fixtures';
 import { renderConnected } from '../test-utils/render';
 import { resetRouter, router } from '../test-utils/router';
 
