@@ -43,6 +43,13 @@ from .prepare import Candidate, prepare
 INF = np.inf
 NUTRITION_WEIGHT = 1.0  # per unit of normalised slack (slack / target)
 VARIETY_WEIGHT = 0.5
+# (min fruit/veg types, min protein-source types, max kcal share override)
+VARIETY_LEVELS = {
+    "basic": (0, 0, None),
+    "balanced": (3, 2, None),
+    "high": (5, 3, Decimal("0.15")),
+}
+PROTEIN_SOURCES = {"meat", "fish", "eggs", "legumes", "dairy"}
 
 _UNITS = {
     "budget": "cents",
@@ -53,6 +60,8 @@ _UNITS = {
     "fat_max": "g",
     "fruit_veg_min": "g",
     "variety": "kcal",
+    "variety_fruit_veg": "types",
+    "variety_protein": "types",
     "salt_max": "g",
     "saturated_fat_max": "kcal",
 }
@@ -65,6 +74,8 @@ _DETAILS = {
     "fat_max": "fat above the maximum (35 % of energy)",
     "fruit_veg_min": "fruit and vegetables below 400 g per person and day (WHO)",
     "variety": "one product would exceed the share of calories allowed per product",
+    "variety_fruit_veg": "too few different fruits and vegetables for the chosen variety",
+    "variety_protein": "too few different protein sources for the chosen variety",
     "salt_max": "salt above 5 g per person and day (WHO; optional health limit)",
     "saturated_fat_max": "saturated fat above 10 % of energy (WHO; optional health limit)",
 }
@@ -93,14 +104,35 @@ class _Model:
         self.cands, self.problem = cands, problem
         self.elastic, self.with_budget, self.max_violation = elastic, with_budget, max_violation
         self.n = len(cands)
+        level = VARIETY_LEVELS[problem.settings.variety]
+        self.min_fv, self.min_protein, self.share_override = level
+        self.fv_types = self._types(lambda c: c.fruit_veg) if self.min_fv else []
+        self.protein_types = (
+            self._types(lambda c: str(c.product.category) in PROTEIN_SOURCES)
+            if self.min_protein
+            else []
+        )
+        self.ny = len(self.fv_types) + len(self.protein_types)
         self.rows: list[dict[int, float]] = []
         self.lb: list[float] = []
         self.ub: list[float] = []
         self.slacks: list[_Slack] = []
         self._build()
 
+    def _types(self, keep) -> list[list[int]]:
+        """Candidate indices grouped by product type (untyped products are their own type)."""
+        groups: dict[str, list[int]] = {}
+        for i, cand in enumerate(self.cands):
+            if keep(cand):
+                key = cand.product.type or f"#{cand.product.id}"
+                groups.setdefault(key, []).append(i)
+        return list(groups.values())
+
+    def _y_col(self, k: int) -> int:
+        return 2 * self.n + k
+
     def _slack_col(self, j: int) -> int:
-        return 2 * self.n + j
+        return 2 * self.n + self.ny + j
 
     def _row(
         self, coeffs: dict[int, float], lb: float, ub: float, slack: tuple | None = None
@@ -153,7 +185,24 @@ class _Model:
                 sat_fat, -INF, 0.0, ("saturated_fat_max", e_max, NUTRITION_WEIGHT, -1.0, None)
             )
 
-        share = float(s.max_kcal_share_per_product)
+        # Variety: y_t = 1 only if type t is eaten in a meaningful amount; count the y_t.
+        minimum = float(s.variety_min_amount)
+        for offset, groups, need, name in (
+            (0, self.fv_types, self.min_fv, "variety_fruit_veg"),
+            (len(self.fv_types), self.protein_types, self.min_protein, "variety_protein"),
+        ):
+            if not need:
+                continue
+            for t_idx, members in enumerate(groups):
+                coeffs = {con[i]: 1.0 for i in members}
+                coeffs[self._y_col(offset + t_idx)] = -minimum
+                self._row(coeffs, 0.0, INF)  # sum c_i >= minimum * y_t
+            count = {self._y_col(offset + g): 1.0 for g in range(len(groups))}
+            self._row(count, float(need), INF, (name, float(need), VARIETY_WEIGHT, 1.0, None))
+
+        share = float(
+            self.share_override if self.share_override is not None else s.max_kcal_share_per_product
+        )
         for i in range(n):
             coeffs = {con[j]: -share * k[j] for j in range(n)}
             coeffs[con[i]] += k[i]
@@ -171,7 +220,7 @@ class _Model:
     def solve(self, minimise: str):
         """``minimise`` is "cost" or "violation" (weighted, normalised slacks)."""
         n, s = self.n, self.problem.settings
-        nvars = 2 * n + len(self.slacks)
+        nvars = 2 * n + self.ny + len(self.slacks)
         A = np.zeros((len(self.rows), nvars))
         for r, coeffs in enumerate(self.rows):
             for col, value in coeffs.items():
@@ -184,8 +233,10 @@ class _Model:
                 objective[col] = value
         upper = np.full(nvars, INF)
         upper[:n] = float(s.max_packs_per_product)
+        upper[2 * n : 2 * n + self.ny] = 1.0  # binary type indicators
         integrality = np.zeros(nvars)
         integrality[:n] = 1
+        integrality[2 * n : 2 * n + self.ny] = 1
         with _quiet_stdout():
             return milp(
                 objective,
@@ -263,6 +314,8 @@ def _lines_and_totals(cands: list[Candidate], x: np.ndarray, problem: Problem):
                 used_from_pantry=min(used, cand.stock_basis),
                 used_total=used,
                 available=available,
+                pack_basis=cand.pack_basis,
+                price_cents=cand.price_cents,
                 basis_unit=str(cand.basis),
                 kcal=kcal.quantize(Decimal(1)),
                 estimated=cand.estimated,

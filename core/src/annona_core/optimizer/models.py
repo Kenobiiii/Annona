@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -36,6 +37,13 @@ class OptimizerSettings(BaseModel):
     # Optional health limits (off by default; the user turns them on). WHO healthy-diet fact
     # sheet: salt < 5 g per day for adults; saturated fat < 10 % of total energy. Free sugars
     # (< 10 %) are not applied: product labels give total sugars, which include fruit and milk.
+    # Variety (a user choice: more variety costs more). Minimum number of DISTINCT product types
+    # actually eaten (at least ``variety_min_amount`` g/ml each over the period):
+    #   basic    - no minimum (cheapest)
+    #   balanced - >= 3 fruits/vegetables and >= 2 protein sources
+    #   high     - >= 5 fruits/vegetables, >= 3 protein sources, max 15 % kcal per product
+    variety: Literal["basic", "balanced", "high"] = "basic"
+    variety_min_amount: Decimal = Decimal(250)
     health_limits: bool = False
     salt_g_per_person_day: Decimal = Decimal(5)
     saturated_fat_energy_share: Decimal = Decimal("0.10")
@@ -82,6 +90,8 @@ class Line(BaseModel):
     pack_unit: str
     used_from_pantry: Decimal  # in the nutrition basis unit (g or ml)
     used_total: Decimal  # consumed this period, nutrition basis unit
+    pack_basis: Decimal  # one pack, nutrition basis unit
+    price_cents: int  # per pack
     available: Decimal  # pantry stock + bought packs, nutrition basis unit
     basis_unit: str
     kcal: Decimal

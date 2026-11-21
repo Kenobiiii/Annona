@@ -336,3 +336,35 @@ def test_sample_nutrition_on_store_products_is_flagged():
     for line in result.lines:
         if line.name == "rice":
             assert line.estimated
+
+
+def distinct(result, keep) -> int:
+    """Distinct product names eaten in a meaningful amount (>= 250 g/ml)."""
+    return len({line.name for line in result.lines if keep(line.name) and line.used_total >= 250})
+
+
+FRUIT_VEG_NAMES = {"apples", "carrots", "tomatoes"}
+PROTEIN_NAMES = {"lentils", "chicken", "milk", "eggs"}
+
+
+def test_variety_levels_trade_money_for_variety():
+    basic = optimise(problem(variety="basic"))
+    balanced = optimise(problem(variety="balanced"))
+    assert basic.status == balanced.status == "optimal"
+    assert distinct(balanced, FRUIT_VEG_NAMES.__contains__) >= 3
+    assert distinct(balanced, PROTEIN_NAMES.__contains__) >= 2
+    assert balanced.total_cost_cents >= basic.total_cost_cents
+
+
+def test_high_variety_explains_missing_variety():
+    """The synthetic catalogue has only 3 fruits/vegetables (potatoes do not count)."""
+    result = optimise(problem(variety="high", budget=1_000_000))
+    assert result.status == "infeasible"
+    shortfall = next(s for s in result.shortfalls if s.constraint == "variety_fruit_veg")
+    assert shortfall.amount == 2 and shortfall.unit == "types"
+
+
+def test_lines_expose_pack_size_and_price():
+    result = optimise(problem())
+    rice = next(line for line in result.lines if line.name == "rice")
+    assert rice.pack_basis == 1000 and rice.price_cents == 120
