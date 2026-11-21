@@ -225,3 +225,11 @@ def test_language_parameter(language):
     ctx = context().model_copy(update={"language": language})
     system, _ = build_prompt(ctx)
     assert ("Spanish" if language == "es" else "English") in system
+
+
+def test_portions_follow_the_energy_actually_bought():
+    """The optimiser may buy 5 % below target; portions then shrink 5 % instead of overdrawing."""
+    ctx = context().model_copy(update={"energy_scale": Decimal("0.95")})
+    v = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx)
+    target = ctx.members[0].daily.energy_kcal * Decimal("0.95")
+    assert all(abs(v.kcal_by_member_day[("Pablo", d)] - target) <= 1 for d in ctx.schedule.days)

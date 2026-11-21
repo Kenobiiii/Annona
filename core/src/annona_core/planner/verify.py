@@ -5,7 +5,8 @@
 2. Ingredients exist; appliances exist in the kitchen (and the summary does not mention an
    oven when there is none); no member eats a product that is not for them.
 3. Portions: for each member and day, all of that day's ingredient amounts are multiplied by
-   one factor so the day's energy equals the member's target x the day's planned share. A
+   one factor so the day's energy equals the member's target x the day's planned share x
+   ``energy_scale`` (the energy actually bought relative to the target). A
    factor outside [min_scale, max_scale] means the draft's portions were unrealistic.
 4. Totals: weekly protein per member reaches ``protein_min_ratio`` of the target, and the
    scaled usage of every product stays within what is available (purchase + pantry).
@@ -61,6 +62,9 @@ class PlanContext(BaseModel):
     min_scale: Decimal = Decimal("0.5")
     max_scale: Decimal = Decimal("2.0")
     protein_min_ratio: Decimal = Decimal("0.90")
+    # Energy actually bought / energy target (the optimiser may land anywhere within +/-5 %);
+    # portions are scaled to what was bought so the menu never needs more food than exists.
+    energy_scale: Decimal = Decimal(1)
     stock_tolerance: Decimal = Decimal("0.01")
 
 
@@ -204,7 +208,7 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
                 Decimal(0),
             )
             share = sum((ctx.schedule.shares[k[1]] for k, _ in meals), Decimal(0))
-            target = member.daily.energy_kcal * share
+            target = member.daily.energy_kcal * share * ctx.energy_scale
             if drafted <= 0:
                 if target > 0:
                     issues.append(

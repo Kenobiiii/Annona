@@ -224,6 +224,7 @@ def _lines_and_totals(cands: list[Candidate], x: np.ndarray, problem: Problem):
                 pack_unit=str(product.package_unit),
                 used_from_pantry=min(used, cand.stock_basis),
                 used_total=used,
+                available=available,
                 basis_unit=str(cand.basis),
                 kcal=kcal.quantize(Decimal(1)),
                 estimated=cand.estimated,

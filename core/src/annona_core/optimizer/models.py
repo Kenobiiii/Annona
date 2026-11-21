@@ -82,6 +82,7 @@ class Line(BaseModel):
     pack_unit: str
     used_from_pantry: Decimal  # in the nutrition basis unit (g or ml)
     used_total: Decimal  # consumed this period, nutrition basis unit
+    available: Decimal  # pantry stock + bought packs, nutrition basis unit
     basis_unit: str
     kcal: Decimal
     estimated: bool = False  # a conversion used an assumed density
