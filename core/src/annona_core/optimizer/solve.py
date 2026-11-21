@@ -26,6 +26,11 @@ result is recomputed with integers from the integral pack counts.
 
 from __future__ import annotations
 
+import ctypes
+import os
+import sys
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -181,13 +186,46 @@ class _Model:
         upper[:n] = float(s.max_packs_per_product)
         integrality = np.zeros(nvars)
         integrality[:n] = 1
-        return milp(
-            objective,
-            integrality=integrality,
-            bounds=Bounds(np.zeros(nvars), upper),
-            constraints=LinearConstraint(A, np.array(self.lb), np.array(self.ub)),
-            options={"time_limit": s.time_limit_s, "disp": False, "mip_rel_gap": 1e-9},
-        )
+        with _quiet_stdout():
+            return milp(
+                objective,
+                integrality=integrality,
+                bounds=Bounds(np.zeros(nvars), upper),
+                constraints=LinearConstraint(A, np.array(self.lb), np.array(self.ub)),
+                options={"time_limit": s.time_limit_s, "disp": False, "mip_rel_gap": 1e-9},
+            )
+
+
+def _libc_fflush() -> Callable[[], None]:
+    try:
+        libc = ctypes.CDLL(None)
+        return lambda: libc.fflush(None)
+    except (OSError, AttributeError):  # e.g. platforms without a C runtime handle
+        return lambda: None
+
+
+_LIBC_FFLUSH = _libc_fflush()
+
+
+@contextmanager
+def _quiet_stdout() -> Iterator[None]:
+    """HiGHS (C++) sometimes prints debug lines to the process stdout even with disp=False;
+    silence file descriptor 1 while it runs."""
+    try:
+        sys.stdout.flush()
+        saved = os.dup(1)
+    except (OSError, ValueError):  # no real stdout (some test runners): nothing to silence
+        yield
+        return
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    try:
+        os.dup2(devnull, 1)
+        yield
+    finally:
+        _LIBC_FFLUSH()  # C stdio buffers hold HiGHS output until flushed: drop it here
+        os.dup2(saved, 1)
+        os.close(saved)
+        os.close(devnull)
 
 
 def _dec(value: float, places: str = "0.1") -> Decimal:

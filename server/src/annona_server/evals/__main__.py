@@ -81,10 +81,29 @@ def main() -> None:
     run.add_argument("--yes", action="store_true", help="actually spend money on the run")
     sub.add_parser("compare", help="compare saved reports")
     sub.add_parser("rescore", help="re-apply current dataset labels to saved runs (free)")
+    pr = sub.add_parser("plan-run", help="run the weekly-planner eval")
+    pr.add_argument("--scenario", action="append", help="only these scenario ids")
+    pr.add_argument("--model", help="override the large-tier model")
+    pr.add_argument("--yes", action="store_true", help="actually spend money on the run")
+    ps = sub.add_parser("plan-show", help="print the menus of a planner run")
+    ps.add_argument("file")
+    ps.add_argument("--scenario")
+    rate = sub.add_parser("plan-rate", help="record your 1-5 rating of a menu")
+    rate.add_argument("file")
+    rate.add_argument("scenario")
+    rate.add_argument("score", type=int, choices=range(1, 6))
+    rate.add_argument("--note", default="")
+    pj = sub.add_parser("plan-judge", help="LLM judge scores for a planner run")
+    pj.add_argument("file")
+    pj.add_argument("--yes", action="store_true")
+    sub.add_parser("plan-compare", help="compare planner runs")
     args = parser.parse_args()
 
     if args.command == "compare":
         compare()
+        return
+    if args.command.startswith("plan-"):
+        plan_commands(args)
         return
     if args.command == "rescore":
         rows = load_dataset()
@@ -142,6 +161,105 @@ def main() -> None:
         engine.dispose()
     print(f"saved {save_report(report)}")
     compare()
+
+
+def _report_path(name: str):
+    from pathlib import Path
+
+    path = Path(name)
+    return path if path.exists() else RESULTS / name
+
+
+def plan_commands(args) -> None:
+    from ..llm import make_llm_client
+    from ..llm.config import llm_settings
+    from . import plans
+
+    if args.command == "plan-show":
+        report = json.loads(_report_path(args.file).read_text())
+        for entry in report["scenarios"]:
+            if args.scenario in (None, entry["id"]):
+                print(plans.menu_text(entry))
+                print(json.dumps(entry.get("metrics"), indent=1))
+                for issue in entry.get("issues", []):
+                    print("ISSUE", issue)
+                print()
+        return
+    if args.command == "plan-rate":
+        path = _report_path(args.file)
+        report = json.loads(path.read_text())
+        report["human_ratings"][args.scenario] = {"score": args.score, "note": args.note}
+        path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+        print(f"saved; judge agreement so far: {plans.agreement(report)}")
+        return
+    if args.command == "plan-compare":
+        print(
+            f"{'run':16} {'model':26} {'ok':>3} {'1st':>3} {'meals':>5} {'distinct':>8} "
+            f"{'used':>5} {'cost $':>9} {'human':>5} {'judge':>5}"
+        )
+        for path in sorted(RESULTS.glob("*__plan_week__*.json")):
+            r = json.loads(path.read_text())
+            for e in r["scenarios"]:
+                m = e.get("metrics") or {}
+                human = r["human_ratings"].get(e["id"], {}).get("score", "-")
+                judged = r["judge"].get(e["id"], {}).get("score", "-")
+                print(
+                    f"{path.name[:15]:16} {r['meta']['model'][:26]:26} "
+                    f"{'y' if m.get('accepted') else 'n':>3} "
+                    f"{'y' if m.get('accepted_first_try') else 'n':>3} {m.get('meals', '-'):>5} "
+                    f"{m.get('distinct_titles_ratio', '-')!s:>8} "
+                    f"{m.get('purchase_used_ratio', '-')!s:>5} "
+                    f"{_fmt(m.get('cost_usd'), money=True):>9} {human!s:>5} {judged!s:>5}  "
+                    f"{e['id']}"
+                )
+        return
+
+    settings = llm_settings()
+    if args.command == "plan-run" and args.model:
+        settings.models[Tier.LARGE] = args.model
+    url = database_url()
+    migrate.upgrade(url)
+    engine = make_engine(url)
+    try:
+        with session_scope(engine) as session:
+            spent = spent_usd(session, EVAL_TASK_PREFIX)
+            if args.command == "plan-run":
+                prepared = plans.prepare_all(args.scenario)
+                model = settings.models[Tier.LARGE]
+                prices = _prices(model)
+                if prices is None:
+                    sys.exit(f"no known price for {model}")
+                estimate = sum(
+                    (plans.estimate_plan_cost(ctx, *prices) for _, _, ctx in prepared if ctx),
+                    Decimal(0),
+                )
+            else:
+                report_path = _report_path(args.file)
+                report = json.loads(report_path.read_text())
+                model = settings.models[Tier.SMALL]
+                prices = _prices(model)
+                estimate = Decimal("0.001") * len(report["scenarios"])  # tiny: ~1k tokens each
+            print(
+                f"model {model}: estimated cost up to ${estimate} "
+                f"(eval budget ${budget_usd()}, already spent ${spent:.4f})"
+            )
+            if spent + estimate > budget_usd():
+                sys.exit("eval budget would be exceeded")
+            if not args.yes:
+                print("dry run: add --yes to spend")
+                return
+            llm = make_llm_client(session, settings=settings)
+            if args.command == "plan-run":
+                report = plans.run_plans(llm, prepared, model)
+                print(f"saved {plans.save(report)}")
+            else:
+                plans.judge(llm, report)
+                report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+                for sid, verdict in report["judge"].items():
+                    print(f"{sid}: {verdict['score']} - {verdict['reasons']}")
+                print(f"agreement with your ratings: {plans.agreement(report)}")
+    finally:
+        engine.dispose()
 
 
 if __name__ == "__main__":
