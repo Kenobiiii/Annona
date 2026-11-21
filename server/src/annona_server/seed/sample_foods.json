@@ -570,6 +570,48 @@
       }
     },
     {
+      "key": "broccoli",
+      "name": "Broccoli, raw",
+      "category": "vegetables",
+      "type": "broccoli",
+      "allergens": [],
+      "usda_description": "Broccoli, raw",
+      "nutrition": {
+        "basis": "g",
+        "saturated_fat_g": "0.114",
+        "sugars_g": "1.7",
+        "carbohydrates_g": "6.64",
+        "energy_kcal": "34",
+        "fat_g": "0.37",
+        "protein_g": "2.82",
+        "fiber_g": "2.6",
+        "salt_g": "0.0825",
+        "source": "sample",
+        "source_ref": "usda-fdc:170379"
+      }
+    },
+    {
+      "key": "zucchini",
+      "name": "Zucchini, raw",
+      "category": "vegetables",
+      "type": "zucchini",
+      "allergens": [],
+      "usda_description": "Squash, summer, zucchini, includes skin, raw",
+      "nutrition": {
+        "basis": "g",
+        "sugars_g": "2.5",
+        "fat_g": "0.32",
+        "carbohydrates_g": "3.11",
+        "energy_kcal": "17",
+        "fiber_g": "1",
+        "protein_g": "1.21",
+        "saturated_fat_g": "0.084",
+        "salt_g": "0.02",
+        "source": "sample",
+        "source_ref": "usda-fdc:169291"
+      }
+    },
+    {
       "key": "lettuce",
       "name": "Romaine lettuce, raw",
       "category": "vegetables",

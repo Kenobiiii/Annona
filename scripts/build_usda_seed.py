@@ -106,6 +106,8 @@ FOODS: tuple[Food, ...] = (
     ),
     Food("carrot", "Carrot, raw", "vegetables", "carrot", "170393", unit_portion="medium"),
     Food("spinach", "Spinach, raw", "vegetables", "spinach", "168462"),
+    Food("broccoli", "Broccoli, raw", "vegetables", "broccoli", "170379"),
+    Food("zucchini", "Zucchini, raw", "vegetables", "zucchini", "169291"),
     Food("lettuce", "Romaine lettuce, raw", "vegetables", "lettuce", "169247"),
     Food(
         "red_pepper",

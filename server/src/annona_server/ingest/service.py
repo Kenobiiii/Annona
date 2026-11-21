@@ -29,6 +29,7 @@ from annona_providers.base import (
 )
 
 from ..db.repositories import SqlPriceRepository, SqlProductRepository
+from ..products import generic_references, with_sample_reference
 from .classify import (
     Classification,
     ClassificationInput,
@@ -53,6 +54,7 @@ class IngestReport:
     prices_added: int = 0
     prices_unchanged: int = 0
     nutrition_from_off: int = 0
+    nutrition_from_sample: int = 0
     off_not_found: int = 0
     without_ean: int = 0
     unclassified: list[str] = field(default_factory=list)
@@ -90,10 +92,11 @@ def ingest(
             classifications[n] = result
 
     products = SqlProductRepository(session)
+    refs = generic_references(session)
     stored: dict[str, Product] = {}
     for item, off_product, result in zip(items, off_products, classifications, strict=True):
         stored[item.store_sku] = _upsert(
-            products, item, provider.store_id, off_product, result, report
+            products, item, provider.store_id, off_product, result, report, refs
         )
 
     prices = SqlPriceRepository(session)
@@ -163,6 +166,7 @@ def _upsert(
     off_product: OffProduct | None,
     result: Classification | None,
     report: IngestReport,
+    refs: dict[tuple[str, str], Product] | None = None,
 ) -> Product:
     existing = repo.get_by_store_sku(store_id, item.store_sku)
     data: dict[str, Any] = (
@@ -198,6 +202,13 @@ def _upsert(
             data["allergens_source"] = NutritionSource.OFF
 
     product = Product.model_validate(data)
+    if refs:
+        # Last resort for data no real source provides (fresh produce is rarely in OFF).
+        filled = with_sample_reference(product, refs)
+        if filled is not None:
+            if product.nutrition is None and filled.nutrition is not None:
+                report.nutrition_from_sample += 1
+            product = filled
     if existing is None:
         report.products_created += 1
         return repo.add(product)

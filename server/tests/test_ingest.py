@@ -217,3 +217,53 @@ def test_rules_first_llm_not_called_when_rules_classify(session, mercadona):
     llm = LLMClient(fake, {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"})
     ingest(session, mercadona, skus=["10381"], off=None, llm_classifier=LLMClassifier(llm))
     assert fake.requests == []  # the store path rule already classified it
+
+
+def test_missing_nutrition_is_filled_from_the_generic_reference(session, mercadona):
+    """Leche semidesnatada Hacendado is not in OFF; the USDA sample 'milk' fills the gap."""
+    from annona_server.seed import load_sample_foods
+
+    load_sample_foods(session)
+    report = ingest(session, mercadona, skus=["10381"], off=FakeOff({}))
+    assert report.nutrition_from_sample == 1
+    milk = SqlProductRepository(session).get_by_store_sku("mercadona", "10381")
+    assert milk.nutrition.source == NutritionSource.SAMPLE
+    assert milk.nutrition.source_ref == "usda-fdc:171265"
+    assert milk.density_g_per_ml == Decimal("1.031")
+    assert (milk.allergens, milk.allergens_source) == ([Allergen.MILK], NutritionSource.SAMPLE)
+
+
+def test_sample_reference_never_claims_no_allergens(session):
+    from annona_core.domain import Product
+    from annona_server.products import generic_references, with_sample_reference
+    from annona_server.seed import load_sample_foods
+
+    load_sample_foods(session)
+    refs = generic_references(session)
+    banana = Product(
+        name="Plátano", category=Category.FRUIT, type="banana", store_id="s", store_sku="1"
+    )
+    filled = with_sample_reference(banana, refs)
+    assert filled.nutrition.energy_kcal == Decimal(89)
+    assert filled.unit_weight_g == Decimal(118)
+    assert filled.allergens is None  # the generic banana says [], which is never copied
+    # Category must match too: tomato sauce is not a raw tomato.
+    sauce = Product(
+        name="Tomate frito",
+        category=Category.CONDIMENTS,
+        type="tomato",
+        store_id="s",
+        store_sku="2",
+    )
+    assert with_sample_reference(sauce, refs) is None
+
+
+def test_fill_existing_products(session, mercadona):
+    from annona_server.products import fill_from_sample_references
+    from annona_server.seed import load_sample_foods
+
+    ingest(session, mercadona, skus=["10381"], off=FakeOff({}))
+    load_sample_foods(session)
+    [updated] = fill_from_sample_references(session)
+    assert updated.store_sku == "10381" and updated.nutrition.source == NutritionSource.SAMPLE
+    assert fill_from_sample_references(session) == []  # idempotent

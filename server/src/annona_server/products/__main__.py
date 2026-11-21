@@ -22,7 +22,12 @@ from ..config import load_env
 from ..db import migrate
 from ..db.engine import database_url, make_engine, session_scope
 from ..db.repositories import NotFoundError, SqlProductRepository
-from . import products_with_unknown_allergens, set_allergens, set_category
+from . import (
+    fill_from_sample_references,
+    products_with_unknown_allergens,
+    set_allergens,
+    set_category,
+)
 
 
 def describe(p: Product) -> str:
@@ -48,6 +53,9 @@ def main() -> None:
     group = a.add_mutually_exclusive_group()
     group.add_argument("--none", action="store_true", help="contains none of the EU 14")
     group.add_argument("--unknown", action="store_true", help="clear the manual entry")
+    sub.add_parser(
+        "fill-sample", help="fill missing nutrition from generic reference foods (approximate)"
+    )
     c = sub.add_parser("category", help="set the category by hand")
     c.add_argument("id", type=int)
     c.add_argument("category", choices=[x.value for x in Category])
@@ -74,6 +82,9 @@ def main() -> None:
                     parser.error("give allergens, --none or --unknown")
                 value = None if args.unknown else [Allergen(x) for x in args.allergens]
                 print(describe(set_allergens(session, args.id, value)))
+            elif args.command == "fill-sample":
+                for p in fill_from_sample_references(session):
+                    print(f"approximate data from generic reference: {describe(p)}")
             elif args.command == "category":
                 print(describe(set_category(session, args.id, Category(args.category), args.type)))
     except NotFoundError as error:
