@@ -110,6 +110,17 @@ def summary(**price) -> mercapy.ProductSummary:
             dict(sold_by_weight=True, reference=Decimal("12.95"), size_format="kg"),
             (Decimal(1000), Unit.G),
         ),
+        # canned lentils: 570 g gross, 400 g drained, reference per drained kg (real case)
+        (
+            dict(
+                unit=Decimal("0.90"),
+                unit_size=Decimal("0.57"),
+                size_format="kg",
+                reference=Decimal("2.250"),
+                drained_weight=Decimal("0.4"),
+            ),
+            (Decimal("400.0"), Unit.G),
+        ),
         # units ("ud") have no mass/volume
         (
             dict(unit=Decimal(2), unit_size=Decimal(12), size_format="ud", reference=Decimal(2)),

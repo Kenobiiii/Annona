@@ -140,7 +140,8 @@ def _package(
 
     ``unit_size`` is the total size of what is sold (a pack of 6 x 1 l bricks has 6 l). It is only
     trusted when ``unit price / unit_size`` matches the published reference price (per kg / l)
-    within one cent; otherwise the size is left unknown rather than guessed.
+    within one cent. Canned food is priced per kg of drained weight, so the drained weight is
+    used when it is the one that matches. Otherwise the size is left unknown, never guessed.
     """
     price = product.price
     if price.sold_by_weight:
@@ -154,10 +155,19 @@ def _package(
         return None, None
     if price.reference is None or q.amount <= 0:
         return None, None
-    per_reference = price.unit / (q.amount / 1000)  # euros per kg or per l
-    if abs(per_reference - price.reference) > Decimal("0.01"):
-        return None, None
-    return q.amount, q.unit
+    if _matches_reference(price.unit, q.amount, price.reference):
+        return q.amount, q.unit
+    # Canned food: the store's reference price is per kg of DRAINED weight (what is eaten).
+    if price.drained_weight and fmt in ("kg", "g"):
+        drained = Quantity.parse(price.drained_weight, fmt)
+        if _matches_reference(price.unit, drained.amount, price.reference):
+            return drained.amount, drained.unit
+    return None, None
+
+
+def _matches_reference(unit_price: Decimal, amount: Decimal, reference: Decimal) -> bool:
+    """unit price / amount (in kg or l) equals the published reference price within 1 cent."""
+    return abs(unit_price / (amount / 1000) - reference) <= Decimal("0.01")
 
 
 def _product(product: mercapy.Product | mercapy.ProductSummary) -> ProviderProduct:

@@ -54,7 +54,7 @@ known-first-party = ["annona_core", "annona_providers", "annona_server", "annona
 # ---------- pytest ----------
 [tool.pytest.ini_options]
 testpaths = ["tests", "core/tests", "providers/tests", "server/tests"]
-addopts = ["--import-mode=importlib", "--strict-markers", "-ra"]
+addopts = ["--import-mode=importlib", "--strict-markers", "-ra", "--ignore-glob=*/_template/*"]
 filterwarnings = [
     "error",
     # Third-party (LiteLLM's dependencies) TypedDicts using ReadOnly; not our code.
