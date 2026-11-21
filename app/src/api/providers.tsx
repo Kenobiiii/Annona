@@ -7,7 +7,7 @@ import {
   QueryClientProvider,
   useQueryClient,
 } from '@tanstack/react-query';
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { createApi, type ApiClient } from './client';
@@ -51,9 +51,16 @@ function ApiProvider({ children, fetchImpl }: { children: ReactNode; fetchImpl?:
     () => (connection ? createApi(connection, fetchImpl) : null),
     [connection, fetchImpl],
   );
+  // Another server (or token): what is cached no longer applies. Not on the first load, when
+  // the screens are just starting their first queries.
+  const identity = connection ? `${connection.baseUrl}|${connection.token}` : null;
+  const previous = useRef<string | null>(null);
   useEffect(() => {
-    queryClient.clear(); // another server (or token): nothing cached applies
-  }, [connection?.baseUrl, connection?.token, queryClient]);
+    if (previous.current !== null && previous.current !== identity) {
+      void queryClient.resetQueries();
+    }
+    previous.current = identity;
+  }, [identity, queryClient]);
   return <ApiContext.Provider value={client}>{children}</ApiContext.Provider>;
 }
 

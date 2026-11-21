@@ -11,10 +11,12 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   hint?: string;
+  /** What a screen reader says, when the visible label is only a symbol (e.g. an arrow). */
+  a11yLabel?: string;
   testID?: string;
 };
 
-export function Button({ label, onPress, variant = 'primary', disabled, loading, hint, testID }: Props) {
+export function Button({ label, onPress, variant = 'primary', disabled, loading, hint, a11yLabel, testID }: Props) {
   const { colors, radius, spacing, MIN_TOUCH } = useTheme();
   const inactive = disabled || loading;
   const background = inactive
@@ -38,7 +40,7 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
       testID={testID}
       onPress={inactive ? undefined : onPress}
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={a11yLabel ?? label}
       accessibilityHint={hint}
       accessibilityState={{ disabled: !!inactive, busy: !!loading }}
       style={({ pressed }) => ({
