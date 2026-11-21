@@ -215,6 +215,7 @@ def test_prompt_contains_only_what_is_needed():
     system, user = build_prompt(ctx)
     assert "Spanish" in system and "never bake" in system
     assert "1 | oats | g | 3000" in user and "weekday 1 (Tue" in user
+    assert "- Pablo: breakfast ~" in user and "dinner ~" in user
     assert (
         "air_fryer" in user and "oven" not in user.split("Kitchen appliances:")[1].splitlines()[0]
     )

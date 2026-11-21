@@ -59,6 +59,18 @@ def build_prompt(ctx: PlanContext) -> tuple[str, str]:
             f"diet {p.diet}, allergies {allergies}"
         )
 
+    lines.append(
+        "\nApproximate energy per serving (portions are rescaled exactly by the app; aim close to"
+        " these so dishes stay realistic):"
+    )
+    for m in ctx.members:
+        per_slot = ", ".join(
+            f"{slot} ~{_n(m.daily.energy_kcal * ctx.energy_scale * share)} kcal"
+            for slot, share in ctx.schedule.shares.items()
+            if any(s.slot == slot for s in ctx.schedule.slots)
+        )
+        lines.append(f"- {m.profile.name}: {per_slot}")
+
     tools = sorted(t.value for t in available_appliances(ctx.equipment) if t.value != "none")
     lines.append(f"\nKitchen appliances: {', '.join(tools) or 'none (no cooking)'}")
 
