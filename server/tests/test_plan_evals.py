@@ -13,7 +13,7 @@ MODELS = {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"}
 
 
 def test_all_scenarios_have_a_feasible_shop():
-    for scenario, shopping, ctx in plans.prepare_all():
+    for scenario, shopping, ctx, _ in plans.prepare_all():
         assert shopping.status == "optimal", scenario["id"]
         assert ctx is not None and ctx.available
 
@@ -45,7 +45,7 @@ def test_judge_and_agreement():
 
 
 def test_estimate_scales_with_meals():
-    prepared = {s["id"]: ctx for s, _, ctx in plans.prepare_all()}
+    prepared = {s["id"]: ctx for s, _, ctx, _ in plans.prepare_all()}
     small = plans.estimate_plan_cost(
         prepared["user_example_five_days"], Decimal("1e-6"), Decimal("2e-6")
     )

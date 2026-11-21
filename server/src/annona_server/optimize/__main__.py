@@ -72,6 +72,12 @@ def main() -> None:
         action="store_true",
         help="also limit salt (< 5 g/person/day) and saturated fat (< 10%% kcal), WHO",
     )
+    parser.add_argument(
+        "--variety",
+        choices=["basic", "balanced", "high"],
+        default="basic",
+        help="more variety costs more (basic = cheapest)",
+    )
     args = parser.parse_args()
     url = database_url()
     migrate.upgrade(url)
@@ -85,7 +91,7 @@ def main() -> None:
                 store_id=args.store,
                 on_date=date.today(),
                 budget_cents=budget,
-                settings=OptimizerSettings(health_limits=args.health_limits),
+                settings=OptimizerSettings(health_limits=args.health_limits, variety=args.variety),
             )
             print(report(optimise(problem), problem.budget_cents))
     except (NotFoundError, ValueError) as error:

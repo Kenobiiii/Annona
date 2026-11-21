@@ -49,6 +49,12 @@ def main() -> None:
     parser.add_argument("--skip-slot", action="append", default=[], help="slot to skip all week")
     parser.add_argument("--budget", type=Decimal)
     parser.add_argument("--health-limits", action="store_true")
+    parser.add_argument(
+        "--variety",
+        choices=["basic", "balanced", "high"],
+        default="basic",
+        help="more variety costs more (basic = cheapest)",
+    )
     parser.add_argument("--regenerate", action="store_true", help="replace this week's plan")
     args = parser.parse_args()
 
@@ -73,7 +79,7 @@ def main() -> None:
                 schedule=schedule,
                 on_date=args.week,
                 budget_cents=None if args.budget is None else int(args.budget * 100),
-                settings=OptimizerSettings(health_limits=args.health_limits),
+                settings=OptimizerSettings(health_limits=args.health_limits, variety=args.variety),
             )
             print(report(week.shopping, week.shopping.total_cost_cents))
             if week.outcome is None:
@@ -101,6 +107,8 @@ def print_menu(week, names: dict[int, str]) -> None:
             print(f"   {portion.member} (x{portion.scale}): {items}")
     for issue in outcome.verification.issues:
         print(f"ISSUE {issue.code}: {issue.message}")
+    for extra in outcome.extra_purchases:
+        print(f"ALSO BUY: {extra.packs} x {extra.name} ({extra.cost_cents / 100:.2f})")
     if week.plan_id:
         print(f"\nstored as meal plan #{week.plan_id}")
 

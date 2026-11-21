@@ -84,6 +84,7 @@ def main() -> None:
     pr = sub.add_parser("plan-run", help="run the weekly-planner eval")
     pr.add_argument("--scenario", action="append", help="only these scenario ids")
     pr.add_argument("--model", help="override the large-tier model")
+    pr.add_argument("--variety", choices=["basic", "balanced", "high"], default="basic")
     pr.add_argument("--yes", action="store_true", help="actually spend money on the run")
     ps = sub.add_parser("plan-show", help="print the menus of a planner run")
     ps.add_argument("file")
@@ -224,13 +225,13 @@ def plan_commands(args) -> None:
         with session_scope(engine) as session:
             spent = spent_usd(session, EVAL_TASK_PREFIX)
             if args.command == "plan-run":
-                prepared = plans.prepare_all(args.scenario)
+                prepared = plans.prepare_all(args.scenario, args.variety)
                 model = settings.models[Tier.LARGE]
                 prices = _prices(model)
                 if prices is None:
                     sys.exit(f"no known price for {model}")
                 estimate = sum(
-                    (plans.estimate_plan_cost(ctx, *prices) for _, _, ctx in prepared if ctx),
+                    (plans.estimate_plan_cost(ctx, *prices) for _, _, ctx, _ in prepared if ctx),
                     Decimal(0),
                 )
             else:
@@ -250,7 +251,7 @@ def plan_commands(args) -> None:
                 return
             llm = make_llm_client(session, settings=settings)
             if args.command == "plan-run":
-                report = plans.run_plans(llm, prepared, model)
+                report = plans.run_plans(llm, prepared, model, args.variety)
                 print(f"saved {plans.save(report)}")
             else:
                 plans.judge(llm, report)

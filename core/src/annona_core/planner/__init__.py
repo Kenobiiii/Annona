@@ -2,9 +2,10 @@
 """Weekly meal planning: schedule, LLM draft schema, deterministic portions and verification."""
 
 from .draft import Appliance, DraftIngredient, DraftMeal, PlanDraft
-from .planner import TASK, PlanOutcome, plan_week
+from .planner import TASK, ExtraPurchase, PlanOutcome, TopUp, plan_week
 from .prompt import LANGUAGES, build_prompt
 from .schedule import DEFAULT_SLOT_SHARES, MealSchedule, PlannedSlot
+from .topup import make_top_up
 from .verify import (
     Available,
     FinalMeal,
@@ -25,6 +26,7 @@ __all__ = [
     "Available",
     "DraftIngredient",
     "DraftMeal",
+    "ExtraPurchase",
     "FinalMeal",
     "Issue",
     "MealSchedule",
@@ -34,9 +36,11 @@ __all__ = [
     "PlanOutcome",
     "PlannedSlot",
     "Portion",
+    "TopUp",
     "Verification",
     "available_appliances",
     "build_prompt",
+    "make_top_up",
     "plan_week",
     "verify",
 ]

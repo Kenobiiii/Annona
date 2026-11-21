@@ -2,13 +2,16 @@
 """Weekly planner: the LLM drafts the meals, code verifies and portions them.
 
 One LLM call (large tier) produces a :class:`PlanDraft`; :func:`verify` checks it and computes
-portions. If verification finds problems, the model gets ONE repair request listing them
-exactly; if they remain, the plan is rejected with a clear list of issues.
+portions. Small stock shortfalls can be fixed without the LLM by buying more (``top_up``, if
+the budget allows). Otherwise the model gets ONE repair request listing the problems exactly;
+if they remain, the plan is rejected with a clear list of issues.
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from decimal import Decimal
 
 from annona_core.llm import CallStats, LLMClient, LLMRequest, Message, Tier
 
@@ -23,6 +26,19 @@ REPAIR = (
 )
 
 
+@dataclass(frozen=True)
+class ExtraPurchase:
+    product_id: int
+    name: str
+    packs: int
+    cost_cents: int
+
+
+# Given the missing amount per product, return a context with more stock and the purchases that
+# provide it, or None if that is not possible (e.g. over budget).
+TopUp = Callable[[dict[int, Decimal]], tuple[PlanContext, list[ExtraPurchase]] | None]
+
+
 @dataclass
 class PlanOutcome:
     accepted: bool
@@ -31,10 +47,34 @@ class PlanOutcome:
     first_issues: list[Issue]
     repaired: bool
     calls: list[CallStats] = field(default_factory=list)
+    extra_purchases: list[ExtraPurchase] = field(default_factory=list)
+
+
+def _only_stock(result: Verification) -> bool:
+    return bool(result.issues) and all(i.code == "stock_exceeded" for i in result.issues)
+
+
+def _with_top_up(
+    draft: PlanDraft, result: Verification, top_up: TopUp | None
+) -> tuple[Verification, list[ExtraPurchase]]:
+    """Fix stock-only shortfalls by buying more, without calling the LLM, when allowed."""
+    if top_up is None or not _only_stock(result):
+        return result, []
+    offer = top_up(result.stock_short)
+    if offer is None:
+        return result, []
+    new_ctx, extras = offer
+    rechecked = verify(draft, new_ctx)
+    return (rechecked, extras) if rechecked.ok else (result, [])
 
 
 def plan_week(
-    llm: LLMClient, ctx: PlanContext, *, task: str = TASK, use_cache: bool = True
+    llm: LLMClient,
+    ctx: PlanContext,
+    *,
+    task: str = TASK,
+    use_cache: bool = True,
+    top_up: TopUp | None = None,
 ) -> PlanOutcome:
     system, user = build_prompt(ctx)
     max_tokens = 400 * len(ctx.schedule.slots) + 1000
@@ -47,19 +87,20 @@ def plan_week(
         max_tokens=max_tokens,
     )
     draft = llm.complete_json(request, PlanDraft, use_cache=use_cache, stats=first_stats)
-    result = verify(draft, ctx)
-    outcome = PlanOutcome(
-        accepted=result.ok,
-        draft=draft,
-        verification=result,
-        first_issues=list(result.issues),
-        repaired=False,
-        calls=[first_stats],
-    )
+    first = verify(draft, ctx)
+    result, extras = _with_top_up(draft, first, top_up)
     if result.ok:
-        return outcome
+        return PlanOutcome(
+            accepted=True,
+            draft=draft,
+            verification=result,
+            first_issues=list(first.issues),
+            repaired=False,
+            calls=[first_stats],
+            extra_purchases=extras,
+        )
 
-    issues = "\n".join(f"- {issue.message}" for issue in result.issues)
+    issues = "\n".join(f"- {issue.message}" for issue in first.issues)
     repair_request = LLMRequest(
         tier=Tier.LARGE,
         task=task,
@@ -73,12 +114,13 @@ def plan_week(
     )
     repair_stats = CallStats()
     fixed = llm.complete_json(repair_request, PlanDraft, use_cache=use_cache, stats=repair_stats)
-    fixed_result = verify(fixed, ctx)
+    fixed_result, extras = _with_top_up(fixed, verify(fixed, ctx), top_up)
     return PlanOutcome(
         accepted=fixed_result.ok,
         draft=fixed,
         verification=fixed_result,
-        first_issues=outcome.first_issues,
+        first_issues=list(first.issues),
         repaired=True,
         calls=[first_stats, repair_stats],
+        extra_purchases=extras,
     )

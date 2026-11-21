@@ -40,6 +40,7 @@ class PortionSolution:
     multipliers: dict[tuple[Key, int], Decimal] = field(default_factory=dict)
     ratios: dict[str, Decimal] = field(default_factory=dict)  # member -> r_m
     problems: list[tuple[str, str]] = field(default_factory=list)  # (code, message)
+    stock_short: dict[int, Decimal] = field(default_factory=dict)  # product_id -> amount missing
 
 
 def _d(value: float, places: str = "0.001") -> Decimal:
@@ -205,6 +206,7 @@ def solve_portions(meals: dict[Key, DraftMeal], ctx) -> PortionSolution:  # ctx:
             )
         else:
             pname, basis, available = names[ref_]
+            solution.stock_short[int(ref_)] = _d(value, "0.1")
             solution.problems.append(
                 (
                     "stock_exceeded",

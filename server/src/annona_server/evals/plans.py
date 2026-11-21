@@ -36,6 +36,7 @@ from annona_core.planner import (
     Member,
     PlanContext,
     build_prompt,
+    make_top_up,
     plan_week,
 )
 
@@ -73,7 +74,7 @@ def _offers(catalogue: dict[str, list]) -> list[Offer]:
     return offers
 
 
-def build_scenario(scenario: dict[str, Any], catalogue: dict[str, list]):
+def build_scenario(scenario: dict[str, Any], catalogue: dict[str, list], variety: str = "basic"):
     members = [
         UserProfile(id=i, household_id=1, allergies_confirmed=True, **m)
         for i, m in enumerate(scenario["members"], start=1)
@@ -91,7 +92,7 @@ def build_scenario(scenario: dict[str, Any], catalogue: dict[str, list]):
         members=members,
         targets=weekly_targets(dailies, days=schedule.day_equivalents),
         budget_cents=scenario["budget_cents"],
-        settings=OptimizerSettings(days=len(schedule.days)),
+        settings=OptimizerSettings(days=len(schedule.days), variety=variety),
     )
     equipment = Equipment(household_id=1, **scenario["kitchen"])
     return problem, schedule, members, dailies, equipment
@@ -184,26 +185,28 @@ def estimate_plan_cost(ctx: PlanContext, price_in: Decimal, price_out: Decimal) 
     return ((tokens_in * price_in + tokens_out * price_out) * 2).quantize(Decimal("0.000001"))
 
 
-def prepare_all(scenario_ids: list[str] | None = None):
+def prepare_all(scenario_ids: list[str] | None = None, variety: str = "basic"):
     data = load_scenarios()
     prepared = []
     for scenario in data["scenarios"]:
         if scenario_ids and scenario["id"] not in scenario_ids:
             continue
-        problem, schedule, members, dailies, equipment = build_scenario(scenario, data["catalogue"])
+        problem, schedule, members, dailies, equipment = build_scenario(
+            scenario, data["catalogue"], variety
+        )
         shopping = optimise(problem)
         ctx = (
             context_for(problem, shopping, schedule, members, dailies, equipment)
             if shopping.status == "optimal"
             else None
         )
-        prepared.append((scenario, shopping, ctx))
+        prepared.append((scenario, shopping, ctx, problem.budget_cents))
     return prepared
 
 
-def run_plans(llm: LLMClient, prepared, model: str) -> dict[str, Any]:
+def run_plans(llm: LLMClient, prepared, model: str, variety: str = "basic") -> dict[str, Any]:
     results = []
-    for scenario, shopping, ctx in prepared:
+    for scenario, shopping, ctx, budget in prepared:
         entry: dict[str, Any] = {
             "id": scenario["id"],
             "description": scenario["description"],
@@ -215,11 +218,24 @@ def run_plans(llm: LLMClient, prepared, model: str) -> dict[str, Any]:
         else:
             started = time.perf_counter()
             try:
-                outcome = plan_week(llm, ctx, task=EVAL_TASK, use_cache=False)
+                outcome = plan_week(
+                    llm,
+                    ctx,
+                    task=EVAL_TASK,
+                    use_cache=False,
+                    top_up=make_top_up(ctx, shopping, budget),
+                )
             except Exception as error:  # schema failure after repair, provider error...
                 entry["error"] = repr(error)
             else:
                 entry["metrics"] = plan_metrics(outcome, ctx)
+                entry["extra_purchases"] = [
+                    {"name": e.name, "packs": e.packs, "cost_cents": e.cost_cents}
+                    for e in outcome.extra_purchases
+                ]
+                entry["metrics"]["extra_cost_cents"] = sum(
+                    e.cost_cents for e in outcome.extra_purchases
+                )
                 entry["issues"] = [i.message for i in outcome.verification.issues]
                 entry["first_issues"] = [i.message for i in outcome.first_issues]
                 entry["menu"] = _menu(outcome, ctx)
@@ -232,6 +248,7 @@ def run_plans(llm: LLMClient, prepared, model: str) -> dict[str, Any]:
             "started_at": datetime.now(UTC).isoformat(timespec="seconds"),
             "git_commit": _git_commit(),
             "dataset": "plan_scenarios.json",
+            "variety": variety,
         },
         "scenarios": results,
         "human_ratings": {},

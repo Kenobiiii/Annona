@@ -99,6 +99,7 @@ class Verification:
     kcal_by_member_day: dict[tuple[str, date], Decimal] = field(default_factory=dict)
     protein_by_member: dict[str, Decimal] = field(default_factory=dict)
     ingredient_scales: list[Decimal] = field(default_factory=list)  # adjusted / drafted
+    stock_short: dict[int, Decimal] = field(default_factory=dict)  # product_id -> missing
 
     @property
     def ok(self) -> bool:
@@ -193,6 +194,7 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
     # 3-4. portions (linear programme: energy, protein, stock) - see portions.py
     solution = solve_portions(seen, ctx)
     issues.extend(Issue(code=code, message=message) for code, message in solution.problems)
+    result.stock_short = dict(solution.stock_short)
     for key, meal in sorted(seen.items()):
         base = {}
         for idx, ing in enumerate(meal.ingredients):

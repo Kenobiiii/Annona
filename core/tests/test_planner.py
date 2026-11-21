@@ -259,3 +259,54 @@ def test_shared_dishes_scale_per_member():
     for d in ctx.schedule.days:
         for m in ctx.members:
             assert abs(v.kcal_by_member_day[(m.profile.name, d)] - m.daily.energy_kcal) <= 2
+
+
+def _shopping_with_chicken(available: int, budget_left_cents: int):
+    from annona_core.optimizer import Line, Result
+
+    line = Line(
+        product_id=5,
+        name="chicken",
+        packs_to_buy=1,
+        cost_cents=600,
+        pack_amount=Decimal(500),
+        pack_unit="g",
+        used_from_pantry=Decimal(0),
+        used_total=Decimal(available),
+        basis_unit="g",
+        kcal=Decimal(0),
+        available=Decimal(available),
+        pack_basis=Decimal(500),
+        price_cents=600,
+    )
+    return Result(status="optimal", lines=[line], total_cost_cents=10_000 - budget_left_cents)
+
+
+def test_small_stock_shortfall_is_fixed_by_buying_one_more_pack():
+    from annona_core.planner import make_top_up
+
+    scarce = tuple(
+        a.model_copy(update={"available": Decimal(100)}) if a.product.id == 5 else a
+        for a in AVAILABLE
+    )
+    ctx = context(available=scarce)
+    top_up = make_top_up(ctx, _shopping_with_chicken(100, budget_left_cents=2000), 10_000)
+    fake = FakeLLM([draft_json(ctx)])
+    outcome = plan_week(LLMClient(fake, MODELS), ctx, top_up=top_up)
+    assert outcome.accepted and not outcome.repaired and len(fake.requests) == 1
+    assert [(e.name, e.packs) for e in outcome.extra_purchases][0][0] == "chicken"
+    assert sum(e.cost_cents for e in outcome.extra_purchases) <= 2000
+
+
+def test_top_up_respects_the_budget():
+    from annona_core.planner import make_top_up
+
+    scarce = tuple(
+        a.model_copy(update={"available": Decimal(100)}) if a.product.id == 5 else a
+        for a in AVAILABLE
+    )
+    ctx = context(available=scarce)
+    top_up = make_top_up(ctx, _shopping_with_chicken(100, budget_left_cents=100), 10_000)
+    bad = draft_json(ctx)
+    outcome = plan_week(LLMClient(FakeLLM([bad, bad]), MODELS), ctx, top_up=top_up)
+    assert not outcome.accepted and outcome.repaired and outcome.extra_purchases == []

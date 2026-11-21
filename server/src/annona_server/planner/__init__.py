@@ -30,6 +30,7 @@ from annona_core.planner import (
     Member,
     PlanContext,
     PlanOutcome,
+    make_top_up,
     plan_week,
 )
 
@@ -126,7 +127,8 @@ def plan_and_store(
     ctx = build_context(
         session, household_id=household_id, schedule=schedule, shopping=shopping, on_date=on_date
     )
-    outcome = plan_week(llm, ctx)
+    budget = problem.budget_cents
+    outcome = plan_week(llm, ctx, top_up=make_top_up(ctx, shopping, budget))
     week = WeekPlan(shopping=shopping, outcome=outcome, context=ctx)
     if outcome.accepted:
         week.plan_id = store_plan(session, household_id, ctx, outcome)
