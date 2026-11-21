@@ -1,0 +1,1542 @@
+{
+  "meta": {
+    "task": "plan_week",
+    "model": "deepseek/deepseek-v4-pro",
+    "started_at": "2026-11-21T15:18:02+00:00",
+    "git_commit": "31a066c",
+    "dataset": "plan_scenarios.json",
+    "variety": "balanced"
+  },
+  "scenarios": [
+    {
+      "id": "single_active_full_week",
+      "description": "One active young man, full week, ceramic hob + microwave + air fryer, no oven",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 1840,
+      "metrics": {
+        "accepted": false,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "portions_unrealistic": 2,
+          "protein_low": 1,
+          "stock_exceeded": 1
+        },
+        "final_issue_codes": {
+          "portions_unrealistic": 2,
+          "protein_low": 1,
+          "stock_exceeded": 1
+        },
+        "meals": 28,
+        "distinct_titles_ratio": 0.5,
+        "most_repeated_title": [
+          "tostadas con plátano",
+          7
+        ],
+        "ingredient_scale_min": "0.500",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "2.05",
+        "purchase_used_ratio": 0.972,
+        "model_calls": 2,
+        "input_tokens": 5048,
+        "output_tokens": 6034,
+        "cached_input_tokens": 1792,
+        "cost_usd": "0.0141357040000000004",
+        "latency_ms": 42037,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [
+        "Pablo's meals on Monday are 314 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients",
+        "Pablo's meals on Wednesday are 356 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients",
+        "Pablo would get 19 g too little protein this week: use more protein-rich products",
+        "Chickpeas, dry: these meals need at least 13 g more than the 1000 g available: use less of it or another product"
+      ],
+      "first_issues": [
+        "Pablo's meals on Monday are 314 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients",
+        "Pablo's meals on Wednesday are 356 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients",
+        "Pablo would get 19 g too little protein this week: use more protein-rich products",
+        "Chickpeas, dry: these meals need at least 13 g more than the 1000 g available: use less of it or another product"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Sopa de lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece las lentejas con zanahoria y cebolla picadas. Añade un chorrito de aceite de oliva al servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "Carrot, raw 100",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con verduras",
+          "appliances": [
+            "hob",
+            "none"
+          ],
+          "summary": "Cuece los garbanzos y mézclalos con zanahoria rallada y cebolla picada. Aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 150",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Arroz con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz y los garbanzos por separado. Mezcla y aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Chickpeas, dry 80",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Pasta con verduras salteadas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la pasta. Saltea la zanahoria y la cebolla picadas con aceite de oliva y mezcla con la pasta.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Carrot, raw 150",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Sopa de lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece las lentejas con zanahoria y cebolla picadas. Añade un chorrito de aceite de oliva al servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "Carrot, raw 100",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Ensalada de alubias blancas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece las alubias blancas y mézclalas con zanahoria rallada y cebolla picada. Aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 100",
+            "Carrot, raw 100",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Arroz con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz. Saltea la zanahoria y la cebolla picadas con aceite de oliva y mezcla con el arroz.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Carrot, raw 150",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Pasta con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la pasta y los garbanzos. Mezcla y aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "Chickpeas, dry 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Arroz con alubias blancas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz y las alubias blancas por separado. Mezcla y aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "White beans, dry 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Ensalada de lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece las lentejas y mézclalas con zanahoria rallada y cebolla picada. Aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 100",
+            "Carrot, raw 100",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Sopa de garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece los garbanzos con zanahoria y cebolla picadas. Añade un chorrito de aceite de oliva al servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Carrot, raw 100",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Pasta con alubias blancas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la pasta y las alubias blancas. Mezcla y aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "White beans, dry 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Tostadas con plátano",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y sírvelo sobre tostadas con un hilo de aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 120",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Ensalada de garbanzos con verduras",
+          "appliances": [
+            "hob",
+            "none"
+          ],
+          "summary": "Cuece los garbanzos y mézclalos con zanahoria rallada y cebolla picada. Aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 150",
+            "Onion, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Arroz con lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz y las lentejas por separado. Mezcla y aliña con aceite de oliva.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 100",
+            "Lentils, dry 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "snack",
+          "title": "Plátano con canela",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Corta el plátano en rodajas y espolvorea canela al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Banana 100"
+          ]
+        }
+      ],
+      "wall_ms": 42065
+    },
+    {
+      "id": "user_example_five_days",
+      "description": "The owner's example: Monday-Friday, no dinner on Tue/Thu/Fri, no afternoon snack",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 1415,
+      "metrics": {
+        "accepted": false,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "portions_unrealistic": 2
+        },
+        "final_issue_codes": {
+          "portions_unrealistic": 1
+        },
+        "meals": 12,
+        "distinct_titles_ratio": 1.0,
+        "most_repeated_title": [
+          "gachas de avena con leche y plátano",
+          1
+        ],
+        "ingredient_scale_min": "0.733",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.41",
+        "purchase_used_ratio": 0.946,
+        "model_calls": 2,
+        "input_tokens": 3600,
+        "output_tokens": 3282,
+        "cached_input_tokens": 1664,
+        "cost_usd": "0.0078127280000000006",
+        "latency_ms": 27563,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [
+        "Pablo's meals on Monday are 635 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients"
+      ],
+      "first_issues": [
+        "Pablo's meals on Monday are 655 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients",
+        "Pablo's meals on Wednesday are 338 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Gachas de avena con leche y plátano",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Calentar la leche a fuego medio, añadir la avena y cocinar a fuego bajo hasta que espese. Servir con almendras troceadas por encima.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 100",
+            "Whole milk 300",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Alubias blancas estofadas con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Poner las alubias en remojo la noche anterior. Cocerlas a fuego bajo con zanahoria picada, cebolla y lechuga troceada hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 120",
+            "Carrot, raw 120",
+            "Onion, raw 100",
+            "Romaine lettuce, raw 60"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de pasta con verduras y atún",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta en agua con sal y escurrir. Mezclar con zanahoria rallada, lechuga troceada y cebolla en juliana. Aliñar al gusto y añadir almendras.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 120",
+            "Carrot, raw 100",
+            "Romaine lettuce, raw 60",
+            "Onion, raw 40",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Tostadas con almendras y leche",
+          "appliances": [],
+          "summary": "Tostar el pan en el microondas o air fryer si se desea crujiente. Servir con almendras troceadas y un vaso de leche.",
+          "skipped_by": [],
+          "ingredients": [
+            "White bread 100",
+            "Almonds 30",
+            "Whole milk 350"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Sopa de pasta con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofreír la cebolla y la zanahoria a fuego medio, añadir agua y cocer la pasta. Incorporar la lechuga al final.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 110",
+            "Carrot, raw 100",
+            "Onion, raw 60",
+            "Romaine lettuce, raw 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Avena nocturna con leche y almendras",
+          "appliances": [],
+          "summary": "Mezclar la avena con la leche y dejar reposar toda la noche. Añadir almendras antes de servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 100",
+            "Whole milk 350",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Pasta con verduras salteadas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta y saltear las verduras a fuego alto. Mezclar todo y servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 120",
+            "Carrot, raw 120",
+            "Onion, raw 100",
+            "Romaine lettuce, raw 40"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Ensalada de alubias con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las alubias previamente remojadas. Mezclar con zanahoria rallada, lechuga, cebolla picada y almendras.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 130",
+            "Carrot, raw 100",
+            "Romaine lettuce, raw 60",
+            "Onion, raw 50",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Pan con leche y almendras",
+          "appliances": [],
+          "summary": "Servir el pan con las almendras troceadas y un vaso de leche.",
+          "skipped_by": [],
+          "ingredients": [
+            "White bread 100",
+            "Whole milk 350",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Estofado de alubias con pasta",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las alubias con las verduras a fuego bajo. Añadir la pasta al final y cocinar hasta que esté al dente.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 120",
+            "Pasta, dry 100",
+            "Carrot, raw 80",
+            "Onion, raw 70",
+            "Romaine lettuce, raw 40"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Gachas de avena con almendras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la avena en la leche a fuego medio hasta espesar. Añadir almendras troceadas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 100",
+            "Whole milk 300",
+            "Almonds 30"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Ensalada de pasta y alubias",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta y las alubias por separado. Mezclar con las verduras crudas y aliñar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "White beans, dry 90",
+            "Carrot, raw 80",
+            "Romaine lettuce, raw 50",
+            "Onion, raw 50"
+          ]
+        }
+      ],
+      "wall_ms": 27581
+    },
+    {
+      "id": "vegetarian_woman",
+      "description": "Vegetarian woman cutting, full week, hob only",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 2200,
+      "metrics": {
+        "accepted": true,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "appliance": 1
+        },
+        "final_issue_codes": {},
+        "meals": 28,
+        "distinct_titles_ratio": 0.964,
+        "most_repeated_title": [
+          "batido de leche con zanahoria",
+          2
+        ],
+        "ingredient_scale_min": "0.650",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.36",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 2,
+        "input_tokens": 5295,
+        "output_tokens": 6709,
+        "cached_input_tokens": 1792,
+        "cost_usd": "0.015635224",
+        "latency_ms": 50607,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [],
+      "first_issues": [
+        "Wednesday 25 snack 'Leche caliente con zanahoria asada (sin horno, cocida)' mentions an oven; there is none"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Tortilla de calabacín y queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltea el calabacín en rodajas a fuego medio, añade los huevos batidos y el queso desmenuzado, cuaja a fuego bajo por ambos lados.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 100",
+            "Zucchini, raw 50",
+            "Fresh cheese (queso fresco) 50"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Sopa de lentejas con zanahoria y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe la cebolla y la zanahoria a fuego medio, añade las lentejas y agua, cuece a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 50"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con zanahoria, cebolla y huevo duro",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece los garbanzos remojados en agua a fuego medio, escurre y mezcla con zanahoria rallada, cebolla picada y huevo cocido troceado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Carrot, raw 50",
+            "Onion, raw 50",
+            "Egg, whole, raw 60"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "snack",
+          "title": "Yogur de leche fresca con zanahoria rallada",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Calienta la leche, añade un fermento, deja reposar hasta cuajar y sirve con zanahoria rallada. Nota: el fermento no está en la lista, se asume disponible.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 150",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Huevos revueltos con queso fresco y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe la cebolla picada a fuego medio, añade los huevos batidos y el queso, remueve a fuego bajo hasta cuajar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 100",
+            "Fresh cheese (queso fresco) 40",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Tortilla de garbanzos con cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Mezcla garbanzos cocidos con cebolla pochada y huevo batido, cuaja a fuego lento en sartén antiadherente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Chickpeas, dry 40",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Alubias blancas estofadas con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Remoja las alubias, sofríe la cebolla y zanahoria, añade las alubias y agua, cuece a fuego lento hasta que estén blandas.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 50"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "snack",
+          "title": "Batido de leche con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Tritura la zanahoria cruda con la leche hasta obtener una mezcla homogénea, sirve frío.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 150",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Queso fresco con mermelada de zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la zanahoria rallada con un poco de agua a fuego medio hasta que espese, sirve sobre queso fresco.",
+          "skipped_by": [],
+          "ingredients": [
+            "Fresh cheese (queso fresco) 60",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Ensalada de alubias blancas con cebolla y huevo",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Mezcla alubias cocidas con cebolla picada y huevo duro troceado, aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 70",
+            "Onion, raw 40",
+            "Egg, whole, raw 60"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Lentejas estofadas con cebolla y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria a fuego medio, incorpora las lentejas y agua, cuece a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "Onion, raw 50",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "snack",
+          "title": "Leche caliente con zanahoria cocida",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la zanahoria troceada en agua a fuego medio, tritura con la leche caliente y sirve.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Tortilla de queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Bate los huevos, añade queso desmenuzado y cuaja a fuego bajo en sartén.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 100",
+            "Fresh cheese (queso fresco) 50"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Huevos escalfados sobre cama de calabacín",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltea el calabacín en tiras a fuego medio, escalfa los huevos en agua con vinagre y sirve encima.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Zucchini, raw 100"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Cocido de garbanzos con zanahoria y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece los garbanzos remojados con cebolla y zanahoria a fuego lento hasta que estén tiernos, sazona al gusto.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 50"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "snack",
+          "title": "Cuajada de leche con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Calienta la leche con zanahoria rallada, deja infusionar, cuela y deja cuajar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 150",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Revuelto de huevo con cebolla y calabacín",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y calabacín a fuego medio, añade los huevos batidos y remueve a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Onion, raw 30",
+            "Zucchini, raw 50"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Tortilla de lentejas con cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Mezcla lentejas cocidas con cebolla pochada y huevo batido, cuaja a fuego lento.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 60",
+            "Lentils, dry 50",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Alubias blancas con zanahoria y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Remoja las alubias, sofríe cebolla y zanahoria, añade las alubias y agua, cuece a fuego lento.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "snack",
+          "title": "Batido de leche con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Tritura la zanahoria con la leche hasta obtener un batido homogéneo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Huevos a la plancha con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Fríe los huevos a fuego medio en sartén con poco aceite, sirve con queso fresco troceado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Fresh cheese (queso fresco) 40"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Potaje de alubias blancas con calabacín",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y calabacín, añade alubias remojadas y agua, cuece a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 70",
+            "Zucchini, raw 100",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con zanahoria y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Mezcla garbanzos cocidos con zanahoria rallada y cebolla picada, aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 50"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "snack",
+          "title": "Leche con zanahoria y miel",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Calienta la leche, añade zanahoria rallada y un poco de miel, cocina a fuego bajo unos minutos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Tortilla francesa rellena de queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Bate los huevos, cuaja a fuego bajo, añade el queso y dobla.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 100",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Ensalada templada de garbanzos y calabacín",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltea el calabacín a fuego medio, mezcla con garbanzos cocidos y cebolla picada, sirve templado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 70",
+            "Zucchini, raw 100",
+            "Onion, raw 30"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Lentejas con zanahoria y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria, añade lentejas y agua, cuece a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "Carrot, raw 50",
+            "Onion, raw 50"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "snack",
+          "title": "Yogur de leche con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Mezcla yogur natural con zanahoria rallada.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 150",
+            "Carrot, raw 50"
+          ]
+        }
+      ],
+      "wall_ms": 50623
+    },
+    {
+      "id": "couple_milk_allergy",
+      "description": "Couple sharing meals; Ana is allergic to milk. Gas hob and oven",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 2580,
+      "metrics": {
+        "accepted": false,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "unknown_product": 7
+        },
+        "final_issue_codes": {
+          "protein_low": 1,
+          "stock_exceeded": 2
+        },
+        "meals": 21,
+        "distinct_titles_ratio": 0.81,
+        "most_repeated_title": [
+          "gachas de avena con naranja",
+          3
+        ],
+        "ingredient_scale_min": "0.500",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.65",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 3,
+        "input_tokens": 9915,
+        "output_tokens": 9650,
+        "cached_input_tokens": 6400,
+        "cost_usd": "0.021567700000000001",
+        "latency_ms": 69864,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [
+        "Ana would get 38 g too little protein this week: use more protein-rich products",
+        "Lentils, dry: these meals need at least 164 g more than the 2000 g available: use less of it or another product",
+        "Olive oil: these meals need at least 89 g more than the 913 g available: use less of it or another product"
+      ],
+      "first_issues": [
+        "Monday 23 breakfast 'Tostada de pan con tomate y aceite, café con leche' uses product 7, which is not available",
+        "Tuesday 24 breakfast 'Gachas de avena con naranja' uses product 7, which is not available",
+        "Wednesday 25 breakfast 'Tostada de pan con aceite y naranja' uses product 7, which is not available",
+        "Thursday 26 breakfast 'Gachas de avena con naranja' uses product 7, which is not available",
+        "Friday 27 breakfast 'Tostada de pan con aceite y naranja' uses product 7, which is not available",
+        "Saturday 28 breakfast 'Gachas de avena con naranja' uses product 7, which is not available",
+        "Sunday 29 breakfast 'Tostada de pan con aceite y naranja' uses product 7, which is not available"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Tostada de pan con tomate y aceite, café con leche",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Cuece la pasta y tuéstala ligeramente en una sartén sin aceite; frota con tomate si tienes, añade aceite y sal. Prepara café con leche (sin leche para Ana).",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 60",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Ensalada de garbanzos con naranja y cebolla",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece los garbanzos (previamente en remojo) hasta que estén tiernos. Mezcla con gajos de naranja, cebolla en plumas y aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Orange 100",
+            "Onion, raw 30",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Lentejas estofadas con verduras y arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria en aceite a fuego medio; añade lentejas (previamente puestas en remojo) y agua, cuece a fuego lento hasta que estén tiernas. Sirve con arroz blanco cocido.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 60",
+            "Onion, raw 50",
+            "Carrot, raw 60",
+            "Olive oil 10",
+            "White rice, long grain, raw 50"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Gachas de avena con naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz en agua a fuego medio hasta que espese, removiendo; añade gajos de naranja.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 60",
+            "Orange 100"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Sopa de lentejas con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria en aceite a fuego medio; añade lentejas previamente remojadas y agua; cuece a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 50",
+            "Carrot, raw 60",
+            "Onion, raw 40",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Arroz salteado con garbanzos y verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz y los garbanzos por separado. Saltea cebolla y zanahoria en aceite a fuego alto, añade arroz y garbanzos, y mezcla bien.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 70",
+            "Chickpeas, dry 50",
+            "Carrot, raw 60",
+            "Onion, raw 40",
+            "Olive oil 12"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Tostada de pan con aceite y naranja",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Cuece la pasta, escúrrela y tuéstala en una sartén sin aceite; rocía con aceite y sal. Acompaña con una naranja en gajos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 60",
+            "Olive oil 5",
+            "Orange 150"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Ensalada de arroz con lentejas y naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece arroz y lentejas por separado. Mezcla con cebolla picada, gajos de naranja y aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 50",
+            "Lentils, dry 40",
+            "Orange 100",
+            "Onion, raw 20",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Pasta con garbanzos y tomate",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece la pasta y los garbanzos por separado. Sofríe cebolla en aceite a fuego medio, añade tomate triturado (opcional), mezcla con pasta y garbanzos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "Chickpeas, dry 50",
+            "Onion, raw 40",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Gachas de avena con naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz en agua a fuego medio hasta que espese, removiendo; añade gajos de naranja.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 60",
+            "Orange 100"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Ensalada de lentejas y naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece las lentejas y déjalas enfriar. Mezcla con gajos de naranja y cebolla en plumas; aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 50",
+            "Orange 100",
+            "Onion, raw 20",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Estofado de alubias blancas con verduras y arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria en aceite a fuego medio; añade alubias (previamente en remojo) y agua; cuece a fuego lento hasta que estén tiernas. Sirve con arroz cocido.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 60",
+            "Carrot, raw 60",
+            "Onion, raw 40",
+            "Olive oil 10",
+            "White rice, long grain, raw 50"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Tostada de pan con aceite y naranja",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Cuece la pasta, escúrrela y tuéstala en una sartén sin aceite; rocía con aceite y sal. Acompaña con una naranja en gajos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 60",
+            "Olive oil 5",
+            "Orange 150"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Arroz con garbanzos y naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece arroz y garbanzos por separado. Mezcla con gajos de naranja y aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 60",
+            "Chickpeas, dry 50",
+            "Orange 100",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Pasta con lentejas y verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece pasta y lentejas por separado. Sofríe cebolla y zanahoria en aceite a fuego medio, añade lentejas y pasta, y mezcla.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "Lentils, dry 50",
+            "Carrot, raw 60",
+            "Onion, raw 40",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Gachas de avena con naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece el arroz en agua a fuego medio hasta que espese, removiendo; añade gajos de naranja.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 60",
+            "Orange 100"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Ensalada de garbanzos con naranja",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece los garbanzos y déjalos enfriar. Mezcla con gajos de naranja y cebolla en plumas; aliña con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 60",
+            "Orange 100",
+            "Onion, raw 20",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Alubias blancas estofadas con arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria en aceite a fuego medio; añade alubias (previamente en remojo) y agua; cuece a fuego lento hasta que estén tiernas. Sirve con arroz cocido.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 70",
+            "Onion, raw 40",
+            "Carrot, raw 60",
+            "Olive oil 10",
+            "White rice, long grain, raw 50"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Tostada de pan con aceite y naranja",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Cuece la pasta, escúrrela y tuéstala en una sartén sin aceite; rocía con aceite y sal. Acompaña con una naranja en gajos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 60",
+            "Olive oil 5",
+            "Orange 150"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Estofado de garbanzos con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Sofríe cebolla y zanahoria en aceite a fuego medio; añade garbanzos (previamente en remojo) y agua; cuece a fuego lento hasta que estén tiernos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 60",
+            "Onion, raw 40",
+            "Carrot, raw 60",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Arroz con lentejas y verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cuece arroz y lentejas por separado. Sofríe cebolla y zanahoria en aceite a fuego medio, añade arroz y lentejas, y mezcla.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 70",
+            "Lentils, dry 50",
+            "Carrot, raw 60",
+            "Onion, raw 40",
+            "Olive oil 10"
+          ]
+        }
+      ],
+      "wall_ms": 69882
+    }
+  ],
+  "human_ratings": {},
+  "judge": {}
+}

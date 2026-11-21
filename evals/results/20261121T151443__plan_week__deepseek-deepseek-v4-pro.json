@@ -1,0 +1,1523 @@
+{
+  "meta": {
+    "task": "plan_week",
+    "model": "deepseek/deepseek-v4-pro",
+    "started_at": "2026-11-21T15:14:43+00:00",
+    "git_commit": "31a066c",
+    "dataset": "plan_scenarios.json",
+    "variety": "basic"
+  },
+  "scenarios": [
+    {
+      "id": "single_active_full_week",
+      "description": "One active young man, full week, ceramic hob + microwave + air fryer, no oven",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 1810,
+      "metrics": {
+        "accepted": true,
+        "accepted_first_try": true,
+        "repaired": false,
+        "first_issue_codes": {},
+        "final_issue_codes": {},
+        "meals": 28,
+        "distinct_titles_ratio": 1.0,
+        "most_repeated_title": [
+          "tostadas con tomate y aceite",
+          1
+        ],
+        "ingredient_scale_min": "1.000",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.50",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 1,
+        "input_tokens": 1075,
+        "output_tokens": 3899,
+        "cached_input_tokens": 1024,
+        "cost_usd": "0.007776208000000001",
+        "latency_ms": 32969,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [],
+      "first_issues": [],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Tostadas con tomate y aceite",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta, escurrir y mezclar con aceite de oliva y tomate rallado (opcional, no incluido). Servir templado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Olive oil 25",
+            "Pasta, dry 100"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Garbanzos salteados con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos previamente remojados. Saltear zanahoria en dados a fuego medio-alto. Mezclar y aliñar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 90",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Lentejas estofadas con arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las lentejas con verduras (opcional, no incluidas) a fuego medio. Cocer el arroz aparte. Servir juntos con un chorrito de aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "White rice, long grain, raw 80",
+            "Olive oil 15"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "snack",
+          "title": "Zanahoria rallada aliñada",
+          "appliances": [],
+          "summary": "Rallar la zanahoria cruda y aliñar con aceite y sal. Refrescar antes de servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 150",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Arroz con leche vegetal y canela",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer el arroz en agua a fuego medio hasta que esté tierno, añadir leche vegetal (no incluida) y canela (no incluida). Servir templado.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 70",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Sopa de lentejas con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las lentejas con zanahoria en dados a fuego medio hasta que estén tiernas. Añadir agua o caldo. Servir caliente con un hilo de aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 90",
+            "Carrot, raw 80",
+            "Olive oil 8"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Ensalada de pasta con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta y enfriar. Mezclar con garbanzos cocidos y aliñar con aceite y especias. Servir fría.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 90",
+            "Chickpeas, dry 80",
+            "Olive oil 12"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "snack",
+          "title": "Hummus de garbanzos con crudités",
+          "appliances": [],
+          "summary": "Triturar garbanzos cocidos con aceite, ajo y limón (no incluidos). Servir con bastones de zanahoria cruda.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Tortitas de lentejas (sin huevo)",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Mezclar lentejas cocidas y trituradas con zanahoria rallada, formar tortitas y cocinar a fuego medio-bajo en sartén con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 50",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Pasta con salsa de lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta. Aparte, cocer lentejas y triturar con un poco de agua de cocción para hacer salsa. Mezclar y servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Lentils, dry 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Guiso de alubias blancas con arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las alubias previamente remojadas con zanahoria a fuego medio. Cocer el arroz aparte. Servir juntos con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 80",
+            "White rice, long grain, raw 80",
+            "Olive oil 15",
+            "Carrot, raw 80"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "snack",
+          "title": "Ensalada de zanahoria y garbanzos",
+          "appliances": [],
+          "summary": "Rallar la zanahoria y mezclar con garbanzos cocidos. Aliñar con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 100",
+            "Chickpeas, dry 50",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Gachas de arroz con canela",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer el arroz con agua a fuego medio hasta que espese. Añadir canela (no incluida) y servir templado.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 70",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Potaje de garbanzos con espinacas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos previamente remojados con zanahoria. Añadir espinacas (no incluidas) al final. Servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Olive oil 10",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Ensalada de alubias y pasta",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer alubias y pasta por separado, enfriar y mezclar con zanahoria rallada. Aliñar con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 70",
+            "Pasta, dry 80",
+            "Olive oil 10",
+            "Carrot, raw 80"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "snack",
+          "title": "Hummus de alubias con palitos de zanahoria",
+          "appliances": [],
+          "summary": "Triturar alubias cocidas con aceite y especias. Servir con bastones de zanahoria cruda.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Crema de zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer zanahoria en dados a fuego medio hasta tierna. Triturar con un poco de agua de cocción y aceite. Servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 200",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Sopa de pasta con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer zanahoria en dados en agua con sal a fuego medio. Añadir la pasta y cocer hasta que esté al dente. Servir caliente con un hilo de aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Arroz a la cubana con lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer el arroz. Aparte, guisar lentejas con tomate (no incluido). Servir arroz con lentejas por encima y un hilo de aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 100",
+            "Lentils, dry 80",
+            "Olive oil 15"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "snack",
+          "title": "Ensalada de garbanzos y zanahoria",
+          "appliances": [],
+          "summary": "Mezclar garbanzos cocidos con zanahoria rallada y aliñar con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 80",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Tortitas de garbanzos con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Triturar garbanzos cocidos y mezclar con zanahoria rallada y especias. Formar tortitas y cocinar a fuego medio en sartén con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Pasta con garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta. Saltear zanahoria en dados y garbanzos cocidos a fuego medio. Mezclar con la pasta y aliñar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Chickpeas, dry 70",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Ensalada de lentejas y arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer lentejas y arroz por separado, enfriar y mezclar con zanahoria rallada. Aliñar con aceite y especias.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 80",
+            "White rice, long grain, raw 80",
+            "Olive oil 12",
+            "Carrot, raw 80"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "snack",
+          "title": "Hummus de garbanzos con zanahoria",
+          "appliances": [],
+          "summary": "Triturar garbanzos cocidos con aceite, ajo y limón (no incluidos). Servir con bastones de zanahoria cruda.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Arroz con zanahoria y especias",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer arroz con zanahoria en daditos y especias (no incluidas) a fuego medio hasta que el arroz esté tierno. Servir templado.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Carrot, raw 50",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Crema de lentejas con pan",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer lentejas con zanahoria a fuego medio hasta tiernas. Triturar con aceite y un poco de agua de cocción. Servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 90",
+            "Olive oil 10",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Guiso de garbanzos con arroz",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer garbanzos previamente remojados con zanahoria a fuego medio. Cocer arroz aparte. Servir juntos con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "White rice, long grain, raw 80",
+            "Olive oil 15",
+            "Carrot, raw 80"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "snack",
+          "title": "Ensalada de alubias y zanahoria",
+          "appliances": [],
+          "summary": "Mezclar alubias cocidas con zanahoria rallada y aliñar con aceite y sal.",
+          "skipped_by": [],
+          "ingredients": [
+            "White beans, dry 70",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        }
+      ],
+      "wall_ms": 32995
+    },
+    {
+      "id": "user_example_five_days",
+      "description": "The owner's example: Monday-Friday, no dinner on Tue/Thu/Fri, no afternoon snack",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 1285,
+      "metrics": {
+        "accepted": true,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "portions_unrealistic": 1
+        },
+        "final_issue_codes": {},
+        "meals": 12,
+        "distinct_titles_ratio": 0.833,
+        "most_repeated_title": [
+          "gachas de avena con leche",
+          2
+        ],
+        "ingredient_scale_min": "0.500",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.32",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 2,
+        "input_tokens": 3387,
+        "output_tokens": 3032,
+        "cached_input_tokens": 1792,
+        "cost_usd": "0.0070954840000000008",
+        "latency_ms": 23864,
+        "extra_cost_cents": 190
+      },
+      "extra_purchases": [
+        {
+          "name": "Chickpeas, dry",
+          "packs": 1,
+          "cost_cents": 190
+        }
+      ],
+      "issues": [],
+      "first_issues": [
+        "Pablo's meals on Monday are 883 kcal short of the target even at 3x the drafted amounts: add more or more energy-dense ingredients"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Gachas de avena con leche y queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la avena con la leche a fuego medio hasta que espese. Añadir el queso fresco desmenuzado al servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 80",
+            "Whole milk 300",
+            "Fresh cheese (queso fresco) 40"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Pasta con queso fresco y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta a fuego medio, escurrir y mezclar con queso fresco y zanahoria rallada cruda. Saltear ligeramente a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 110",
+            "Fresh cheese (queso fresco) 50",
+            "Carrot, raw 80"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos y zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Cocer los garbanzos previamente remojados y escurrirlos. Rallar la zanahoria y mezclar con el queso fresco desmenuzado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Carrot, raw 150",
+            "Fresh cheese (queso fresco) 60"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Gachas de avena con leche",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Calentar la leche y cocer la avena a fuego medio hasta obtener una textura cremosa. Servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 80",
+            "Whole milk 300"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Garbanzos salteados con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos previamente remojados. Saltear la zanahoria en rodajas a fuego medio y añadir los garbanzos y el queso fresco al final.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Carrot, raw 150",
+            "Fresh cheese (queso fresco) 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Gachas de avena con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la avena con leche a fuego medio y añadir queso fresco desmenuzado por encima al servir.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 80",
+            "Whole milk 300",
+            "Fresh cheese (queso fresco) 40"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Crema de zanahoria con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la zanahoria en agua a fuego medio, escurrir y triturar con un poco de leche. Servir con queso fresco desmenuzado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 250",
+            "Carrot, raw 200",
+            "Fresh cheese (queso fresco) 60"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Ensalada de pasta con garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta y los garbanzos por separado. Enfriar ligeramente y mezclar con zanahoria rallada y queso fresco en cubos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 110",
+            "Chickpeas, dry 80",
+            "Carrot, raw 120",
+            "Fresh cheese (queso fresco) 50"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Gachas de avena con leche",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la avena con leche a fuego medio hasta que espese. Servir caliente.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 80",
+            "Whole milk 300"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Pasta con garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la pasta y los garbanzos previamente remojados. Saltear la zanahoria en rodajas y mezclar todo a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 110",
+            "Chickpeas, dry 100",
+            "Carrot, raw 120"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Gachas de avena con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer la avena con leche a fuego medio y añadir queso fresco desmenuzado.",
+          "skipped_by": [],
+          "ingredients": [
+            "Rolled oats 80",
+            "Whole milk 300",
+            "Fresh cheese (queso fresco) 40"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos y zanahoria con queso fresco",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Mezclar garbanzos cocidos previamente con zanahoria rallada y queso fresco desmenuzado. Servir frío.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 100",
+            "Carrot, raw 150",
+            "Fresh cheese (queso fresco) 60"
+          ]
+        }
+      ],
+      "wall_ms": 23885
+    },
+    {
+      "id": "vegetarian_woman",
+      "description": "Vegetarian woman cutting, full week, hob only",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 2200,
+      "metrics": {
+        "accepted": true,
+        "accepted_first_try": false,
+        "repaired": false,
+        "first_issue_codes": {
+          "stock_exceeded": 2
+        },
+        "final_issue_codes": {},
+        "meals": 28,
+        "distinct_titles_ratio": 0.821,
+        "most_repeated_title": [
+          "batido de leche con zanahoria",
+          2
+        ],
+        "ingredient_scale_min": "0.500",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.26",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 1,
+        "input_tokens": 1112,
+        "output_tokens": 3555,
+        "cached_input_tokens": 1024,
+        "cost_usd": "0.007119508000000001",
+        "latency_ms": 26629,
+        "extra_cost_cents": 450
+      },
+      "extra_purchases": [
+        {
+          "name": "Chickpeas, dry",
+          "packs": 1,
+          "cost_cents": 190
+        },
+        {
+          "name": "Egg, whole, raw",
+          "packs": 1,
+          "cost_cents": 260
+        }
+      ],
+      "issues": [],
+      "first_issues": [
+        "Chickpeas, dry: these meals need at least 70 g more than the 1000 g available: use less of it or another product",
+        "Egg, whole, raw: these meals need at least 378 g more than the 1800 g available: use less of it or another product"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Huevos revueltos con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria y mezclar con el queso desmenuzado. Batir los huevos y cuajar a fuego medio, añadir la mezcla al final.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Fresh cheese (queso fresco) 40",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Revuelto de calabacín y queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín en rodajas a fuego medio, añadir los huevos batidos y el queso, cuajar sin secar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 60",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos previamente remojados. Cortar las verduras en dados y mezclar todo en frío.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 90",
+            "Carrot, raw 100",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "snack",
+          "title": "Batido de leche con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Triturar la zanahoria con la leche hasta obtener un batido homogéneo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Tortilla de zanahoria y queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria y mezclar con los huevos batidos y el queso. Cuajar a fuego medio por ambos lados.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Carrot, raw 70",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Huevos con calabacín",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín en dados y añadir los huevos batidos, cuajar a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 80"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Lentejas estofadas con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las lentejas con las verduras troceadas a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 90",
+            "Carrot, raw 80",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "snack",
+          "title": "Leche con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Servir la leche fría o templada con la zanahoria rallada.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Huevos revueltos con queso fresco y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria y mezclar con el queso. Batir los huevos y cuajar a fuego medio, incorporar la mezcla.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Fresh cheese (queso fresco) 40",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Revuelto de calabacín con queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín en rodajas, añadir los huevos batidos y el queso, cuajar sin secar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 60",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos y mezclar con las verduras crudas troceadas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 90",
+            "Carrot, raw 100",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "snack",
+          "title": "Batido de leche y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Triturar la zanahoria con la leche hasta obtener una textura suave.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Tortilla de zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria y mezclar con los huevos batidos y queso. Cuajar a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Carrot, raw 70",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Huevos con calabacín salteado",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín en dados y añadir los huevos batidos, cuajar a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 80"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Lentejas con verduras",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las lentejas con las verduras a fuego lento hasta que estén tiernas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 90",
+            "Carrot, raw 80",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "snack",
+          "title": "Leche con zanahoria rallada",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Servir la leche con la zanahoria rallada, sin cocinar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Huevos revueltos con queso y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria y mezclar con el queso. Batir los huevos y cuajar a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Fresh cheese (queso fresco) 40",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Revuelto de calabacín con queso fresco",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín y cuajar con huevos y queso a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 60",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con verduras frescas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos y mezclar con las verduras crudas en frío.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 90",
+            "Carrot, raw 100",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "snack",
+          "title": "Batido de zanahoria y leche",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Triturar la zanahoria con la leche hasta obtener un batido.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Tortilla de zanahoria y queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Rallar la zanahoria, mezclar con huevos y queso, cuajar a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Carrot, raw 70",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Huevos con calabacín a la sartén",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín y añadir los huevos, cuajar a fuego bajo.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 80"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Potaje de lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer las lentejas con las verduras hasta que estén tiernas, a fuego lento.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 100",
+            "Carrot, raw 80",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "snack",
+          "title": "Leche con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Servir la leche con la zanahoria rallada.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Huevos revueltos con queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Batir los huevos con queso y zanahoria rallada, cuajar a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Egg, whole, raw 80",
+            "Fresh cheese (queso fresco) 40",
+            "Carrot, raw 50"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Revuelto de calabacín y queso",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Saltear el calabacín en rodajas y cuajar con huevos y queso a fuego medio.",
+          "skipped_by": [],
+          "ingredients": [
+            "Zucchini, raw 150",
+            "Egg, whole, raw 60",
+            "Fresh cheese (queso fresco) 30"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer los garbanzos y mezclar con las verduras crudas.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 90",
+            "Carrot, raw 100",
+            "Onion, raw 60",
+            "Zucchini, raw 80"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "snack",
+          "title": "Batido de leche con zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Triturar la zanahoria con la leche hasta obtener un batido suave.",
+          "skipped_by": [],
+          "ingredients": [
+            "Whole milk 200",
+            "Carrot, raw 60"
+          ]
+        }
+      ],
+      "wall_ms": 26650
+    },
+    {
+      "id": "couple_milk_allergy",
+      "description": "Couple sharing meals; Ana is allergic to milk. Gas hob and oven",
+      "shopping_status": "optimal",
+      "shopping_cost_cents": 2500,
+      "metrics": {
+        "accepted": false,
+        "accepted_first_try": false,
+        "repaired": true,
+        "first_issue_codes": {
+          "protein_low": 1,
+          "stock_exceeded": 1
+        },
+        "final_issue_codes": {
+          "protein_low": 2,
+          "stock_exceeded": 2
+        },
+        "meals": 21,
+        "distinct_titles_ratio": 0.857,
+        "most_repeated_title": [
+          "gachas de garbanzos y zanahoria",
+          2
+        ],
+        "ingredient_scale_min": "0.500",
+        "ingredient_scale_max": "3.000",
+        "ingredient_scale_mean": "1.74",
+        "purchase_used_ratio": 1.0,
+        "model_calls": 2,
+        "input_tokens": 4487,
+        "output_tokens": 5067,
+        "cached_input_tokens": 2048,
+        "cost_usd": "0.011687456",
+        "latency_ms": 37913,
+        "extra_cost_cents": 0
+      },
+      "extra_purchases": [],
+      "issues": [
+        "Ana would get 129 g too little protein this week: use more protein-rich products",
+        "Marc would get 117 g too little protein this week: use more protein-rich products",
+        "Chickpeas, dry: these meals need at least 537 g more than the 1000 g available: use less of it or another product",
+        "Olive oil: these meals need at least 352 g more than the 913 g available: use less of it or another product"
+      ],
+      "first_issues": [
+        "Ana would get 26 g too little protein this week: use more protein-rich products",
+        "Lentils, dry: these meals need at least 1188 g more than the 2000 g available: use less of it or another product"
+      ],
+      "menu": [
+        {
+          "weekday": 0,
+          "slot": "breakfast",
+          "title": "Gachas de garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer garbanzos y zanahoria a fuego medio, triturar y añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "dinner",
+          "title": "Sopa de lentejas y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer lentejas con zanahoria a fuego medio y añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 60",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 0,
+          "slot": "lunch",
+          "title": "Ensalada de garbanzos con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Mezclar garbanzos cocidos con zanahoria rallada y aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "breakfast",
+          "title": "Zanahoria cocida con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer zanahoria en rodajas y añadir garbanzos cocidos. Aliñar con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 100",
+            "Chickpeas, dry 50",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "dinner",
+          "title": "Ensalada de lentejas y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer lentejas, enfriar y mezclar con zanahoria rallada y aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Lentils, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 1,
+          "slot": "lunch",
+          "title": "Pasta con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer pasta y mezclar con garbanzos cocidos y aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Chickpeas, dry 70",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "breakfast",
+          "title": "Crema de zanahoria con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer zanahoria y garbanzos, triturar y añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 150",
+            "Chickpeas, dry 40",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "dinner",
+          "title": "Hummus de garbanzos con zanahoria",
+          "appliances": [
+            "none"
+          ],
+          "summary": "Triturar garbanzos cocidos con aceite y servir con bastones de zanahoria.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 2,
+          "slot": "lunch",
+          "title": "Arroz con garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer arroz con garbanzos y zanahoria a fuego medio, aliñar con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Chickpeas, dry 60",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "breakfast",
+          "title": "Zanahoria asada con garbanzos",
+          "appliances": [
+            "oven"
+          ],
+          "summary": "Hornear zanahoria en bastones con aceite y añadir garbanzos cocidos.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 150",
+            "Chickpeas, dry 50",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "dinner",
+          "title": "Ensalada de arroz y garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer arroz, enfriar y mezclar con garbanzos, zanahoria rallada y aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 70",
+            "Chickpeas, dry 60",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 3,
+          "slot": "lunch",
+          "title": "Pasta con lentejas y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer pasta y mezclar con lentejas cocidas y zanahoria salteada.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "Lentils, dry 50",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "breakfast",
+          "title": "Gachas de garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer garbanzos y zanahoria, triturar y añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "dinner",
+          "title": "Pasta con garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer pasta y mezclar con garbanzos cocidos y aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Chickpeas, dry 70",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 4,
+          "slot": "lunch",
+          "title": "Arroz con lentejas y garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer arroz con lentejas, garbanzos y zanahoria a fuego medio. Aliñar con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Lentils, dry 40",
+            "Chickpeas, dry 40",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "breakfast",
+          "title": "Zanahoria al microondas con garbanzos",
+          "appliances": [
+            "microwave"
+          ],
+          "summary": "Cocinar zanahoria en microondas y añadir garbanzos cocidos con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Carrot, raw 150",
+            "Chickpeas, dry 50",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "dinner",
+          "title": "Pasta con zanahoria y garbanzos",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer pasta, saltear zanahoria y añadir garbanzos cocidos. Mezclar.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 100",
+            "Carrot, raw 100",
+            "Chickpeas, dry 40",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 5,
+          "slot": "lunch",
+          "title": "Potaje de garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer garbanzos con zanahoria y aceite a fuego lento.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 80",
+            "Carrot, raw 100",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "breakfast",
+          "title": "Puré de garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer garbanzos y zanahoria, triturar y añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Chickpeas, dry 50",
+            "Carrot, raw 100",
+            "Olive oil 5"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "dinner",
+          "title": "Sopa de pasta y lentejas",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer pasta y lentejas con zanahoria a fuego medio. Añadir aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "Pasta, dry 80",
+            "Lentils, dry 40",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        },
+        {
+          "weekday": 6,
+          "slot": "lunch",
+          "title": "Arroz con garbanzos y zanahoria",
+          "appliances": [
+            "hob"
+          ],
+          "summary": "Cocer arroz con garbanzos y zanahoria a fuego medio, aliñar con aceite.",
+          "skipped_by": [],
+          "ingredients": [
+            "White rice, long grain, raw 80",
+            "Chickpeas, dry 60",
+            "Carrot, raw 50",
+            "Olive oil 10"
+          ]
+        }
+      ],
+      "wall_ms": 37934
+    }
+  ],
+  "human_ratings": {},
+  "judge": {}
+}

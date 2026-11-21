@@ -82,3 +82,6 @@ docs/ROADMAP.md
 # ---------- Windows/WSL metadata ----------
 *:Zone.Identifier
 .hypothesis/
+
+# Local, human-readable eval review files (derived from evals/results)
+evals/review/

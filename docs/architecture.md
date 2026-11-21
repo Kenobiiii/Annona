@@ -84,6 +84,11 @@ validated with Pydantic and one repair attempt, caching and usage hooks, `FakeLL
 database response cache and a usage log with tokens and cost. Quality is measured with evals:
 see [evals.md](evals.md).
 
+## Weekly planner
+
+The LLM drafts meals; code verifies them and computes exact portions with a linear
+programme. See [planner.md](planner.md).
+
 ## Domain model
 
 A `Household` owns the shared things (budget, pantry, kitchen, plans, shopping lists, receipts) and

@@ -102,3 +102,37 @@ saving); revisit `v2_compact` when volumes grow, with a larger dataset that has 
 Note: categories `prepared` and `other` exclude nothing for any diet, so a meat-containing ready
 meal is only caught by its declared allergens or by the `diet_uncertain` flag. Unsafe errors into
 those two categories are the ones to watch.
+
+## Weekly planner
+
+```bash
+uv run python -m annona_server.evals plan-run [--variety basic|balanced|high] --yes
+uv run python -m annona_server.evals plan-show <file> [--scenario id]
+uv run python -m annona_server.evals plan-rate <file> <scenario> <1-5> [--note "..."]
+uv run python -m annona_server.evals plan-judge <file> --yes     # LLM judge + agreement
+uv run python -m annona_server.evals plan-compare
+```
+
+Four scenarios (`evals/datasets/plan_scenarios.json`): one active man for a full week, the
+owner's 5-day example, a vegetarian woman cutting, and a couple where one is allergic to milk.
+
+Hard checks come from the verifier (schedule, ingredients, kitchen, allergies, protein, stock).
+Metrics: accepted, accepted at first try, issue codes before/after the repair, distinct dish
+titles, ingredient multipliers (how far the model's portions were), share of the purchase used,
+extra packs bought, tokens, cost and latency. Whether people *want* to eat it is rated by a
+human (1-5); an LLM judge is only trusted as far as it agrees with those ratings.
+
+### Iterations (2026-11-21, `deepseek-v4-pro`, one run per scenario)
+
+| Run | Change | Accepted |
+|---|---|---|
+| 1 | first version: one portion factor per day, 0.5x-2x | 0/4 (portions 2-2.6x too small; stock overdrawn) |
+| 2 | linear programme per ingredient (0.5x-3x) | 1/4 |
+| 3 | approximate kcal per serving in the prompt | 2/4 |
+| 4 | buy one more pack for small stock shortfalls | 3/4 (2 thanks to extra packs) |
+| 4b | same, `--variety balanced` | 1/4 (drafts still short of energy) |
+
+Lessons: the model drafts "ordinary" portions for people needing 1900-3400 kcal, so exact
+portions must come from code; the cheapest shop (7 products) makes menus valid but monotonous,
+hence the optional variety levels; and one run per scenario is too noisy to compare variants
+reliably (repeat runs before deciding).
