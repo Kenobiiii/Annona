@@ -5,14 +5,12 @@ from __future__ import annotations
 
 from datetime import date
 from decimal import Decimal
-from typing import Any
 
 from fastapi import APIRouter, Request, status
 from pydantic import BaseModel
 from sqlmodel import Session
 
 from annona_core.domain import MealPlan, MealSlot, PlanStatus
-from annona_core.optimizer import OptimizerSettings
 
 from ...db.repositories import (
     MealPlanRepository,
@@ -24,7 +22,8 @@ from ...db.repositories import (
     SqlProductRepository,
     UserProfileRepository,
 )
-from ...planner import existing_plan, plan_and_store
+from ...planner import existing_plan
+from ...planner.jobs import plan_job
 from ..deps import HouseholdDep, SessionDep
 from ..errors import APIError
 from ..schemas import JobAccepted, ScheduleIn, ShoppingOptions
@@ -52,34 +51,7 @@ def generate_plan(
         raise APIError(409, "plan_exists", "this week already has a plan; send regenerate=true")
     to_schedule(body.schedule)  # validate now, not inside the job
     params = body.model_dump(mode="json")
-    llm_factory = request.app.state.llm_factory
-    household_id = household.id
-
-    def run(job_session: Session, p: dict[str, Any]) -> dict[str, Any]:
-        plan = PlanIn.model_validate(p)
-        week = plan_and_store(
-            job_session,
-            llm_factory(job_session),
-            household_id=household_id,
-            store_id=plan.store_id,
-            schedule=to_schedule(plan.schedule),
-            on_date=plan.schedule.week_start,
-            budget_cents=plan.budget_cents,
-            settings=OptimizerSettings(variety=plan.variety, health_limits=plan.health_limits),
-        )
-        result: dict[str, Any] = {
-            "plan_id": week.plan_id,
-            "shopping_status": week.shopping.status,
-            "shortfalls": [s.model_dump(mode="json") for s in week.shopping.shortfalls],
-        }
-        if week.outcome is not None:
-            result |= {
-                "accepted": week.outcome.accepted,
-                "issues": [i.message for i in week.outcome.verification.issues],
-                "extra_purchases": [e.__dict__ for e in week.outcome.extra_purchases],
-            }
-        return result
-
+    run = plan_job(request.app.state.llm_factory, household.id)
     job_id = request.app.state.runner.submit("plan_week", params, run)
     return JobAccepted(job_id=job_id, status_url=f"/api/v1/jobs/{job_id}")
 

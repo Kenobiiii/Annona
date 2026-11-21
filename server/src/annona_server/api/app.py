@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from mcp.server.transport_security import TransportSecuritySettings
 from sqlalchemy import Engine
 from sqlmodel import Session
 
@@ -20,8 +21,10 @@ from ..config import load_env
 from ..db import migrate
 from ..db.engine import database_url, make_engine
 from ..jobs import JobRunner
+from ..mcp_server import build_server
 from . import errors
 from .deps import require_token
+from .mcp_guard import BearerGuard, McpPathAlias
 from .routes import household, pantry, plans, products, shopping, system
 
 DESCRIPTION = """Self-hosted API of **Annona**, the open-source weekly meal planner.
@@ -48,16 +51,28 @@ def create_app(
 
         llm_factory = make_llm_client
 
+    runner = runner or JobRunner(engine)
+    mcp_server = build_server(engine, llm_factory=llm_factory, runner=runner)
+    # Stateless JSON responses: no server-to-client streaming is needed, and it works behind
+    # simple proxies. DNS-rebinding protection is off because every request needs the token.
+    mcp_app = mcp_server.streamable_http_app(
+        streamable_http_path="/",
+        stateless_http=True,
+        json_response=True,
+        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
+    )
+
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        yield
+        async with mcp_server.session_manager.run():
+            yield
         app.state.runner.shutdown()
 
     app = FastAPI(
         title="Annona API", version=__version__, description=DESCRIPTION, lifespan=lifespan
     )
     app.state.engine = engine
-    app.state.runner = runner or JobRunner(engine)
+    app.state.runner = runner
     app.state.token = token if token is not None else os.environ.get("ANNONA_API_TOKEN", "")
     app.state.llm_factory = llm_factory
     origins = [o for o in os.environ.get("ANNONA_CORS_ORIGINS", "").split(",") if o]
@@ -70,6 +85,9 @@ def create_app(
     @app.get("/health", tags=["system"])
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__}
+
+    app.mount("/mcp", BearerGuard(mcp_app, lambda: app.state.token))
+    app.add_middleware(McpPathAlias)
 
     protected = [Depends(require_token)]
     for module in (system, household, pantry, products, shopping, plans):

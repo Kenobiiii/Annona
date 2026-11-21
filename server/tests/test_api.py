@@ -1,29 +1,18 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """REST API tests (httpx TestClient). FakeLLM, inline jobs, SYNTHETIC products and prices."""
 
-from datetime import UTC, date, datetime
+from datetime import date
 from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
 
-from annona_core.domain import (
-    NutritionFacts,
-    NutritionSource,
-    Price,
-    PriceSource,
-    Product,
-    Unit,
-)
 from annona_core.llm import FakeLLM, Tier
 from annona_server.api import create_app
-from annona_server.db.engine import session_scope
-from annona_server.db.repositories import SqlPriceRepository, SqlProductRepository
 from annona_server.jobs import InlineExecutor, JobRunner
 from annona_server.llm import make_llm_client
 from annona_server.llm.config import LLMSettings
 
-from .test_optimize_db import FOODS
 from .test_planner_db import even_split
 
 TOKEN = "secret-token"
@@ -54,40 +43,6 @@ def client(engine):
     )
     with TestClient(app) as c:
         yield c
-
-
-@pytest.fixture
-def shop(engine):
-    with session_scope(engine) as s:
-        products, prices = SqlProductRepository(s), SqlPriceRepository(s)
-        for i, (name, cat, grams, kcal, p, f, c, cents) in enumerate(FOODS):
-            prod = products.add(
-                Product(
-                    name=name,
-                    category=cat,
-                    store_id="demo",
-                    store_sku=str(i),
-                    package_amount=Decimal(grams),
-                    package_unit=Unit.G,
-                    allergens=[],
-                    nutrition=NutritionFacts(
-                        energy_kcal=Decimal(kcal),
-                        protein_g=Decimal(p),
-                        fat_g=Decimal(f),
-                        carbohydrates_g=Decimal(c),
-                        source=NutritionSource.MANUAL,
-                    ),
-                )
-            )
-            prices.add(
-                Price(
-                    product_id=prod.id,
-                    store_id="demo",
-                    amount_cents=cents,
-                    source=PriceSource.MANUAL,
-                    observed_at=datetime(2026, 11, 20, tzinfo=UTC),
-                )
-            )
 
 
 def setup_home(client):
