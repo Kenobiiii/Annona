@@ -1,0 +1,33 @@
+# Self-hosting: `cp .env.example .env`, set ANNONA_API_TOKEN (and your AI key), then
+#   docker compose up -d
+# API and interactive docs: http://localhost:8000/docs
+services:
+  api:
+    build: .
+    image: annona-server:local
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "8000:8000"
+    volumes:
+      - annona-data:/data
+    restart: unless-stopped
+
+  scheduler:
+    image: annona-server:local
+    command: ["/app/.venv/bin/python", "-m", "annona_server.scheduler"]
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - annona-data:/data
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+
+volumes:
+  annona-data:

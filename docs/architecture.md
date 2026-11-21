@@ -89,6 +89,12 @@ see [evals.md](evals.md).
 The LLM drafts meals; code verifies them and computes exact portions with a linear
 programme. See [planner.md](planner.md).
 
+## REST API
+
+FastAPI under `/api/v1` with a bearer token; slow operations (plan generation, price
+refresh) are background jobs polled at `/api/v1/jobs/{id}`; a separate scheduler process
+refreshes prices daily. See [self-hosting.md](self-hosting.md) and the live docs at `/docs`.
+
 ## Domain model
 
 A `Household` owns the shared things (budget, pantry, kitchen, plans, shopping lists, receipts) and

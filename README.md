@@ -3,7 +3,7 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 7 — weekly meal planner).** Nothing usable yet. Follow the project to see it grow.
+> **Status: pre-alpha (Phase 8 — REST API and Docker).** Nothing usable yet. Follow the project to see it grow.
 
 ## Vision
 
@@ -57,6 +57,15 @@ npm run lint && npm run typecheck && npm test
 ```
 
 Copy `.env.example` to `.env` for local configuration. Never commit `.env`.
+
+## Run your own server
+
+```bash
+cp .env.example .env    # set ANNONA_API_TOKEN and your AI key
+docker compose up -d    # API + docs at http://localhost:8000/docs
+```
+
+See [docs/self-hosting.md](docs/self-hosting.md).
 
 ## Disclaimers
 
