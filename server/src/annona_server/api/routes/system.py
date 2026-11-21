@@ -102,3 +102,39 @@ def llm_usage(session: SessionDep) -> list[UsageRow]:
         acc.output_tokens += row.output_tokens or 0
         acc.cost_usd += row.cost_usd or Decimal(0)
     return sorted(totals.values(), key=lambda r: (r.task, r.model))
+
+
+class ModelStatus(BaseModel):
+    tier: str
+    model: str
+    provider: str
+    key_configured: bool | None  # None: could not tell; the key itself is never returned
+
+
+class LlmSettingsOut(BaseModel):
+    models: list[ModelStatus]
+    thinking: bool
+    spent_usd: Decimal  # known cost of every recorded call
+
+
+@router.get("/settings/llm", response_model=LlmSettingsOut)
+def llm_settings_status(session: SessionDep) -> LlmSettingsOut:
+    """Configured AI models and whether their keys are set on the server (read-only)."""
+    from ...llm.config import llm_settings
+    from ...llm.litellm_backend import key_configured
+    from ...llm.storage import spent_usd
+
+    settings = llm_settings()
+    return LlmSettingsOut(
+        models=[
+            ModelStatus(
+                tier=str(tier),
+                model=model,
+                provider=model.split("/", 1)[0],
+                key_configured=key_configured(model),
+            )
+            for tier, model in settings.models.items()
+        ],
+        thinking=settings.thinking,
+        spent_usd=spent_usd(session),
+    )

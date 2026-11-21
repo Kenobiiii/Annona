@@ -26,6 +26,22 @@ class PantryIn(BaseModel):
     expires_at: date | None = None
 
 
+class PantryOut(PantryItem):
+    """A pantry item with the product's name and category, so clients can group and label it."""
+
+    name: str
+    category: str
+
+
+def _out(session, item: PantryItem) -> PantryOut:
+    product = SqlProductRepository(session).get(item.product_id)
+    return PantryOut(
+        **item.model_dump(),
+        name=product.name if product else "?",
+        category=str(product.category) if product else "other",
+    )
+
+
 def _item(session, household, item_id: int) -> PantryItem:
     item = SqlPantryRepository(session).get(item_id)
     if item is None or item.household_id != household.id:
@@ -33,32 +49,34 @@ def _item(session, household, item_id: int) -> PantryItem:
     return item
 
 
-@router.get("/pantry", response_model=Page[PantryItem])
+@router.get("/pantry", response_model=Page[PantryOut])
 def list_pantry(
     session: SessionDep,
     household: HouseholdDep,
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
-) -> Page[PantryItem]:
-    items = list(SqlPantryRepository(session).for_household(household.id))
+) -> Page[PantryOut]:
+    items = [_out(session, i) for i in SqlPantryRepository(session).for_household(household.id)]
     return paginate(items, page, size)
 
 
-@router.post("/pantry", response_model=PantryItem, status_code=status.HTTP_201_CREATED)
-def add_pantry(body: PantryIn, session: SessionDep, household: HouseholdDep) -> PantryItem:
+@router.post("/pantry", response_model=PantryOut, status_code=status.HTTP_201_CREATED)
+def add_pantry(body: PantryIn, session: SessionDep, household: HouseholdDep) -> PantryOut:
     if SqlProductRepository(session).get(body.product_id) is None:
         raise APIError(404, "not_found", f"product {body.product_id} not found")
-    return SqlPantryRepository(session).add(
+    item = SqlPantryRepository(session).add(
         PantryItem(household_id=household.id, **body.model_dump())
     )
+    return _out(session, item)
 
 
-@router.put("/pantry/{item_id}", response_model=PantryItem)
+@router.put("/pantry/{item_id}", response_model=PantryOut)
 def update_pantry(
     item_id: int, body: PantryIn, session: SessionDep, household: HouseholdDep
-) -> PantryItem:
+) -> PantryOut:
     current = _item(session, household, item_id)
-    return SqlPantryRepository(session).update(current.model_copy(update=body.model_dump()))
+    updated = SqlPantryRepository(session).update(current.model_copy(update=body.model_dump()))
+    return _out(session, updated)
 
 
 @router.delete("/pantry/{item_id}", status_code=status.HTTP_204_NO_CONTENT)

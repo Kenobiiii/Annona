@@ -1,0 +1,4082 @@
+{
+  "components": {
+    "schemas": {
+      "ActivityLevel": {
+        "description": "Physical activity level categories for adults.\n\nThe four categories of the National Academies' *Dietary Reference Intakes for Energy* (2023),\nwhich EFSA (2013) also uses with almost the same values. Factors live in\n:mod:`annona_core.nutrition.settings`; :mod:`annona_core.nutrition.activity_quiz` helps a user\npick one.",
+        "enum": [
+          "inactive",
+          "low_active",
+          "active",
+          "very_active"
+        ],
+        "title": "ActivityLevel",
+        "type": "string"
+      },
+      "Allergen": {
+        "description": "The 14 allergens that must be declared in the EU (Regulation (EU) No 1169/2011, Annex II).",
+        "enum": [
+          "gluten",
+          "crustaceans",
+          "eggs",
+          "fish",
+          "peanuts",
+          "soybeans",
+          "milk",
+          "nuts",
+          "celery",
+          "mustard",
+          "sesame",
+          "sulphites",
+          "lupin",
+          "molluscs"
+        ],
+        "title": "Allergen",
+        "type": "string"
+      },
+      "AllergenNote": {
+        "properties": {
+          "member": {
+            "title": "Member",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "member",
+          "reasons"
+        ],
+        "title": "AllergenNote",
+        "type": "object"
+      },
+      "Category": {
+        "description": "Coarse product category. Finer grouping lives in ``Product.type`` (free text).",
+        "enum": [
+          "fruit",
+          "vegetables",
+          "grains",
+          "legumes",
+          "dairy",
+          "eggs",
+          "meat",
+          "fish",
+          "oils_fats",
+          "nuts_seeds",
+          "bakery",
+          "beverages",
+          "condiments",
+          "prepared",
+          "other"
+        ],
+        "title": "Category",
+        "type": "string"
+      },
+      "CategorySource": {
+        "description": "Who set a product's category. See :data:`CATEGORY_SOURCE_PRIORITY`.",
+        "enum": [
+          "manual",
+          "rule",
+          "llm"
+        ],
+        "title": "CategorySource",
+        "type": "string"
+      },
+      "DailyTargets": {
+        "properties": {
+          "bmr_kcal": {
+            "title": "Bmr Kcal",
+            "type": "string"
+          },
+          "carbohydrates_g": {
+            "title": "Carbohydrates G",
+            "type": "string"
+          },
+          "energy_kcal": {
+            "title": "Energy Kcal",
+            "type": "string"
+          },
+          "energy_kcal_max": {
+            "title": "Energy Kcal Max",
+            "type": "string"
+          },
+          "energy_kcal_min": {
+            "title": "Energy Kcal Min",
+            "type": "string"
+          },
+          "fat_g": {
+            "title": "Fat G",
+            "type": "string"
+          },
+          "fat_g_max": {
+            "title": "Fat G Max",
+            "type": "string"
+          },
+          "fat_g_min": {
+            "title": "Fat G Min",
+            "type": "string"
+          },
+          "protein_g": {
+            "title": "Protein G",
+            "type": "string"
+          },
+          "tee_kcal": {
+            "title": "Tee Kcal",
+            "type": "string"
+          },
+          "warnings": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/TargetWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "bmr_kcal",
+          "tee_kcal",
+          "energy_kcal",
+          "energy_kcal_min",
+          "energy_kcal_max",
+          "protein_g",
+          "fat_g",
+          "fat_g_min",
+          "fat_g_max",
+          "carbohydrates_g"
+        ],
+        "title": "DailyTargets",
+        "type": "object"
+      },
+      "DataWarning": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "issue": {
+            "title": "Issue",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "issue",
+          "detail"
+        ],
+        "title": "DataWarning",
+        "type": "object"
+      },
+      "Diet": {
+        "enum": [
+          "omnivore",
+          "pescatarian",
+          "vegetarian",
+          "vegan"
+        ],
+        "title": "Diet",
+        "type": "string"
+      },
+      "Equipment": {
+        "additionalProperties": false,
+        "description": "The household kitchen. Cooking times are adapted with the calibration, not by hob model.",
+        "properties": {
+          "air_fryer": {
+            "default": false,
+            "title": "Air Fryer",
+            "type": "boolean"
+          },
+          "burners": {
+            "default": 2,
+            "maximum": 12.0,
+            "minimum": 0.0,
+            "title": "Burners",
+            "type": "integer"
+          },
+          "calibration_boil_1l_minutes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Boil 1L Minutes"
+          },
+          "calibration_level": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Level"
+          },
+          "hob_type": {
+            "$ref": "#/components/schemas/HobType",
+            "default": "induction"
+          },
+          "household_id": {
+            "title": "Household Id",
+            "type": "integer"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "microwave": {
+            "default": false,
+            "title": "Microwave",
+            "type": "boolean"
+          },
+          "oven": {
+            "default": false,
+            "title": "Oven",
+            "type": "boolean"
+          },
+          "power_levels": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "max level on the dial",
+            "title": "Power Levels"
+          }
+        },
+        "required": [
+          "household_id"
+        ],
+        "title": "Equipment",
+        "type": "object"
+      },
+      "EquipmentIn": {
+        "properties": {
+          "air_fryer": {
+            "default": false,
+            "title": "Air Fryer",
+            "type": "boolean"
+          },
+          "burners": {
+            "default": 2,
+            "maximum": 12.0,
+            "minimum": 0.0,
+            "title": "Burners",
+            "type": "integer"
+          },
+          "calibration_boil_1l_minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Boil 1L Minutes"
+          },
+          "calibration_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Level"
+          },
+          "hob_type": {
+            "$ref": "#/components/schemas/HobType",
+            "default": "ceramic"
+          },
+          "microwave": {
+            "default": false,
+            "title": "Microwave",
+            "type": "boolean"
+          },
+          "oven": {
+            "default": false,
+            "title": "Oven",
+            "type": "boolean"
+          },
+          "power_levels": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Power Levels"
+          }
+        },
+        "title": "EquipmentIn",
+        "type": "object"
+      },
+      "Goal": {
+        "enum": [
+          "cut",
+          "maintain",
+          "bulk"
+        ],
+        "title": "Goal",
+        "type": "string"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HobType": {
+        "enum": [
+          "induction",
+          "ceramic",
+          "electric_coil",
+          "gas",
+          "none"
+        ],
+        "title": "HobType",
+        "type": "string"
+      },
+      "Household": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "default": "EUR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "weekly_budget_cents": {
+            "minimum": 0.0,
+            "title": "Weekly Budget Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "weekly_budget_cents"
+        ],
+        "title": "Household",
+        "type": "object"
+      },
+      "HouseholdIn": {
+        "properties": {
+          "currency": {
+            "default": "EUR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "weekly_budget_cents": {
+            "minimum": 0.0,
+            "title": "Weekly Budget Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "weekly_budget_cents"
+        ],
+        "title": "HouseholdIn",
+        "type": "object"
+      },
+      "Ingredient": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "amount",
+          "unit"
+        ],
+        "title": "Ingredient",
+        "type": "object"
+      },
+      "JobAccepted": {
+        "properties": {
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "status_url": {
+            "title": "Status Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "status_url"
+        ],
+        "title": "JobAccepted",
+        "type": "object"
+      },
+      "JobOut": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "result",
+          "error"
+        ],
+        "title": "JobOut",
+        "type": "object"
+      },
+      "Line": {
+        "description": "One product in the result.",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "string"
+          },
+          "basis_unit": {
+            "title": "Basis Unit",
+            "type": "string"
+          },
+          "cost_cents": {
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "estimated": {
+            "default": false,
+            "title": "Estimated",
+            "type": "boolean"
+          },
+          "kcal": {
+            "title": "Kcal",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "not_for": {
+            "items": {
+              "$ref": "#/components/schemas/AllergenNote"
+            },
+            "title": "Not For",
+            "type": "array"
+          },
+          "pack_amount": {
+            "title": "Pack Amount",
+            "type": "string"
+          },
+          "pack_basis": {
+            "title": "Pack Basis",
+            "type": "string"
+          },
+          "pack_unit": {
+            "title": "Pack Unit",
+            "type": "string"
+          },
+          "packs_to_buy": {
+            "title": "Packs To Buy",
+            "type": "integer"
+          },
+          "price_cents": {
+            "title": "Price Cents",
+            "type": "integer"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "used_from_pantry": {
+            "title": "Used From Pantry",
+            "type": "string"
+          },
+          "used_total": {
+            "title": "Used Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "packs_to_buy",
+          "cost_cents",
+          "pack_amount",
+          "pack_unit",
+          "used_from_pantry",
+          "used_total",
+          "pack_basis",
+          "price_cents",
+          "available",
+          "basis_unit",
+          "kcal"
+        ],
+        "title": "Line",
+        "type": "object"
+      },
+      "LlmSettingsOut": {
+        "properties": {
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelStatus"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "spent_usd": {
+            "title": "Spent Usd",
+            "type": "string"
+          },
+          "thinking": {
+            "title": "Thinking",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "models",
+          "thinking",
+          "spent_usd"
+        ],
+        "title": "LlmSettingsOut",
+        "type": "object"
+      },
+      "MealOut": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "needs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Needs",
+            "type": "array"
+          },
+          "portions": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/Ingredient"
+              },
+              "type": "array"
+            },
+            "title": "Portions",
+            "type": "object"
+          },
+          "slot": {
+            "$ref": "#/components/schemas/MealSlot"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "slot",
+          "title",
+          "steps",
+          "needs",
+          "portions"
+        ],
+        "title": "MealOut",
+        "type": "object"
+      },
+      "MealPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "household_id": {
+            "title": "Household Id",
+            "type": "integer"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlanStatus",
+            "default": "draft"
+          },
+          "week_start": {
+            "format": "date",
+            "title": "Week Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "household_id",
+          "week_start"
+        ],
+        "title": "MealPlan",
+        "type": "object"
+      },
+      "MealSlot": {
+        "enum": [
+          "breakfast",
+          "lunch",
+          "dinner",
+          "snack"
+        ],
+        "title": "MealSlot",
+        "type": "string"
+      },
+      "ModelStatus": {
+        "properties": {
+          "key_configured": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Configured"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "tier": {
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier",
+          "model",
+          "provider",
+          "key_configured"
+        ],
+        "title": "ModelStatus",
+        "type": "object"
+      },
+      "NutritionFacts": {
+        "additionalProperties": false,
+        "description": "Nutrient amounts per 100 g (``basis=g``) or per 100 ml (``basis=ml``).",
+        "properties": {
+          "basis": {
+            "$ref": "#/components/schemas/Unit",
+            "default": "g"
+          },
+          "carbohydrates_g": {
+            "title": "Carbohydrates G",
+            "type": "string"
+          },
+          "energy_kcal": {
+            "title": "Energy Kcal",
+            "type": "string"
+          },
+          "fat_g": {
+            "title": "Fat G",
+            "type": "string"
+          },
+          "fiber_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiber G"
+          },
+          "protein_g": {
+            "title": "Protein G",
+            "type": "string"
+          },
+          "salt_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salt G"
+          },
+          "saturated_fat_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saturated Fat G"
+          },
+          "source": {
+            "$ref": "#/components/schemas/NutritionSource"
+          },
+          "source_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "e.g. 'usda-fdc:173944'",
+            "title": "Source Ref"
+          },
+          "sugars_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sugars G"
+          }
+        },
+        "required": [
+          "energy_kcal",
+          "protein_g",
+          "fat_g",
+          "carbohydrates_g",
+          "source"
+        ],
+        "title": "NutritionFacts",
+        "type": "object"
+      },
+      "NutritionIn": {
+        "properties": {
+          "basis": {
+            "$ref": "#/components/schemas/Unit",
+            "default": "g"
+          },
+          "carbohydrates_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Carbohydrates G"
+          },
+          "energy_kcal": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Energy Kcal"
+          },
+          "fat_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Fat G"
+          },
+          "fiber_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiber G"
+          },
+          "protein_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Protein G"
+          },
+          "salt_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salt G"
+          },
+          "saturated_fat_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saturated Fat G"
+          },
+          "sugars_g": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sugars G"
+          }
+        },
+        "required": [
+          "energy_kcal",
+          "protein_g",
+          "fat_g",
+          "carbohydrates_g"
+        ],
+        "title": "NutritionIn",
+        "type": "object"
+      },
+      "NutritionSource": {
+        "description": "Where nutrition values (or allergens) come from. See :data:`NUTRITION_SOURCE_PRIORITY`.",
+        "enum": [
+          "manual",
+          "label_scan",
+          "off",
+          "llm_estimate",
+          "sample"
+        ],
+        "title": "NutritionSource",
+        "type": "string"
+      },
+      "OptimiseIn": {
+        "properties": {
+          "budget_cents": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Cents"
+          },
+          "health_limits": {
+            "default": false,
+            "title": "Health Limits",
+            "type": "boolean"
+          },
+          "schedule": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScheduleIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          },
+          "variety": {
+            "default": "basic",
+            "enum": [
+              "basic",
+              "balanced",
+              "high"
+            ],
+            "title": "Variety",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_id"
+        ],
+        "title": "OptimiseIn",
+        "type": "object"
+      },
+      "OptimiseOut": {
+        "properties": {
+          "budget_cents": {
+            "title": "Budget Cents",
+            "type": "integer"
+          },
+          "result": {
+            "$ref": "#/components/schemas/Result"
+          }
+        },
+        "required": [
+          "budget_cents",
+          "result"
+        ],
+        "title": "OptimiseOut",
+        "type": "object"
+      },
+      "Page_PantryOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PantryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "size",
+          "total"
+        ],
+        "title": "Page[PantryOut]",
+        "type": "object"
+      },
+      "Page_ProductOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "size",
+          "total"
+        ],
+        "title": "Page[ProductOut]",
+        "type": "object"
+      },
+      "PantryIn": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          }
+        },
+        "required": [
+          "product_id",
+          "amount",
+          "unit"
+        ],
+        "title": "PantryIn",
+        "type": "object"
+      },
+      "PantryOut": {
+        "additionalProperties": false,
+        "description": "A pantry item with the product's name and category, so clients can group and label it.",
+        "properties": {
+          "added_at": {
+            "format": "date-time",
+            "title": "Added At",
+            "type": "string"
+          },
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "household_id": {
+            "title": "Household Id",
+            "type": "integer"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          }
+        },
+        "required": [
+          "household_id",
+          "product_id",
+          "amount",
+          "unit",
+          "name",
+          "category"
+        ],
+        "title": "PantryOut",
+        "type": "object"
+      },
+      "PlanIn": {
+        "properties": {
+          "budget_cents": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Cents"
+          },
+          "health_limits": {
+            "default": false,
+            "title": "Health Limits",
+            "type": "boolean"
+          },
+          "regenerate": {
+            "default": false,
+            "title": "Regenerate",
+            "type": "boolean"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/ScheduleIn"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          },
+          "variety": {
+            "default": "basic",
+            "enum": [
+              "basic",
+              "balanced",
+              "high"
+            ],
+            "title": "Variety",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_id",
+          "schedule"
+        ],
+        "title": "PlanIn",
+        "type": "object"
+      },
+      "PlanOut": {
+        "properties": {
+          "meals": {
+            "items": {
+              "$ref": "#/components/schemas/MealOut"
+            },
+            "title": "Meals",
+            "type": "array"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/MealPlan"
+          }
+        },
+        "required": [
+          "plan",
+          "meals"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
+      "PlanStatus": {
+        "enum": [
+          "draft",
+          "active",
+          "archived"
+        ],
+        "title": "PlanStatus",
+        "type": "string"
+      },
+      "Product": {
+        "additionalProperties": false,
+        "description": "Something you can buy. Store products carry ``store_id`` + ``store_sku``; generic foods\n(e.g. sample data) have neither.",
+        "properties": {
+          "allergens": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Allergen"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None = unknown; [] = known to contain none of the EU 14",
+            "title": "Allergens"
+          },
+          "allergens_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NutritionSource"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "who set the allergens; same priority as nutrition sources"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category",
+            "default": "other"
+          },
+          "category_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CategorySource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "density_g_per_ml": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Density G Per Ml"
+          },
+          "ean": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{8,14}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "barcode (EAN/UPC/GTIN)",
+            "title": "Ean"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "nutrition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NutritionFacts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "package_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Amount"
+          },
+          "package_unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Unit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "provider id",
+            "title": "Store Id"
+          },
+          "store_sku": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Sku"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "finer grouping, e.g. 'rice'",
+            "title": "Type"
+          },
+          "unit_weight_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Weight G"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "Product",
+        "type": "object"
+      },
+      "ProductOut": {
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "latest_price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Price Cents"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "unit_price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price Cents"
+          },
+          "unit_price_per": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price Per"
+          }
+        },
+        "required": [
+          "product",
+          "latest_price_cents",
+          "currency",
+          "unit_price_cents",
+          "unit_price_per"
+        ],
+        "title": "ProductOut",
+        "type": "object"
+      },
+      "ProductPatch": {
+        "description": "Only the fields sent are changed. Manual data is never overwritten by automatic sources.",
+        "properties": {
+          "allergens": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Allergen"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allergens"
+          },
+          "allergens_unknown": {
+            "default": false,
+            "title": "Allergens Unknown",
+            "type": "boolean"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "density_g_per_ml": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Density G Per Ml"
+          },
+          "nutrition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NutritionIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "unit_weight_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Weight G"
+          }
+        },
+        "title": "ProductPatch",
+        "type": "object"
+      },
+      "ProfileIn": {
+        "properties": {
+          "activity": {
+            "$ref": "#/components/schemas/ActivityLevel"
+          },
+          "allergies": {
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            },
+            "title": "Allergies",
+            "type": "array"
+          },
+          "allergies_confirmed": {
+            "default": false,
+            "title": "Allergies Confirmed",
+            "type": "boolean"
+          },
+          "birth_date": {
+            "format": "date",
+            "title": "Birth Date",
+            "type": "string"
+          },
+          "diet": {
+            "$ref": "#/components/schemas/Diet",
+            "default": "omnivore"
+          },
+          "food_preferences": {
+            "additionalProperties": {
+              "enum": [
+                "avoid",
+                "less"
+              ],
+              "type": "string"
+            },
+            "title": "Food Preferences",
+            "type": "object"
+          },
+          "goal": {
+            "$ref": "#/components/schemas/Goal",
+            "default": "maintain"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Height Cm"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex"
+          },
+          "weekly_servings": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "meat",
+                "fish",
+                "eggs"
+              ]
+            },
+            "title": "Weekly Servings",
+            "type": "object"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "name",
+          "sex",
+          "birth_date",
+          "height_cm",
+          "weight_kg",
+          "activity"
+        ],
+        "title": "ProfileIn",
+        "type": "object"
+      },
+      "ProfileOut": {
+        "properties": {
+          "allergy_notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allergy Notice"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile"
+          },
+          "targets": {
+            "$ref": "#/components/schemas/DailyTargets"
+          }
+        },
+        "required": [
+          "profile",
+          "targets",
+          "allergy_notice"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "Result": {
+        "properties": {
+          "currency": {
+            "default": "EUR",
+            "title": "Currency",
+            "type": "string"
+          },
+          "daily_average": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Totals"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/Line"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "period_totals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Totals"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "shortfalls": {
+            "items": {
+              "$ref": "#/components/schemas/Shortfall"
+            },
+            "title": "Shortfalls",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "total_cost_cents": {
+            "default": 0,
+            "title": "Total Cost Cents",
+            "type": "integer"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/DataWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "Result",
+        "type": "object"
+      },
+      "ScheduleIn": {
+        "description": "Which meals to plan. weekday 0 = Monday.",
+        "properties": {
+          "skip": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/components/schemas/MealSlot"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Skip",
+            "type": "array"
+          },
+          "skip_slots": {
+            "items": {
+              "$ref": "#/components/schemas/MealSlot"
+            },
+            "title": "Skip Slots",
+            "type": "array"
+          },
+          "week_start": {
+            "format": "date",
+            "title": "Week Start",
+            "type": "string"
+          },
+          "weekdays": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Weekdays",
+            "type": "array"
+          }
+        },
+        "required": [
+          "week_start"
+        ],
+        "title": "ScheduleIn",
+        "type": "object"
+      },
+      "Sex": {
+        "description": "Biological sex, used only by the BMR formula (Mifflin-St Jeor).",
+        "enum": [
+          "female",
+          "male"
+        ],
+        "title": "Sex",
+        "type": "string"
+      },
+      "ShoppingItemOut": {
+        "properties": {
+          "checked": {
+            "title": "Checked",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "packs": {
+            "title": "Packs",
+            "type": "integer"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit_price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price Cents"
+          }
+        },
+        "required": [
+          "id",
+          "product_id",
+          "name",
+          "packs",
+          "unit_price_cents",
+          "checked"
+        ],
+        "title": "ShoppingItemOut",
+        "type": "object"
+      },
+      "ShoppingItemPatch": {
+        "properties": {
+          "checked": {
+            "title": "Checked",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "checked"
+        ],
+        "title": "ShoppingItemPatch",
+        "type": "object"
+      },
+      "ShoppingListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ShoppingItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "store_id",
+          "total_cents",
+          "items"
+        ],
+        "title": "ShoppingListOut",
+        "type": "object"
+      },
+      "Shortfall": {
+        "description": "A constraint that cannot be met, and by how much.",
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "constraint": {
+            "title": "Constraint",
+            "type": "string"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "constraint",
+          "amount",
+          "unit",
+          "detail"
+        ],
+        "title": "Shortfall",
+        "type": "object"
+      },
+      "StoreOut": {
+        "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attribution"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "country",
+          "currency",
+          "opt_in",
+          "notice",
+          "attribution"
+        ],
+        "title": "StoreOut",
+        "type": "object"
+      },
+      "TargetWarning": {
+        "description": "Machine-readable warnings; the app shows a translated message for each.",
+        "enum": [
+          "minor",
+          "age_outside_formula_range",
+          "raised_to_bmr_floor",
+          "carbs_below_reference",
+          "carbs_above_reference",
+          "protein_and_fat_exceed_energy",
+          "allergies_not_confirmed"
+        ],
+        "title": "TargetWarning",
+        "type": "string"
+      },
+      "Totals": {
+        "properties": {
+          "carbohydrates_g": {
+            "title": "Carbohydrates G",
+            "type": "string"
+          },
+          "energy_kcal": {
+            "title": "Energy Kcal",
+            "type": "string"
+          },
+          "fat_g": {
+            "title": "Fat G",
+            "type": "string"
+          },
+          "fruit_veg_g": {
+            "title": "Fruit Veg G",
+            "type": "string"
+          },
+          "protein_g": {
+            "title": "Protein G",
+            "type": "string"
+          },
+          "salt_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salt G"
+          },
+          "saturated_fat_g": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saturated Fat G"
+          }
+        },
+        "required": [
+          "energy_kcal",
+          "protein_g",
+          "fat_g",
+          "carbohydrates_g",
+          "fruit_veg_g"
+        ],
+        "title": "Totals",
+        "type": "object"
+      },
+      "Unit": {
+        "description": "Canonical storage unit.",
+        "enum": [
+          "g",
+          "ml",
+          "unit"
+        ],
+        "title": "Unit",
+        "type": "string"
+      },
+      "UsageRow": {
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "cost_usd": {
+            "title": "Cost Usd",
+            "type": "string"
+          },
+          "input_tokens": {
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "output_tokens": {
+            "title": "Output Tokens",
+            "type": "integer"
+          },
+          "task": {
+            "title": "Task",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task",
+          "model",
+          "calls",
+          "input_tokens",
+          "output_tokens",
+          "cost_usd"
+        ],
+        "title": "UsageRow",
+        "type": "object"
+      },
+      "UserProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "activity": {
+            "$ref": "#/components/schemas/ActivityLevel"
+          },
+          "allergies": {
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            },
+            "title": "Allergies",
+            "type": "array"
+          },
+          "allergies_confirmed": {
+            "default": false,
+            "description": "True once the user explicitly answered the allergy question (an empty list then really means 'no allergies')",
+            "title": "Allergies Confirmed",
+            "type": "boolean"
+          },
+          "birth_date": {
+            "format": "date",
+            "title": "Birth Date",
+            "type": "string"
+          },
+          "diet": {
+            "$ref": "#/components/schemas/Diet",
+            "default": "omnivore"
+          },
+          "food_preferences": {
+            "additionalProperties": {
+              "enum": [
+                "avoid",
+                "less"
+              ],
+              "type": "string"
+            },
+            "description": "product type -> 'avoid' (never bought for them) or 'less' (small amounts)",
+            "title": "Food Preferences",
+            "type": "object"
+          },
+          "goal": {
+            "$ref": "#/components/schemas/Goal",
+            "default": "maintain"
+          },
+          "height_cm": {
+            "title": "Height Cm",
+            "type": "string"
+          },
+          "household_id": {
+            "title": "Household Id",
+            "type": "integer"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex"
+          },
+          "weekly_servings": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "minimum servings per week, e.g. {'meat': 3, 'fish': 2}",
+            "propertyNames": {
+              "enum": [
+                "meat",
+                "fish",
+                "eggs"
+              ]
+            },
+            "title": "Weekly Servings",
+            "type": "object"
+          },
+          "weight_kg": {
+            "title": "Weight Kg",
+            "type": "string"
+          }
+        },
+        "required": [
+          "household_id",
+          "name",
+          "sex",
+          "birth_date",
+          "height_cm",
+          "weight_kg",
+          "activity"
+        ],
+        "title": "UserProfile",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Self-hosted API of **Annona**, the open-source weekly meal planner.\n\nAuthenticate with **Authorize** using the server's `ANNONA_API_TOKEN`. Slow operations (plan\ngeneration, price refresh) return a job: poll `GET /api/v1/jobs/{id}`.\nNutrition is informational, not medical advice.",
+    "title": "Annona API",
+    "version": "0.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/equipment": {
+      "get": {
+        "operationId": "get_equipment_api_v1_equipment_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Equipment"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Equipment Api V1 Equipment Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Equipment",
+        "tags": [
+          "household"
+        ]
+      },
+      "put": {
+        "operationId": "put_equipment_api_v1_equipment_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Equipment"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Equipment",
+        "tags": [
+          "household"
+        ]
+      }
+    },
+    "/api/v1/household": {
+      "get": {
+        "operationId": "get_household_api_v1_household_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Household"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Household",
+        "tags": [
+          "household"
+        ]
+      },
+      "put": {
+        "operationId": "put_household_api_v1_household_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HouseholdIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Household"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Household",
+        "tags": [
+          "household"
+        ]
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "operationId": "job_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/llm/usage": {
+      "get": {
+        "description": "AI calls and known cost per task and model (cache hits excluded).",
+        "operationId": "llm_usage_api_v1_llm_usage_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UsageRow"
+                  },
+                  "title": "Response Llm Usage Api V1 Llm Usage Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Llm Usage",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/pantry": {
+      "get": {
+        "operationId": "list_pantry_api_v1_pantry_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_PantryOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Pantry",
+        "tags": [
+          "pantry"
+        ]
+      },
+      "post": {
+        "operationId": "add_pantry_api_v1_pantry_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PantryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Pantry",
+        "tags": [
+          "pantry"
+        ]
+      }
+    },
+    "/api/v1/pantry/{item_id}": {
+      "delete": {
+        "operationId": "delete_pantry_api_v1_pantry__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Pantry",
+        "tags": [
+          "pantry"
+        ]
+      },
+      "put": {
+        "operationId": "update_pantry_api_v1_pantry__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PantryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Pantry",
+        "tags": [
+          "pantry"
+        ]
+      }
+    },
+    "/api/v1/plans": {
+      "get": {
+        "description": "The active plan of the week starting on ``week`` (a Monday), or null.",
+        "operationId": "plan_for_week_api_v1_plans_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Week",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PlanOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Plan For Week Api V1 Plans Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan For Week",
+        "tags": [
+          "plans"
+        ]
+      },
+      "post": {
+        "description": "Optimise the shop and draft the week with the AI (25-90 s): poll the returned job.",
+        "operationId": "generate_plan_api_v1_plans_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generate Plan",
+        "tags": [
+          "plans"
+        ]
+      }
+    },
+    "/api/v1/plans/{plan_id}": {
+      "get": {
+        "operationId": "get_plan_api_v1_plans__plan_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Plan",
+        "tags": [
+          "plans"
+        ]
+      }
+    },
+    "/api/v1/plans/{plan_id}/shopping-list": {
+      "get": {
+        "operationId": "shopping_list_api_v1_plans__plan_id__shopping_list_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShoppingListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Shopping List",
+        "tags": [
+          "plans"
+        ]
+      }
+    },
+    "/api/v1/prices/refresh": {
+      "post": {
+        "description": "Refresh prices now with the providers in ANNONA_REFRESH_PROVIDERS (also runs daily).",
+        "operationId": "refresh_prices_api_v1_prices_refresh_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh Prices",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "operationId": "search_products_api_v1_products_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "store",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Store"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ProductOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Products",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/v1/products/{product_id}": {
+      "get": {
+        "operationId": "get_product_api_v1_products__product_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "title": "Product Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Product",
+        "tags": [
+          "products"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_product_api_v1_products__product_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "title": "Product Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Product",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/v1/profiles": {
+      "get": {
+        "description": "Members with today's daily targets (informational, not medical advice).",
+        "operationId": "list_profiles_api_v1_profiles_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProfileOut"
+                  },
+                  "title": "Response List Profiles Api V1 Profiles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Profiles",
+        "tags": [
+          "household"
+        ]
+      },
+      "post": {
+        "operationId": "create_profile_api_v1_profiles_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Profile",
+        "tags": [
+          "household"
+        ]
+      }
+    },
+    "/api/v1/profiles/{profile_id}": {
+      "delete": {
+        "operationId": "delete_profile_api_v1_profiles__profile_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Profile",
+        "tags": [
+          "household"
+        ]
+      },
+      "get": {
+        "operationId": "get_profile_api_v1_profiles__profile_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Profile",
+        "tags": [
+          "household"
+        ]
+      },
+      "put": {
+        "operationId": "update_profile_api_v1_profiles__profile_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Profile",
+        "tags": [
+          "household"
+        ]
+      }
+    },
+    "/api/v1/settings/llm": {
+      "get": {
+        "description": "Configured AI models and whether their keys are set on the server (read-only).",
+        "operationId": "llm_settings_status_api_v1_settings_llm_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Llm Settings Status",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/shopping-items/{item_id}": {
+      "patch": {
+        "description": "Tick or untick an item of a shopping list.",
+        "operationId": "check_shopping_item_api_v1_shopping_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShoppingItemPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShoppingItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Shopping Item",
+        "tags": [
+          "plans"
+        ]
+      }
+    },
+    "/api/v1/shopping/optimise": {
+      "post": {
+        "description": "Cheapest purchase meeting the household's targets at one store, or why that is impossible.",
+        "operationId": "optimise_shop_api_v1_shopping_optimise_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimiseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimiseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Optimise Shop",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
+    "/api/v1/stores": {
+      "get": {
+        "description": "Installed supermarket providers. Opt-in ones show the notice the user must accept.",
+        "operationId": "stores_api_v1_stores_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StoreOut"
+                  },
+                  "title": "Response Stores Api V1 Stores Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stores",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "description": "Meals planned for a day (default today) in the active plan: the base of the home screen.",
+        "operationId": "today_api_v1_today_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          },
+          {
+            "in": "query",
+            "name": "profile_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Profile Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MealOut"
+                  },
+                  "title": "Response Today Api V1 Today Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Today",
+        "tags": [
+          "plans"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  }
+}

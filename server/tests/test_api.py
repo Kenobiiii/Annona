@@ -168,3 +168,49 @@ def test_stores_and_unknown_job(client):
     ids = {s["id"] for s in client.get("/api/v1/stores", headers=AUTH).json()}
     assert {"open_prices", "mercadona"} <= ids
     assert client.get("/api/v1/jobs/nope", headers=AUTH).status_code == 404
+
+
+def test_pantry_items_carry_name_and_category(client, shop):
+    setup_home(client)
+    rice = client.get("/api/v1/products", params={"q": "rice"}, headers=AUTH).json()["items"][0]
+    pid = rice["product"]["id"]
+    made = client.post(
+        "/api/v1/pantry", json={"product_id": pid, "amount": 500, "unit": "g"}, headers=AUTH
+    ).json()
+    assert (made["name"], made["category"]) == ("rice", "grains")
+    listed = client.get("/api/v1/pantry", headers=AUTH).json()["items"][0]
+    assert (listed["name"], listed["category"]) == ("rice", "grains")
+
+
+def test_shopping_items_can_be_ticked(client, shop):
+    setup_home(client)
+    body = {"store_id": "demo", "schedule": {"week_start": MONDAY.isoformat(), "weekdays": [0, 1]}}
+    job = client.get(
+        client.post("/api/v1/plans", json=body, headers=AUTH).json()["status_url"], headers=AUTH
+    ).json()
+    items = client.get(
+        f"/api/v1/plans/{job['result']['plan_id']}/shopping-list", headers=AUTH
+    ).json()["items"]
+    first = items[0]
+    assert first["checked"] is False
+    ticked = client.patch(
+        f"/api/v1/shopping-items/{first['id']}", json={"checked": True}, headers=AUTH
+    )
+    assert ticked.status_code == 200 and ticked.json()["checked"] is True
+    assert (
+        client.patch(
+            "/api/v1/shopping-items/99999", json={"checked": True}, headers=AUTH
+        ).status_code
+        == 404
+    )
+
+
+def test_llm_settings_never_expose_keys(client, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-super-secret")
+    r = client.get("/api/v1/settings/llm", headers=AUTH)
+    assert r.status_code == 200
+    assert "sk-super-secret" not in r.text
+    data = r.json()
+    assert {m["tier"] for m in data["models"]} == {"small", "large"}
+    assert all(m["key_configured"] is True for m in data["models"] if m["provider"] == "deepseek")
+    assert "spent_usd" in data

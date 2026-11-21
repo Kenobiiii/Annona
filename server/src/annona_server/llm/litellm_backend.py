@@ -87,3 +87,13 @@ def _cached_tokens(usage: Any) -> int | None:
     details = getattr(usage, "prompt_tokens_details", None)
     value = getattr(details, "cached_tokens", None) if details is not None else None
     return int(value) if value is not None else None
+
+
+def key_configured(model: str) -> bool | None:
+    """Whether the environment holds the API key this model's provider needs (None: unknown)."""
+    try:
+        litellm.get_llm_provider(model)  # raises for providers LiteLLM does not know
+        status = litellm.validate_environment(model=model)
+    except Exception:
+        return None
+    return bool(status.get("keys_in_environment"))
