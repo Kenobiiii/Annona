@@ -95,6 +95,12 @@ FastAPI under `/api/v1` with a bearer token; slow operations (plan generation, p
 refresh) are background jobs polled at `/api/v1/jobs/{id}`; a separate scheduler process
 refreshes prices daily. See [self-hosting.md](self-hosting.md) and the live docs at `/docs`.
 
+## Tool registry and MCP
+
+Nine workflow-level tools defined once in `server/annona_server/tools/` and exposed over MCP
+(stdio and streamable HTTP at `/mcp`); the Phase 14 chat agent will reuse the same registry.
+See [mcp.md](mcp.md).
+
 ## Domain model
 
 A `Household` owns the shared things (budget, pantry, kitchen, plans, shopping lists, receipts) and

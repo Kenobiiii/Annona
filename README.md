@@ -3,7 +3,7 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 8 — REST API and Docker).** Nothing usable yet. Follow the project to see it grow.
+> **Status: pre-alpha (Phase 9 — MCP server).** Nothing usable yet. Follow the project to see it grow.
 
 ## Vision
 
@@ -66,6 +66,11 @@ docker compose up -d    # API + docs at http://localhost:8000/docs
 ```
 
 See [docs/self-hosting.md](docs/self-hosting.md).
+
+## Use it from Claude, Gemini and other AI assistants
+
+Annona is an MCP server (`uv run python -m annona_server.mcp_server`, or `/mcp` on the API).
+See [docs/mcp.md](docs/mcp.md).
 
 ## Disclaimers
 
