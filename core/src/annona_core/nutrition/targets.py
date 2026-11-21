@@ -182,10 +182,18 @@ _SUMMED = (
 )
 
 
-def weekly_targets(members: list[DailyTargets], days: int = 7) -> WeeklyTargets:
-    """Weekly targets for one person or a whole household (sum of its members)."""
+def weekly_targets(members: list[DailyTargets], days: int | Decimal = 7) -> WeeklyTargets:
+    """Targets for one person or a whole household (sum of its members) over ``days``.
+
+    ``days`` may be fractional "day-equivalents" when only some meals are planned (see
+    :mod:`annona_core.planner.schedule`); totals are rounded half-up to whole units.
+    """
     if not members:
         raise ValueError("at least one member is required")
-    totals = {name: sum((getattr(m, name) for m in members), Decimal(0)) * days for name in _SUMMED}
+    factor = Decimal(days)
+    totals = {
+        name: _round(sum((getattr(m, name) for m in members), Decimal(0)) * factor)
+        for name in _SUMMED
+    }
     warnings = tuple(dict.fromkeys(w for m in members for w in m.warnings))
     return WeeklyTargets(**totals, warnings=warnings)
