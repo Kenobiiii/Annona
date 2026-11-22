@@ -124,9 +124,8 @@ def main() -> None:
         base, token, "POST", "/api/v1/meals/recipe", {"day": monday, "slot": "lunch"}
     )
     check(status == 200 and recipe["steps"], "a recipe is written for a meal")
-    print(
-        f"\nAll good: {len(week['meals'])} meals, shopping list {shopping['total_cents'] / 100:.2f} EUR."
-    )
+    total = shopping["total_cents"] / 100
+    print(f"\nAll good: {len(week['meals'])} meals, shopping list {total:.2f} EUR.")
 
 
 if __name__ == "__main__":
