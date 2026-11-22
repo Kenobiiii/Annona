@@ -211,6 +211,7 @@ class ShoppingItemRow(SQLModel, table=True):
     packs: int
     unit_price_cents: int | None = None
     checked: bool
+    replaces_product_id: int | None = Field(default=None, foreign_key="product.id")
 
 
 class ReceiptRow(SQLModel, table=True):

@@ -372,6 +372,10 @@ class ShoppingItem(DomainModel):
     packs: int = Field(ge=1)
     unit_price_cents: int | None = Field(default=None, ge=0, description="price per pack, snapshot")
     checked: bool = False
+    replaces_product_id: int | None = Field(
+        default=None,
+        description="set when this product substitutes one the store does not sell",
+    )
 
 
 class Receipt(DomainModel):
