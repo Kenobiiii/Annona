@@ -4,6 +4,19 @@
 from .draft import Appliance, DraftIngredient, DraftMeal, PlanDraft
 from .planner import TASK, ExtraPurchase, PlanOutcome, TopUp, plan_week
 from .prompt import LANGUAGES, build_prompt
+from .recipe import (
+    MealIngredient,
+    RecipeContext,
+    RecipeDraft,
+    RecipeOutcome,
+    RecipeSettings,
+    RenderedRecipe,
+    RenderedStep,
+    generate_recipe,
+    render_recipe,
+    to_method,
+    validate_recipe,
+)
 from .scale import scale_to_energy
 from .schedule import DEFAULT_SLOT_SHARES, MealSchedule, PlannedSlot
 from .topup import make_top_up
@@ -43,6 +56,17 @@ __all__ = [
     "build_prompt",
     "make_top_up",
     "plan_week",
+    "validate_recipe",
+    "to_method",
+    "render_recipe",
+    "generate_recipe",
+    "RenderedStep",
+    "RenderedRecipe",
+    "RecipeSettings",
+    "RecipeOutcome",
+    "RecipeDraft",
+    "RecipeContext",
+    "MealIngredient",
     "scale_to_energy",
     "verify",
 ]
