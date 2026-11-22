@@ -54,3 +54,30 @@ def test_recipe_step_limits():
     with pytest.raises(ValidationError):
         RecipeStep(text="x", boil_ml=10)
     assert RecipeStep(text="Mezcla").appliance == Appliance.NONE
+
+
+def test_receipt_alias_round_trip_and_uniqueness(session, household):
+    import sqlalchemy.exc
+
+    from annona_core.domain import Product, ReceiptAlias
+
+    product = r.SqlProductRepository(session).add(Product(name="Arroz"))
+    aliases = r.ReceiptAliasRepository(session)
+    saved = aliases.add(
+        ReceiptAlias(
+            household_id=household.id,
+            store_id="shop",
+            normalized_text="ARROZ REDONDO",
+            product_id=product.id,
+        )
+    )
+    assert aliases.get(saved.id) == saved
+    with pytest.raises(sqlalchemy.exc.IntegrityError):  # one alias per (store, text)
+        aliases.add(
+            ReceiptAlias(
+                household_id=household.id,
+                store_id="shop",
+                normalized_text="ARROZ REDONDO",
+                product_id=product.id,
+            )
+        )

@@ -23,6 +23,7 @@ from annona_core.domain import (
     Price,
     Product,
     Receipt,
+    ReceiptAlias,
     ReceiptLine,
     Recipe,
     RecipeIngredient,
@@ -112,6 +113,7 @@ ShoppingListRepository = _repo(ShoppingList, t.ShoppingListRow)
 ShoppingItemRepository = _repo(ShoppingItem, t.ShoppingItemRow)
 ReceiptRepository = _repo(Receipt, t.ReceiptRow)
 ReceiptLineRepository = _repo(ReceiptLine, t.ReceiptLineRow)
+ReceiptAliasRepository = _repo(ReceiptAlias, t.ReceiptAliasRow)
 
 
 _NUTRITION_FIELDS = (

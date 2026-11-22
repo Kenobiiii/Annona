@@ -13,6 +13,7 @@ dependencies = [
     "litellm==1.108.0",
     "mcp==2.3.0",
     "python-dotenv>=1.1",
+    "python-multipart>=0.0.20",
     "sqlmodel>=0.0.50",
     "uvicorn==0.54.0",
 ]

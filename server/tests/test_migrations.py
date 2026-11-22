@@ -26,6 +26,7 @@ EXPECTED_TABLES = {
     "llm_cache",
     "llm_usage",
     "job",
+    "receipt_alias",
 }
 
 

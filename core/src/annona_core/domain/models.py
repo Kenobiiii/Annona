@@ -390,6 +390,21 @@ class Receipt(DomainModel):
     created_at: AwareDatetime = Field(default_factory=utc_now)
 
 
+class ReceiptAlias(DomainModel):
+    """What a receipt printed for a product, learned from a confirmation (per store).
+
+    Stores print the same abbreviated name every time, so a confirmed match is remembered and
+    reused with full confidence next time.
+    """
+
+    id: int | None = None
+    household_id: int
+    store_id: str | None = Field(default=None, max_length=50)
+    normalized_text: str = Field(min_length=1, max_length=200)
+    product_id: int
+    created_at: AwareDatetime = Field(default_factory=utc_now)
+
+
 class ReceiptLine(DomainModel):
     id: int | None = None
     receipt_id: int
