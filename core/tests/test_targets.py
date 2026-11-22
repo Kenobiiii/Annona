@@ -208,3 +208,20 @@ def test_invariants(profile):
     macro_kcal = t.protein_g * 4 + t.fat_g * 9 + t.carbohydrates_g * 4
     if W.PROTEIN_AND_FAT_EXCEED_ENERGY not in t.warnings:
         assert abs(macro_kcal - t.energy_kcal) <= 9
+
+
+def test_own_protein_target_replaces_the_goal_default():
+    # 85 kg on a cut: default 2.0 g/kg = 170 g; own 1.5 g/kg = 127.5 -> 128 g (half-up).
+    profile = person("male", date(2005, 1, 1), 185, 85, "active", "cut")
+    assert daily_targets(profile, TODAY).protein_g == Decimal(170)
+    own = profile.model_copy(update={"protein_g_per_kg": Decimal("1.5")})
+    t = daily_targets(own, TODAY)
+    assert t.protein_g == Decimal(128)
+    assert t.energy_kcal == daily_targets(profile, TODAY).energy_kcal  # energy is unaffected
+
+
+@pytest.mark.parametrize("value", ["0.5", "0.79", "3.1", "10"])
+def test_own_protein_target_must_stay_in_a_sensible_range(value):
+    data = person("male", date(2005, 1, 1), 185, 85, "active", "cut").model_dump()
+    with pytest.raises(ValueError):
+        UserProfile.model_validate({**data, "protein_g_per_kg": value})

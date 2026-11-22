@@ -150,6 +150,37 @@ describe('profile editor', () => {
     await waitFor(() => expect(router.back).toHaveBeenCalled());
   });
 
+  it('saves an own protein target, or none when left empty', async () => {
+    params.mockReturnValue({ id: 'new' });
+    const api = fakeApi({ 'POST /api/v1/profiles': profile('Ana', 2) });
+    await renderConnected(<ProfileScreen />, api.fetchImpl);
+    await fireEvent.changeText(await screen.findByLabelText('Nombre'), 'Ana');
+    await fireEvent.changeText(screen.getByLabelText('Fecha de nacimiento (AAAA-MM-DD)'), '1990-05-01');
+    await fireEvent.changeText(screen.getByLabelText('Altura (cm)'), '165');
+    await fireEvent.changeText(screen.getByLabelText('Peso (kg)'), '60');
+    await fireEvent.changeText(screen.getByLabelText('Proteína (g por kg de peso al día)'), '5');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar persona' }));
+    expect(await screen.findByText('Escribe un valor entre 0,8 y 3, o déjalo vacío.')).toBeTruthy();
+    expect(api.called('POST /api/v1/profiles')).toHaveLength(0);
+    await fireEvent.changeText(screen.getByLabelText('Proteína (g por kg de peso al día)'), '1,6');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar persona' }));
+    await waitFor(() => expect(api.called('POST /api/v1/profiles')).toHaveLength(1));
+    expect(api.called('POST /api/v1/profiles')[0].body).toMatchObject({ protein_g_per_kg: 1.6 });
+  });
+
+  it('sends null when the protein field is empty', async () => {
+    params.mockReturnValue({ id: 'new' });
+    const api = fakeApi({ 'POST /api/v1/profiles': profile('Ana', 2) });
+    await renderConnected(<ProfileScreen />, api.fetchImpl);
+    await fireEvent.changeText(await screen.findByLabelText('Nombre'), 'Ana');
+    await fireEvent.changeText(screen.getByLabelText('Fecha de nacimiento (AAAA-MM-DD)'), '1990-05-01');
+    await fireEvent.changeText(screen.getByLabelText('Altura (cm)'), '165');
+    await fireEvent.changeText(screen.getByLabelText('Peso (kg)'), '60');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar persona' }));
+    await waitFor(() => expect(api.called('POST /api/v1/profiles')).toHaveLength(1));
+    expect(api.called('POST /api/v1/profiles')[0].body).toMatchObject({ protein_g_per_kg: null });
+  });
+
   it('shows the server field errors', async () => {
     params.mockReturnValue({ id: 'new' });
     const api = fakeApi({

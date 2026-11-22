@@ -100,6 +100,13 @@ class UserProfile(DomainModel):
         default_factory=dict,
         description="minimum servings per week, e.g. {'meat': 3, 'fish': 2}",
     )
+    protein_g_per_kg: Decimal | None = Field(
+        default=None,
+        ge=Decimal("0.8"),
+        le=Decimal(3),
+        description="protein target in g per kg of body weight; None = the default for the goal "
+        "(0.8 g/kg is the adult reference intake, 3 g/kg the top of what sports research uses)",
+    )
     allergies_confirmed: bool = Field(
         default=False,
         description="True once the user explicitly answered the allergy question "

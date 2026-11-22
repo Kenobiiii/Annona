@@ -8,7 +8,8 @@ Pipeline (defaults and sources in :mod:`annona_core.nutrition.settings`):
 3. Goal adjustment: ``TEE * goal factor`` (cut / maintain / bulk).
 4. Safety floor: the target is never below the person's BMR; if the goal would push it lower it
    is raised to the BMR and a warning is returned.
-5. Protein: ``g/kg * body weight``; fat: a share of energy; carbohydrates: the remaining energy.
+5. Protein: ``g/kg * body weight`` (the person's own g/kg if set, else the goal's default);
+   fat: a share of energy; carbohydrates: the remaining energy.
 
 Values are informational, not medical advice. Results are rounded half-up to whole kcal / grams
 only at the end.
@@ -142,7 +143,8 @@ def daily_targets(
     energy_min = max(energy * (_ONE - settings.energy_tolerance), bmr)
     energy_max = energy * (_ONE + settings.energy_tolerance)
 
-    protein = profile.weight_kg * settings.protein_g_per_kg[profile.goal]
+    per_kg = profile.protein_g_per_kg or settings.protein_g_per_kg[profile.goal]
+    protein = profile.weight_kg * per_kg
     fat = energy * settings.fat_energy_share / KCAL_PER_G_FAT
     carb_energy = energy - protein * KCAL_PER_G_PROTEIN - fat * KCAL_PER_G_FAT
     if carb_energy < 0:

@@ -63,6 +63,7 @@ class ProfileIn(BaseModel):
     allergies_confirmed: bool = False
     food_preferences: dict[str, FoodPreference] = Field(default_factory=dict)
     weekly_servings: dict[ServingGroup, int] = Field(default_factory=dict)
+    protein_g_per_kg: Decimal | None = Field(default=None, ge=Decimal("0.8"), le=Decimal(3))
 
 
 class ProfileOut(BaseModel):

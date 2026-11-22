@@ -1746,6 +1746,22 @@
             "title": "Name",
             "type": "string"
           },
+          "protein_g_per_kg": {
+            "anyOf": [
+              {
+                "maximum": 3.0,
+                "minimum": 0.8,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protein G Per Kg"
+          },
           "sex": {
             "$ref": "#/components/schemas/Sex"
           },
@@ -2295,6 +2311,18 @@
             "minLength": 1,
             "title": "Name",
             "type": "string"
+          },
+          "protein_g_per_kg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "protein target in g per kg of body weight; None = the default for the goal (0.8 g/kg is the adult reference intake, 3 g/kg the top of what sports research uses)",
+            "title": "Protein G Per Kg"
           },
           "sex": {
             "$ref": "#/components/schemas/Sex"

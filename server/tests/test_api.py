@@ -84,6 +84,25 @@ def test_household_setup_and_profiles(client):
     assert client.delete(f"/api/v1/profiles/{pid}", headers=AUTH).status_code == 204
 
 
+def test_own_protein_target_is_saved_and_changes_the_daily_target(client):
+    created = setup_home(client)
+    pid = created["profile"]["id"]
+    assert created["profile"]["protein_g_per_kg"] is None
+    default = float(created["targets"]["protein_g"])
+    r = client.put(
+        f"/api/v1/profiles/{pid}", json=dict(PABLO, protein_g_per_kg="1.2"), headers=AUTH
+    ).json()
+    assert Decimal(r["profile"]["protein_g_per_kg"]) == Decimal("1.2")
+    assert float(r["targets"]["protein_g"]) < default
+    again = client.get("/api/v1/profiles", headers=AUTH).json()[0]
+    assert Decimal(again["profile"]["protein_g_per_kg"]) == Decimal("1.2")
+    bad = client.put(
+        f"/api/v1/profiles/{pid}", json=dict(PABLO, protein_g_per_kg="0.3"), headers=AUTH
+    )
+    assert bad.status_code == 422
+    assert "protein_g_per_kg" in {d["field"] for d in bad.json()["error"]["details"]}
+
+
 def test_validation_errors_list_the_fields(client):
     setup_home(client)
     r = client.post("/api/v1/profiles", json={"name": "X"}, headers=AUTH)

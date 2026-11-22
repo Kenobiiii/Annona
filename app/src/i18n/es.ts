@@ -273,6 +273,10 @@ export const es = {
   'activity.active': 'Activa: algo de deporte varios días',
   'activity.very_active': 'Muy activa: entrenamiento intenso',
   'profile.goal': 'Objetivo',
+  'profile.protein': 'Proteína (g por kg de peso al día)',
+  'profile.protein.hint':
+    'Déjalo vacío para usar el valor automático según tu objetivo. Entre 0,8 y 3. Con más proteína la compra sale más cara.',
+  'profile.invalid.protein': 'Escribe un valor entre 0,8 y 3, o déjalo vacío.',
   'goal.cut': 'Definir',
   'goal.maintain': 'Mantener',
   'goal.bulk': 'Volumen',

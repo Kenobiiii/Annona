@@ -40,6 +40,7 @@ function ProfileForm({ existing }: { existing?: Out }) {
   const [height, setHeight] = useState(p ? String(p.height_cm) : '');
   const [weight, setWeight] = useState(p ? String(p.weight_kg) : '');
   const [activity, setActivity] = useState<Schemas['ActivityLevel']>(p?.activity ?? 'low_active');
+  const [protein, setProtein] = useState(p?.protein_g_per_kg ? String(p.protein_g_per_kg).replace('.', ',') : '');
   const [goal, setGoal] = useState<Schemas['Goal']>(p?.goal ?? 'maintain');
   const [diet, setDiet] = useState<Schemas['Diet']>(p?.diet ?? 'omnivore');
   const [allergies, setAllergies] = useState<Schemas['Allergen'][]>(p?.allergies ?? []);
@@ -60,6 +61,9 @@ function ProfileForm({ existing }: { existing?: Out }) {
     if (!DATE.test(birth.trim())) next.birth_date = t('profile.invalid.date');
     if (h === null) next.height_cm = t('profile.invalid.number');
     if (w === null) next.weight_kg = t('profile.invalid.number');
+    const proteinValue = protein.trim() === '' ? null : parseNumber(protein);
+    if (proteinValue !== null && (proteinValue < 0.8 || proteinValue > 3)) next.protein_g_per_kg = t('profile.invalid.protein');
+    if (protein.trim() !== '' && proteinValue === null) next.protein_g_per_kg = t('profile.invalid.protein');
     const counts: Record<string, number> = {};
     for (const g of SERVINGS) {
       const n = parseNumber(servings[g]);
@@ -80,6 +84,7 @@ function ProfileForm({ existing }: { existing?: Out }) {
           activity,
           goal,
           diet,
+          protein_g_per_kg: proteinValue,
           allergies,
           allergies_confirmed: confirmed,
           food_preferences: prefs,
@@ -128,6 +133,10 @@ function ProfileForm({ existing }: { existing?: Out }) {
           {t('profile.activity.hint')}
         </AppText>
         <Segmented label={t('profile.goal')} value={goal} onChange={setGoal} options={GOALS.map((v) => ({ value: v, label: t(`goal.${v}`) }))} />
+        <TextField label={t('profile.protein')} value={protein} onChangeText={setProtein} error={errors.protein_g_per_kg} keyboardType="decimal-pad" />
+        <AppText variant="caption" muted>
+          {t('profile.protein.hint')}
+        </AppText>
         <Segmented label={t('profile.diet')} value={diet} onChange={setDiet} options={DIETS.map((v) => ({ value: v, label: t(`diet.${v}`) }))} />
       </Card>
       <Card style={{ gap: 12 }}>

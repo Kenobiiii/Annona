@@ -12,7 +12,7 @@ advice.**
 4. **Safety floor** — the target is never below the person's own BMR. If the goal would push it
    lower, it is raised to the BMR and a warning is returned. (The common "1200/1500 kcal" floors
    were not used: no authoritative source could be verified for them.)
-5. **Macros** — protein `g/kg × weight`; fat 30 % of energy; carbohydrates take the rest
+5. **Macros** — protein `g/kg × weight` (the person's own `protein_g_per_kg`, 0.8–3, if set; otherwise the goal's default below); fat 30 % of energy; carbohydrates take the rest
    (4/9/4 kcal per g). Warnings if carbohydrates fall outside 45–60 % of energy.
 6. **Range** — ±5 % around the calorie target (never below the BMR), for the optimiser.
 

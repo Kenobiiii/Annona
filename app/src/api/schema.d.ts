@@ -1027,6 +1027,8 @@ export interface components {
             height_cm: number | string;
             /** Name */
             name: string;
+            /** Protein G Per Kg */
+            protein_g_per_kg?: number | string | null;
             sex: components["schemas"]["Sex"];
             /** Weekly Servings */
             weekly_servings?: {
@@ -1230,6 +1232,11 @@ export interface components {
             id?: number | null;
             /** Name */
             name: string;
+            /**
+             * Protein G Per Kg
+             * @description protein target in g per kg of body weight; None = the default for the goal (0.8 g/kg is the adult reference intake, 3 g/kg the top of what sports research uses)
+             */
+            protein_g_per_kg?: string | null;
             sex: components["schemas"]["Sex"];
             /**
              * Weekly Servings

@@ -62,6 +62,7 @@ class UserProfileRow(SQLModel, table=True):
     allergies_confirmed: bool = False
     food_preferences: dict = Field(default_factory=dict, sa_type=JSON)
     weekly_servings: dict = Field(default_factory=dict, sa_type=JSON)
+    protein_g_per_kg: Decimal | None = dec(nullable=True)
 
 
 class EquipmentRow(SQLModel, table=True):
