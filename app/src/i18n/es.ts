@@ -494,6 +494,20 @@ export const es = {
   'chat.privacy.title': 'El chat envía datos a la IA',
   'chat.privacy.message': 'Para responder, el chat envía al proveedor de IA configurado en tu servidor lo que cada pregunta necesite (por ejemplo tu perfil, tu menú o tu despensa). Nada se cambia sin que lo confirmes.',
   'chat.privacy.ok': 'Entendido',
+
+  'compare.button': 'Comparar tiendas',
+  'compare.title': 'Comparación de tiendas',
+  'compare.store.total': '{store}: {total}',
+  'compare.store.complete': 'Tiene todo lo que necesitas.',
+  'compare.store.missing': 'No tiene: {items}.',
+  'compare.best': 'Lo más barato en una sola tienda: {store} ({total}).',
+  'compare.best.none': 'Ninguna tienda tiene todo lo que necesitas por sí sola.',
+  'compare.split.yes': 'Repartiendo la compra entre {a} y {b} ahorras {saving} (total {total}).',
+  'compare.split.only': 'Hace falta repartir la compra entre {a} y {b} para tenerlo todo (total {total}).',
+  'compare.split.no': 'Repartir entre dos tiendas no ahorra lo bastante como para compensar el viaje.',
+  'compare.split.at': 'En {store} ({total}): {items}',
+  'compare.use': 'Usar {store}',
+  'compare.error': 'No se pudo comparar: {error}',
 } as const;
 
 export type MessageKey = keyof typeof es;

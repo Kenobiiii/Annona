@@ -5,7 +5,7 @@ import { Share } from 'react-native';
 import ShoppingScreen from '@/app/(app)/shopping';
 import * as confirm from '@/components/confirm';
 import { shoppingText } from '@/features/shopping/text';
-import { fakeApi } from '../test-utils/fakeApi';
+import { apiError, fakeApi } from '../test-utils/fakeApi';
 import { plan } from '../test-utils/fixtures';
 import { renderConnected } from '../test-utils/render';
 import { localISODate, mondayOf } from '@/i18n';
@@ -159,5 +159,65 @@ describe('sharing', () => {
       'No disponible en esta tienda:',
       '- Cacahuetes (300 g)',
     ]);
+  });
+});
+
+describe('comparing stores', () => {
+  const COMPARE = 'POST /api/v1/plans/7/shopping-compare';
+  const line = (name: string, packs: number, cost: number) => ({ name, packs, cost_cents: cost, replaces_product_id: null });
+  const comparison = {
+    stores: [
+      { store_id: 'mercadona', total_cents: 1250, complete: true, lines: [], unavailable: [] },
+      { store_id: 'dia', total_cents: 990, complete: false, lines: [], unavailable: ['Cacahuetes'] },
+    ],
+    best_single_store: 'mercadona', best_single_cents: 1250,
+    split: {
+      stores: ['mercadona', 'dia'], total_cents: 1050, totals: { mercadona: 700, dia: 350 },
+      assignments: { mercadona: [line('Leche', 1, 700)], dia: [line('Arroz', 2, 350)] },
+    },
+    saving_cents: 200,
+  };
+
+  it('shows each store, the best single store and what splitting saves', async () => {
+    const api = server({ [COMPARE]: comparison });
+    await renderConnected(<ShoppingScreen />, api.fetchImpl);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Comparar tiendas' }));
+    expect(await screen.findByText('Comparación de tiendas')).toBeTruthy();
+    expect(screen.getByText('dia: 9,90 €')).toBeTruthy();
+    expect(screen.getByText('No tiene: Cacahuetes.')).toBeTruthy();
+    expect(screen.getByText('Lo más barato en una sola tienda: mercadona (12,50 €).')).toBeTruthy();
+    expect(screen.getByText('Repartiendo la compra entre mercadona y dia ahorras 2,00 € (total 10,50 €).')).toBeTruthy();
+    expect(screen.getByText('En dia (3,50 €): 2 × Arroz')).toBeTruthy();
+    expect(api.called(COMPARE)[0].body).toEqual({ store_ids: ['mercadona', 'dia'], min_saving_cents: 100 });
+  });
+
+  it('says so when splitting does not save enough, and lets the person pick the cheapest store', async () => {
+    const api = server({ [COMPARE]: { ...comparison, split: null, saving_cents: 0 } });
+    await renderConnected(<ShoppingScreen />, api.fetchImpl);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Comparar tiendas' }));
+    expect(await screen.findByText(/no ahorra lo bastante como para compensar el viaje/)).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Usar mercadona' }));
+    expect(api.called('POST /api/v1/plans/7/shopping-list').at(-1)?.body).toMatchObject({ store_id: 'mercadona' });
+  });
+
+  it('explains when no single store has everything but two together do', async () => {
+    const api = server({ [COMPARE]: { ...comparison, best_single_store: null, best_single_cents: null, saving_cents: 0 } });
+    await renderConnected(<ShoppingScreen />, api.fetchImpl);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Comparar tiendas' }));
+    expect(await screen.findByText('Ninguna tienda tiene todo lo que necesitas por sí sola.')).toBeTruthy();
+    expect(screen.getByText(/Hace falta repartir la compra entre mercadona y dia/)).toBeTruthy();
+  });
+
+  it('shows a clear error when the comparison fails', async () => {
+    const api = server({ [COMPARE]: apiError(404, 'unknown_store', 'no priced products for store dia') });
+    await renderConnected(<ShoppingScreen />, api.fetchImpl);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Comparar tiendas' }));
+    expect(await screen.findByText(/No se pudo comparar: no priced products for store dia/)).toBeTruthy();
+  });
+
+  it('offers no comparison with a single store', async () => {
+    await renderConnected(<ShoppingScreen />, server({ 'GET /api/v1/catalog/stores': [stores[0]] }).fetchImpl);
+    await screen.findByText('Tienda: mercadona');
+    expect(screen.queryByRole('button', { name: 'Comparar tiendas' })).toBeNull();
   });
 });

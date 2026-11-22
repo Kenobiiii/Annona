@@ -38,15 +38,24 @@ This is what fills the pantry that "mark as cooked" ([recipes.md](recipes.md)) d
 The app builds a plain-text version (`shoppingText`): one line per item with its tick, price and
 the product it replaces, then what is unavailable. It is shared with the system share sheet.
 
-## Extension point: cheapest basket across stores
+## Cheapest basket across stores
 
-`core/shopping/compare.py` defines the result type and a stub, `cheapest_split`, that raises
-`NotImplementedError`. `price_basket` already prices the same needs at any one store, so a
-comparison calls it once per store and combines the results (the whole-basket cost per store and
-the saving of splitting between two). Not built yet, on purpose: no API route or screen exists
-for it, and it needs product decisions (how many stores, travel cost, minimum saving).
+`core/shopping/compare.py` prices the same needs at every selected store (`price_basket`) and
+compares them (`compare_baskets`):
+
+- **Each store alone.** Complete baskets rank first, then the cheapest: a basket missing items is
+  not "cheaper".
+- **The best split between two stores.** Every need is bought where its packs cost least among the
+  two. It is proposed only if it saves at least 1 EUR over the best single store
+  (`min_saving_cents`, configurable): a second trip has to be worth it. If no store has everything
+  but two together do, the split is shown as the only way.
+
+`POST /plans/{id}/shopping-compare` and the "Comparar tiendas" button of the shopping screen. Only
+stores with priced products in the database can be compared; with one real store (Mercadona) it
+needs a second one ([adding-a-supermarket.md](adding-a-supermarket.md)).
 
 ## API
 
 `GET /plans/{id}/shopping-list[?store_id=]`, `POST /plans/{id}/shopping-list`,
+`POST /plans/{id}/shopping-compare`,
 `PATCH /shopping-items/{id}` (returns what changed in the pantry), `GET /catalog/stores`.

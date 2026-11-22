@@ -12,6 +12,7 @@ import { confirmAction } from '@/components/confirm';
 import { Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { Async, EmptyState } from '@/components/StateViews';
+import { CompareSection } from '@/features/shopping/CompareSection';
 import { markPantryNoticeSeen, pantryNoticeSeen } from '@/features/shopping/notice';
 import { shoppingText } from '@/features/shopping/text';
 import { formatAmount, formatMoney, localISODate, mondayOf, t } from '@/i18n';
@@ -144,6 +145,9 @@ function List({ planId, defaultStore }: { planId: number; defaultStore?: string 
                     t('shopping.unavailable.hint'),
                   ].join('\n')}
                 </Banner>
+              ) : null}
+              {options.length > 1 ? (
+                <CompareSection planId={planId} storeIds={options.map((o) => o.value)} onUse={setStore} />
               ) : null}
               <Button variant="secondary" label={t('shopping.share')} onPress={() => void Share.share({ message: shoppingText(data) })} />
             </View>

@@ -352,3 +352,19 @@ export function useResolveAction() {
     onSuccess: () => queryClient.invalidateQueries(),
   });
 }
+
+// ---- comparing stores ----------------------------------------------------------------------
+
+/** Whole-basket cost of the plan at several stores, and the best split between two. */
+export function useCompareStores(planId: number) {
+  const api = useApi();
+  return useMutation({
+    mutationFn: (storeIds: string[]) =>
+      unwrap(
+        api.POST('/api/v1/plans/{plan_id}/shopping-compare', {
+          params: { path: { plan_id: planId } },
+          body: { store_ids: storeIds, min_saving_cents: 100 }, // same default as the server: under 1 EUR is not worth a trip
+        }),
+      ),
+  });
+}
