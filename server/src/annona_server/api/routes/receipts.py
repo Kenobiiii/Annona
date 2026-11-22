@@ -146,6 +146,10 @@ def upload_receipt(
         )
     except BadImage as error:
         raise APIError(422, "bad_image", str(error)) from error
+    except APIError:
+        raise
+    except Exception as error:  # the AI provider failed (down, bad key, demo mode...)
+        raise APIError(502, "ai_error", f"{type(error).__name__}: {error}"[:300]) from error
     assert result.receipt.id is not None
     return _out(view_receipt(session, household, result.receipt.id))
 

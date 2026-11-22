@@ -8,7 +8,6 @@ planner, so every run starts from the same state and only the chat agent is bein
 from __future__ import annotations
 
 import json
-import re
 import tempfile
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -42,6 +41,7 @@ from ..db.repositories import (
     SqlProductRepository,
     UserProfileRepository,
 )
+from ..demo import plan_answer, recipe_answer, swap_answer
 from ..planner import plan_and_store
 from ..seed import sample_foods
 
@@ -69,12 +69,7 @@ CATALOGUE = {
     "tomato": ("Tomates", 1000, 190),
     "banana": ("Plátanos", 1000, 190),
 }
-_SHARES = {"breakfast": 0.25, "lunch": 0.35, "snack": 0.10, "dinner": 0.30}
 _MODELS = {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"}
-# "id | name | group | unit | available | planned | kcal/100 | protein/100 | not for"
-_PRODUCT_ROW = re.compile(
-    r"^(\d+) \| [^|]+ \| \w+ \| \w+ \| (\d+) \| (\d+) \| (\d+) \| (\d+) \|", re.M
-)
 
 
 @dataclass
@@ -87,77 +82,18 @@ class World:
         self.engine.dispose()
 
 
-def _plan_answer(request) -> str:
-    """A deterministic menu: every meal uses every product, split by each slot's energy share."""
-    text = request.messages[0].text
-    products = [(int(m.group(1)), Decimal(m.group(3))) for m in _PRODUCT_ROW.finditer(text)]
-    slots = []
-    for m in re.finditer(r"^- weekday (\d) \([^)]*\): (.+)$", text, re.M):
-        slots += [(int(m.group(1)), s.strip()) for s in m.group(2).split(",")]
-    total = sum(_SHARES[s] for _, s in slots)
-    names = {"breakfast": "Desayuno", "lunch": "Comida", "snack": "Merienda", "dinner": "Cena"}
-    meals = [
-        {
-            "weekday": wd,
-            "slot": slot,
-            "title": f"{names[slot]} {i + 1}",
-            # Dinners are baked: so "something without oven" is a real change.
-            "appliances": ["oven"] if slot == "dinner" else ["hob"],
-            "ingredients": [
-                {
-                    "product_id": pid,
-                    "amount": str(planned * Decimal(_SHARES[slot] / total) * Decimal("0.97")),
-                }
-                for pid, planned in products
-                if planned > 0
-            ][:10],
-            "summary": "Hornear 25 minutos." if slot == "dinner" else "Cocinar a fuego medio.",
-        }
-        for i, (wd, slot) in enumerate(slots)
-    ]
-    return json.dumps({"meals": meals})
-
-
-def _recipe_answer(request) -> str:
-    text = request.messages[0].text
-    ids = [int(m.group(1)) for m in re.finditer(r"^(\d+) \| [^|]+ \| [\d,.]+ \w+$", text, re.M)]
-    steps = [
-        {"text": f"Cocina {{p{pid}}}.", "appliance": "hob", "heat": "medium", "minutes": 5}
-        for pid in ids
-    ]
-    return json.dumps({"steps": steps})
-
-
-def _swap_answer(request) -> str:
-    """A sensible replacement: the leftover products richest in protein, no oven."""
-    text = request.messages[0].text
-    rows = [
-        (int(m.group(1)), Decimal(m.group(2)), int(m.group(5))) for m in _PRODUCT_ROW.finditer(text)
-    ]
-    products = [(pid, amount) for pid, amount, _ in sorted(rows, key=lambda r: -r[2])[:4]]
-    day = int(re.search(r"^- weekday (\d)", text, re.M).group(1))  # type: ignore[union-attr]
-    slot = re.search(r"^- weekday \d \([^)]*\): (\w+)", text, re.M).group(1)  # type: ignore[union-attr]
-    return json.dumps(
-        {
-            "meals": [
-                {
-                    "weekday": day,
-                    "slot": slot,
-                    "title": "Plato de sustitución",
-                    "appliances": ["hob"],
-                    "ingredients": [
-                        {"product_id": pid, "amount": str(min(amount / 4, Decimal(150)))}
-                        for pid, amount in products
-                    ],
-                    "summary": "Cocinar a fuego medio.",
-                }
-            ]
-        }
-    )
+def _plan_with_baked_dinners(request) -> str:
+    """The shared demo menu, with dinners baked: so "something without oven" is a real change."""
+    data = json.loads(plan_answer(request))
+    for meal in data["meals"]:
+        if meal["slot"] == "dinner":
+            meal["appliances"] = ["oven"]
+            meal["summary"] = "Hornear 25 minutos."
+    return json.dumps(data)
 
 
 def _scripted_plan_llm() -> LLMClient:
-    return LLMClient(FakeLLM(responder=_plan_answer), _MODELS)
+    return LLMClient(FakeLLM(responder=_plan_with_baked_dinners), _MODELS)
 
 
 def scripted_swap_llm() -> LLMClient:
@@ -165,9 +101,7 @@ def scripted_swap_llm() -> LLMClient:
 
     def respond(request) -> str:
         return (
-            _recipe_answer(request)
-            if request.task == "recipe_of_the_day"
-            else _swap_answer(request)
+            recipe_answer(request) if request.task == "recipe_of_the_day" else swap_answer(request)
         )
 
     return LLMClient(FakeLLM(responder=respond), _MODELS)

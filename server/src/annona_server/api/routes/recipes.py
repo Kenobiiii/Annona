@@ -82,6 +82,10 @@ def meal_recipe(
             "the AI recipe did not pass the checks; try again",
             details=error.issues,
         ) from error
+    except APIError:
+        raise
+    except Exception as error:  # the AI provider failed (down, bad key, demo mode...)
+        raise APIError(502, "ai_error", f"{type(error).__name__}: {error}"[:300]) from error
     parts = result.parts
     return RecipeOut(
         day=body.day,

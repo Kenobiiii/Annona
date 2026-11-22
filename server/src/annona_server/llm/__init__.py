@@ -16,6 +16,11 @@ def make_llm_client(
 ) -> LLMClient:
     settings = settings or llm_settings()
     if backend is None:
+        from ..demo import demo_backend, fake_llm_enabled
+
+        if fake_llm_enabled():  # demo mode: no AI provider is called
+            backend = demo_backend()
+    if backend is None:
         from .litellm_backend import LiteLLMBackend  # imported lazily: LiteLLM is heavy
 
         backend = LiteLLMBackend(timeout_s=settings.timeout_s, thinking=settings.thinking)

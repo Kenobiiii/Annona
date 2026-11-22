@@ -25,6 +25,10 @@ ChatModelFactory = Callable[[Session, Tier], ChatModel]
 
 
 def default_model_factory(session: Session, tier: Tier) -> ChatModel:
+    from ..demo import DemoChatModel, fake_llm_enabled
+
+    if fake_llm_enabled():
+        return DemoChatModel()
     from ..llm.storage import SqlUsageSink
     from .litellm_chat import LiteChatModel
 

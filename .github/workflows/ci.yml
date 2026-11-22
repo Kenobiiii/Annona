@@ -61,8 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Configure a throwaway token
-        run: echo "ANNONA_API_TOKEN=ci-token" > .env
+      - name: Configure a throwaway token and demo mode (no AI key in CI)
+        run: |
+          echo "ANNONA_API_TOKEN=ci-token" > .env
+          echo "ANNONA_FAKE_LLM=1" >> .env
       - name: Build and start
         run: docker compose up -d --build --wait --wait-timeout 180
       - name: Docs page and authenticated API respond
@@ -71,9 +73,28 @@ jobs:
           curl --fail --silent --output /dev/null http://localhost:8000/docs
           curl --fail --silent -H "Authorization: Bearer ci-token" http://localhost:8000/api/v1/stores
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://localhost:8000/api/v1/stores)" = "401"
+      - name: First-run path of the README (demo store, household, plan, recipe)
+        run: |
+          docker compose exec -T api /app/.venv/bin/python -m annona_server.seed --demo-store
+          python3 scripts/e2e_smoke.py http://localhost:8000 ci-token
       - name: Logs
         if: always()
         run: docker compose logs --no-color
       - name: Stop
         if: always()
         run: docker compose down --volumes
+
+  audit:
+    name: Dependency audit (pip-audit + npm audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3 (no floating major tag published)
+      - name: Python dependencies (accepted exceptions: security/pip-audit-ignore.txt)
+        run: ./scripts/audit_python.sh
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: App dependencies (production, high and critical)
+        working-directory: app
+        run: npm audit --omit=dev --audit-level=high

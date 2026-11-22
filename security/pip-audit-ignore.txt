@@ -1,0 +1,19 @@
+# Vulnerabilities accepted on purpose (one ID per line; text after the ID is the reason).
+# Revisit when LiteLLM relaxes its `filelock<4.0` pin (we pin LiteLLM exactly, see server/pyproject.toml).
+#
+# filelock 3.32.7, fixed in 4.x: all are local-attacker issues (symlink / permission races in the lock
+# directory by a user who can already write there) or Windows-only. Annona runs as one unprivileged
+# user in a container; filelock is only used by huggingface-hub (a LiteLLM dependency) for its cache.
+CVE-2026-112940 filelock: symlink race in ReadWriteLock (local user with write access to the lock dir)
+CVE-2026-112913 filelock: Windows only (ReadWriteLock side files)
+CVE-2026-112907 filelock: Windows only (soft lock marker by path)
+CVE-2026-112938 filelock: StrictSoftFileLock lstat race (local)
+CVE-2026-112936 filelock: ReadWriteLock follows symlinks (local user with write access to the lock dir)
+CVE-2026-112910 filelock: Windows ignores `mode`
+CVE-2026-112909 filelock: UnixFileLock truncates the file at the lock path (local)
+CVE-2026-112911 filelock: soft locks keep state in a derived directory (local)
+CVE-2026-112939 filelock: soft lock owner check by marker file (local)
+CVE-2026-112915 filelock: ReadWriteLock loads the SQLite schema per acquire (local)
+CVE-2026-112935 filelock: stale-lock break recognises the marker (local)
+CVE-2026-112912 filelock: raise_on_not_writable_file symlink check (local)
+CVE-2026-112908 filelock: StrictSoftFileLock applies `mode` to sentinel files (local)
