@@ -1,0 +1,14 @@
+{
+  "store": "MERCADONA S.A.",
+  "date": "12/11/2026",
+  "total": "22,05",
+  "lines": [
+    {"raw_text": "ARROZ REDONDO 1KG", "quantity": "1", "total": "1,15"},
+    {"raw_text": "LECHE SEMI 6X1L", "quantity": "2", "unit_price": "4,98", "total": "9,96"},
+    {"raw_text": "FILETE PECHUGA POLLO", "weight": "0,550 kg", "unit_price": "7,70", "total": "4,24"},
+    {"raw_text": "HUEVOS 30 L", "total": "5,90"},
+    {"raw_text": "YOGUR NAT.", "quantity": "3", "unit_price": "0,35", "total": "1,05"},
+    {"raw_text": "BOLSA PLASTICO", "total": "0,05"},
+    {"raw_text": "DESCUENTO", "total": "-0,30"}
+  ]
+}

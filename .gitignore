@@ -18,7 +18,8 @@ credentials.json
 *.db-shm
 data/
 uploads/
-receipts/
+# Receipt photos live next to the database (never source code named receipts/)
+/data/receipts/
 .cache/
 llm_cache/
 
