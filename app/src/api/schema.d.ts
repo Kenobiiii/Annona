@@ -315,6 +315,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plans/{plan_id}/shopping-compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare Stores
+         * @description Whole-basket cost at each store, and whether splitting between two saves enough.
+         */
+        post: operations["compare_stores_api_v1_plans__plan_id__shopping_compare_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/plans/{plan_id}/shopping-list": {
         parameters: {
             query?: never;
@@ -812,6 +832,38 @@ export interface components {
              */
             tier: "small" | "large";
         };
+        /** CompareIn */
+        CompareIn: {
+            /**
+             * Min Saving Cents
+             * @description a split must save at least this to be proposed
+             * @default 100
+             */
+            min_saving_cents: number;
+            /**
+             * Store Ids
+             * @description stores to compare
+             */
+            store_ids: string[];
+        };
+        /** CompareOut */
+        CompareOut: {
+            /** Best Single Cents */
+            best_single_cents: number | null;
+            /** Best Single Store */
+            best_single_store: string | null;
+            /**
+             * Saving Cents
+             * @description of the split over the best single store
+             */
+            saving_cents: number;
+            split: components["schemas"]["SplitOut"] | null;
+            /**
+             * Stores
+             * @description complete baskets first, then cheapest
+             */
+            stores: components["schemas"]["StoreBasketOut"][];
+        };
         /** ConfirmIn */
         ConfirmIn: {
             /**
@@ -1142,6 +1194,17 @@ export interface components {
             used_from_pantry: string;
             /** Used Total */
             used_total: string;
+        };
+        /** LineOut */
+        LineOut: {
+            /** Cost Cents */
+            cost_cents: number;
+            /** Name */
+            name: string;
+            /** Packs */
+            packs: number;
+            /** Replaces Product Id */
+            replaces_product_id?: number | null;
         };
         /** LlmSettingsOut */
         LlmSettingsOut: {
@@ -1796,6 +1859,43 @@ export interface components {
             detail: string;
             /** Unit */
             unit: string;
+        };
+        /** SplitOut */
+        SplitOut: {
+            /**
+             * Assignments
+             * @description what to buy at each store
+             */
+            assignments: {
+                [key: string]: components["schemas"]["LineOut"][];
+            };
+            /** Stores */
+            stores: string[];
+            /** Total Cents */
+            total_cents: number;
+            /** Totals */
+            totals: {
+                [key: string]: number;
+            };
+        };
+        /** StoreBasketOut */
+        StoreBasketOut: {
+            /**
+             * Complete
+             * @description false if the store does not sell something the menu needs
+             */
+            complete: boolean;
+            /** Lines */
+            lines: components["schemas"]["LineOut"][];
+            /** Store Id */
+            store_id: string;
+            /** Total Cents */
+            total_cents: number;
+            /**
+             * Unavailable
+             * @description names of what this store cannot supply
+             */
+            unavailable: string[];
         };
         /** StoreOut */
         StoreOut: {
@@ -2633,6 +2733,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compare_stores_api_v1_plans__plan_id__shopping_compare_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                plan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompareIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompareOut"];
                 };
             };
             /** @description Validation Error */

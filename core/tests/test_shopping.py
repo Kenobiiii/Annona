@@ -6,10 +6,9 @@ from decimal import Decimal
 import pytest
 
 from annona_core.shopping import (
-    Basket,
     Need,
     StoreProduct,
-    cheapest_split,
+    compare_baskets,
     price_basket,
 )
 
@@ -146,8 +145,83 @@ def test_prices_stay_in_integer_cents():
     assert isinstance(basket.total_cents, int)
 
 
-def test_cheapest_split_is_a_marked_extension_point():
-    with pytest.raises(NotImplementedError, match="extension point"):
-        cheapest_split(
-            [Basket(store_id="a", lines=(), unavailable=(), already_have=(), total_cents=0)]
-        )
+def three_stores():
+    needs = [
+        need(1, "Arroz", 1000),
+        need(2, "Pollo", 500, type_="chicken", category="meat"),
+        need(3, "Leche", 1000, type_="milk", category="dairy", basis="ml"),
+    ]
+
+    def store(rice, chicken, milk, name):
+        items = []
+        if rice is not None:
+            items.append(sells(10, "Arroz", 1000, rice))
+        if chicken is not None:
+            items.append(sells(20, "Pollo", 500, chicken, type_="chicken", category="meat"))
+        if milk is not None:
+            items.append(sells(30, "Leche", 1000, milk, type_="milk", category="dairy", basis="ml"))
+        return price_basket(needs, items, store_id=name)
+
+    return {
+        "a": store(100, 400, 120, "a"),  # 620: cheap rice, dear chicken
+        "b": store(180, 250, 110, "b"),  # 540: the cheapest single store
+        "c": store(90, 500, None, "c"),  # sells no milk at all
+    }
+
+
+def test_the_cheapest_complete_store_wins_and_incomplete_ones_rank_last():
+    baskets = three_stores()
+    result = compare_baskets(list(baskets.values()))
+    assert [b.store_id for b in result.baskets] == ["b", "a", "c"]
+    assert (result.best_single_store, result.best_single_cents) == ("b", 540)
+    assert baskets["c"].unavailable[0].product_id == 3 and baskets["c"].total_cents == 590
+
+
+def test_splitting_between_two_stores_reports_the_saving_and_what_to_buy_where():
+    result = compare_baskets(list(three_stores().values()), min_saving_cents=50)
+    split = result.split
+    assert split is not None and set(split.stores) == {"b", "c"}
+    # rice at c (90), chicken at b (250), milk at b (110) = 450 versus 540 at b alone; c sells no
+    # milk, which is fine: b supplies it.
+    assert split.total_cents == 450 and result.saving_cents == 90
+    names = {s: sorted(ln.name for ln in lines) for s, lines in split.assignments.items()}
+    assert names == {"c": ["Arroz"], "b": ["Leche", "Pollo"]}
+    assert split.totals == {"c": 90, "b": 360} and sum(split.totals.values()) == split.total_cents
+
+
+def test_a_small_saving_is_not_worth_a_second_trip():
+    result = compare_baskets(list(three_stores().values()))  # default: at least 1 EUR
+    assert result.split is None and result.saving_cents == 0  # 90 cents saved: not enough
+    assert result.best_single_store == "b"
+
+
+def test_a_split_can_be_the_only_way_to_buy_everything():
+    needs = [need(1, "Arroz", 1000), need(2, "Pollo", 500, type_="chicken", category="meat")]
+    only_rice = price_basket(needs, [sells(10, "Arroz", 1000, 100)], store_id="rice")
+    only_chicken = price_basket(
+        needs, [sells(20, "Pollo", 500, 300, type_="chicken", category="meat")], store_id="meat"
+    )
+    result = compare_baskets([only_rice, only_chicken])
+    assert result.best_single_store is None and result.best_single_cents is None
+    assert result.split is not None and result.split.total_cents == 400 and result.saving_cents == 0
+
+
+def test_a_need_nobody_sells_means_no_split_can_cover_everything():
+    needs = [need(1, "Arroz", 1000), need(9, "Quinoa", 300, type_="quinoa")]
+    a = price_basket(needs, [sells(10, "Arroz", 1000, 100)], store_id="a")
+    b = price_basket(needs, [sells(10, "Arroz", 1000, 90)], store_id="b")
+    assert compare_baskets([a, b]).split is None
+
+
+def test_one_store_alone_is_just_itself():
+    only = three_stores()["b"]
+    result = compare_baskets([only])
+    assert [b.store_id for b in result.baskets] == ["b"] and result.split is None
+    with pytest.raises(ValueError):
+        compare_baskets([])
+
+
+def test_a_split_never_picks_a_store_that_would_sell_nothing():
+    cheap = price_basket([need(1, "Arroz", 1000)], [sells(10, "Arroz", 1000, 50)], store_id="x")
+    dear = price_basket([need(1, "Arroz", 1000)], [sells(10, "Arroz", 1000, 500)], store_id="y")
+    assert compare_baskets([cheap, dear], min_saving_cents=0).split is None

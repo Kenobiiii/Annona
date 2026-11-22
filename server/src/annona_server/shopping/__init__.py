@@ -24,11 +24,14 @@ from annona_core.domain import (
 )
 from annona_core.domain.units import Quantity, UnitConversionError
 from annona_core.shopping import (
+    DEFAULT_MIN_SAVING_CENTS,
     Alternative,
     Need,
+    StoreComparison,
     StoreProduct,
     Unavailable,
     alternatives_for,
+    compare_baskets,
     price_basket,
 )
 
@@ -144,6 +147,25 @@ def store_products(session: Session, store_id: str, currency: str) -> list[Store
             )
         )
     return out
+
+
+def compare_plan_stores(
+    session: Session,
+    household: Household,
+    plan_id: int,
+    store_ids: list[str],
+    *,
+    min_saving_cents: int = DEFAULT_MIN_SAVING_CENTS,
+) -> StoreComparison:
+    """Price the plan's needs (minus the pantry) at each store and compare them."""
+    needs, nutrition = plan_needs(session, household.id, plan_id)
+    baskets = []
+    for store_id in dict.fromkeys(store_ids):  # no repeats, order kept
+        products = store_products(session, store_id, household.currency)
+        if not products:
+            raise UnknownStore(f"no priced products for store {store_id!r}")
+        baskets.append(price_basket(needs, products, store_id=store_id, nutrition=nutrition))
+    return compare_baskets(baskets, min_saving_cents=min_saving_cents)
 
 
 def find_list(session: Session, plan_id: int, store_id: str | None = None) -> ShoppingList | None:

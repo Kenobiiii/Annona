@@ -15,6 +15,7 @@ from ...shopping import (
     PantryEffect,
     UnknownStore,
     build_list,
+    compare_plan_stores,
     find_list,
     set_checked,
     view_list,
@@ -159,3 +160,87 @@ def check_shopping_item(
     updated, effect = set_checked(session, household, item, body.checked)
     view = next(v for v in view_list(session, household, parent).items if v.item.id == updated.id)
     return _item_out(view, effect)
+
+
+class CompareIn(BaseModel):
+    store_ids: list[str] = Field(min_length=2, max_length=6, description="stores to compare")
+    min_saving_cents: int = Field(
+        default=100, ge=0, description="a split must save at least this to be proposed"
+    )
+
+
+class LineOut(BaseModel):
+    name: str
+    packs: int
+    cost_cents: int
+    replaces_product_id: int | None = None
+
+
+class StoreBasketOut(BaseModel):
+    store_id: str
+    total_cents: int
+    complete: bool = Field(description="false if the store does not sell something the menu needs")
+    lines: list[LineOut]
+    unavailable: list[str] = Field(description="names of what this store cannot supply")
+
+
+class SplitOut(BaseModel):
+    stores: list[str]
+    total_cents: int
+    totals: dict[str, int]
+    assignments: dict[str, list[LineOut]] = Field(description="what to buy at each store")
+
+
+class CompareOut(BaseModel):
+    stores: list[StoreBasketOut] = Field(description="complete baskets first, then cheapest")
+    best_single_store: str | None
+    best_single_cents: int | None
+    split: SplitOut | None
+    saving_cents: int = Field(description="of the split over the best single store")
+
+
+def _line(line) -> LineOut:
+    return LineOut(
+        name=line.name,
+        packs=line.packs,
+        cost_cents=line.cost_cents,
+        replaces_product_id=line.replaces_product_id,
+    )
+
+
+@router.post("/plans/{plan_id}/shopping-compare", response_model=CompareOut)
+def compare_stores(
+    plan_id: int, body: CompareIn, session: SessionDep, household: HouseholdDep
+) -> CompareOut:
+    """Whole-basket cost at each store, and whether splitting between two saves enough."""
+    _plan(session, household.id, plan_id)
+    try:
+        result = compare_plan_stores(
+            session, household, plan_id, body.store_ids, min_saving_cents=body.min_saving_cents
+        )
+    except UnknownStore as error:
+        raise APIError(404, "unknown_store", str(error)) from error
+    split = result.split
+    return CompareOut(
+        stores=[
+            StoreBasketOut(
+                store_id=b.store_id,
+                total_cents=b.total_cents,
+                complete=not b.unavailable,
+                lines=[_line(line) for line in b.lines],
+                unavailable=[u.name for u in b.unavailable],
+            )
+            for b in result.baskets
+        ],
+        best_single_store=result.best_single_store,
+        best_single_cents=result.best_single_cents,
+        split=None
+        if split is None
+        else SplitOut(
+            stores=list(split.stores),
+            total_cents=split.total_cents,
+            totals=split.totals,
+            assignments={s: [_line(ln) for ln in ls] for s, ls in split.assignments.items()},
+        ),
+        saving_cents=result.saving_cents,
+    )

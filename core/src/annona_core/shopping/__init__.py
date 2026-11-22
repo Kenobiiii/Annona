@@ -12,18 +12,20 @@ from .basket import (
     equivalents,
     price_basket,
 )
-from .compare import StoreComparison, cheapest_split
+from .compare import DEFAULT_MIN_SAVING_CENTS, SplitPlan, StoreComparison, compare_baskets
 
 __all__ = [
     "Alternative",
     "Basket",
     "BasketLine",
     "Need",
+    "DEFAULT_MIN_SAVING_CENTS",
+    "SplitPlan",
     "StoreComparison",
     "StoreProduct",
     "Unavailable",
     "alternatives_for",
-    "cheapest_split",
+    "compare_baskets",
     "equivalents",
     "price_basket",
 ]

@@ -375,6 +375,90 @@
         "title": "ChatIn",
         "type": "object"
       },
+      "CompareIn": {
+        "properties": {
+          "min_saving_cents": {
+            "default": 100,
+            "description": "a split must save at least this to be proposed",
+            "minimum": 0.0,
+            "title": "Min Saving Cents",
+            "type": "integer"
+          },
+          "store_ids": {
+            "description": "stores to compare",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 6,
+            "minItems": 2,
+            "title": "Store Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "store_ids"
+        ],
+        "title": "CompareIn",
+        "type": "object"
+      },
+      "CompareOut": {
+        "properties": {
+          "best_single_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Single Cents"
+          },
+          "best_single_store": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Single Store"
+          },
+          "saving_cents": {
+            "description": "of the split over the best single store",
+            "title": "Saving Cents",
+            "type": "integer"
+          },
+          "split": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SplitOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stores": {
+            "description": "complete baskets first, then cheapest",
+            "items": {
+              "$ref": "#/components/schemas/StoreBasketOut"
+            },
+            "title": "Stores",
+            "type": "array"
+          }
+        },
+        "required": [
+          "stores",
+          "best_single_store",
+          "best_single_cents",
+          "split",
+          "saving_cents"
+        ],
+        "title": "CompareOut",
+        "type": "object"
+      },
       "ConfirmIn": {
         "properties": {
           "lines": {
@@ -1162,6 +1246,40 @@
           "kcal"
         ],
         "title": "Line",
+        "type": "object"
+      },
+      "LineOut": {
+        "properties": {
+          "cost_cents": {
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "packs": {
+            "title": "Packs",
+            "type": "integer"
+          },
+          "replaces_product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replaces Product Id"
+          }
+        },
+        "required": [
+          "name",
+          "packs",
+          "cost_cents"
+        ],
+        "title": "LineOut",
         "type": "object"
       },
       "LlmSettingsOut": {
@@ -3131,6 +3249,88 @@
         "title": "Shortfall",
         "type": "object"
       },
+      "SplitOut": {
+        "properties": {
+          "assignments": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/LineOut"
+              },
+              "type": "array"
+            },
+            "description": "what to buy at each store",
+            "title": "Assignments",
+            "type": "object"
+          },
+          "stores": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Stores",
+            "type": "array"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "totals": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Totals",
+            "type": "object"
+          }
+        },
+        "required": [
+          "stores",
+          "total_cents",
+          "totals",
+          "assignments"
+        ],
+        "title": "SplitOut",
+        "type": "object"
+      },
+      "StoreBasketOut": {
+        "properties": {
+          "complete": {
+            "description": "false if the store does not sell something the menu needs",
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/LineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "unavailable": {
+            "description": "names of what this store cannot supply",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unavailable",
+            "type": "array"
+          }
+        },
+        "required": [
+          "store_id",
+          "total_cents",
+          "complete",
+          "lines",
+          "unavailable"
+        ],
+        "title": "StoreBasketOut",
+        "type": "object"
+      },
       "StoreOut": {
         "properties": {
           "attribution": {
@@ -4736,6 +4936,75 @@
         "summary": "Get Plan",
         "tags": [
           "plans"
+        ]
+      }
+    },
+    "/api/v1/plans/{plan_id}/shopping-compare": {
+      "post": {
+        "description": "Whole-basket cost at each store, and whether splitting between two saves enough.",
+        "operationId": "compare_stores_api_v1_plans__plan_id__shopping_compare_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compare Stores",
+        "tags": [
+          "shopping"
         ]
       }
     },

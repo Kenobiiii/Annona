@@ -306,3 +306,67 @@ def test_api_store_switching_and_ticking(api, world):
     undone = api.patch(f"/api/v1/shopping-items/{item['id']}", json={"checked": False}).json()
     assert undone["pantry_effect"]["direction"] == "removed"
     assert api.get("/api/v1/pantry").json()["items"] == []
+
+
+# ----------------------------------------------------------------- comparing stores
+
+
+@pytest.fixture
+def three_stores(session, world):  # noqa: F811
+    """'demo' and 'other' exist; 'third' sells the same foods, with rice very cheap."""
+    demo = {p.name: p for p in r.SqlProductRepository(session).list(store_id="demo")}
+    for name, p in demo.items():
+        if name != "peanuts":
+            add_to_store(
+                session, p, "third", f"{name} (tercera)", 1000, 30 if name == "rice" else 400
+            )
+    session.commit()
+    return world
+
+
+def test_comparing_stores_prices_the_same_plan_at_each(session, three_stores):  # noqa: F811
+    from annona_server.shopping import compare_plan_stores
+
+    home, plan_id = three_stores["household"], three_stores["plan_id"]
+    result = compare_plan_stores(
+        session, home, plan_id, ["demo", "other", "third"], min_saving_cents=0
+    )
+    assert {b.store_id for b in result.baskets} == {"demo", "other", "third"}
+    assert result.baskets[0].total_cents == min(
+        b.total_cents for b in result.baskets if not b.unavailable
+    )
+    # peanuts are sold by neither 'other' nor 'third': their baskets are incomplete
+    incomplete = {b.store_id for b in result.baskets if b.unavailable}
+    assert incomplete == {"other", "third"}
+    assert result.best_single_store == "demo"
+
+
+def test_a_cheaper_store_for_some_products_makes_a_split_worthwhile(session, three_stores):  # noqa: F811
+    from annona_server.shopping import compare_plan_stores
+
+    home, plan_id = three_stores["household"], three_stores["plan_id"]
+    result = compare_plan_stores(session, home, plan_id, ["demo", "third"], min_saving_cents=0)
+    assert result.split is not None and set(result.split.stores) == {"demo", "third"}
+    assert result.saving_cents > 0 and result.split.total_cents < result.best_single_cents
+    bought_at_third = {ln.name for ln in result.split.assignments["third"]}
+    assert any("rice" in name for name in bought_at_third)  # the very cheap rice
+
+
+def test_api_compare_stores(api, three_stores):  # noqa: F811
+    plan_id = three_stores["plan_id"]
+    url = f"/api/v1/plans/{plan_id}/shopping-compare"
+    ok = api.post(url, json={"store_ids": ["demo", "third"], "min_saving_cents": 0})
+    assert ok.status_code == 200, ok.text
+    body = ok.json()
+    assert [s["store_id"] for s in body["stores"]][0] in ("demo", "third")
+    assert body["best_single_store"] and body["split"]["total_cents"] > 0
+    assert body["saving_cents"] == body["best_single_cents"] - body["split"]["total_cents"]
+    assert set(body["split"]["assignments"]) == {"demo", "third"}
+    # defaults: a split must save at least 1 EUR to be proposed
+    strict = api.post(url, json={"store_ids": ["demo", "third"], "min_saving_cents": 10_000_000})
+    assert strict.json()["split"] is None and strict.json()["saving_cents"] == 0
+
+    assert api.post(url, json={"store_ids": ["demo"]}).status_code == 422
+    assert api.post(url, json={"store_ids": ["demo", "nowhere"]}).status_code == 404
+    deduped = api.post(url, json={"store_ids": ["demo", "demo", "third"]}).json()
+    assert [s["store_id"] for s in deduped["stores"]].count("demo") == 1
