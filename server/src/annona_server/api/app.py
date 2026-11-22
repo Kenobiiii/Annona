@@ -30,6 +30,7 @@ from .routes import (
     pantry,
     plans,
     products,
+    receipts,
     recipes,
     shopping,
     shopping_lists,
@@ -99,6 +100,16 @@ def create_app(
     app.add_middleware(McpPathAlias)
 
     protected = [Depends(require_token)]
-    for module in (system, household, pantry, products, shopping, plans, shopping_lists, recipes):
+    for module in (
+        system,
+        household,
+        pantry,
+        products,
+        shopping,
+        plans,
+        shopping_lists,
+        recipes,
+        receipts,
+    ):
         app.include_router(module.router, prefix="/api/v1", dependencies=protected)
     return app

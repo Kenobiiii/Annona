@@ -353,6 +353,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Receipt
+         * @description Read a receipt photo with the AI (5-20 s). Nothing is applied until you confirm.
+         */
+        post: operations["upload_receipt_api_v1_receipts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receipts/{receipt_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Receipt */
+        get: operations["get_receipt_api_v1_receipts__receipt_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receipts/{receipt_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm
+         * @description Add the confirmed lines to the pantry and save their prices (source=receipt).
+         */
+        post: operations["confirm_api_v1_receipts__receipt_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receipts/{receipt_id}/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Discard
+         * @description Throw the scan away: nothing is applied and the photo is deleted.
+         */
+        post: operations["discard_api_v1_receipts__receipt_id__discard_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/receipts/{receipt_id}/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Receipt Image
+         * @description The original photo, from this server's disk.
+         */
+        get: operations["get_receipt_image_api_v1_receipts__receipt_id__image_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/settings/llm": {
         parameters: {
             query?: never;
@@ -546,6 +643,31 @@ export interface components {
          * @enum {string}
          */
         Appliance: "hob" | "oven" | "microwave" | "air_fryer" | "none";
+        /** AppliedOut */
+        AppliedOut: {
+            /** Amount */
+            amount: string;
+            /** Line Id */
+            line_id: number;
+            /** Name */
+            name: string;
+            /** Notes */
+            notes: string[];
+            /** Price Cents */
+            price_cents: number | null;
+            /** Product Id */
+            product_id: number;
+            /** Unit */
+            unit: string;
+        };
+        /** Body_upload_receipt_api_v1_receipts_post */
+        Body_upload_receipt_api_v1_receipts_post: {
+            /**
+             * File
+             * @description a JPEG, PNG or WebP photo of the receipt (max 8 MB)
+             */
+            file: string;
+        };
         /** BuildListIn */
         BuildListIn: {
             /**
@@ -578,6 +700,21 @@ export interface components {
          * @enum {string}
          */
         CategorySource: "manual" | "rule" | "llm";
+        /** ConfirmIn */
+        ConfirmIn: {
+            /**
+             * Lines
+             * @description only the lines named here with a product are applied; the rest are ignored
+             */
+            lines: components["schemas"]["DecisionIn"][];
+        };
+        /** ConfirmOut */
+        ConfirmOut: {
+            /** Applied */
+            applied: components["schemas"]["AppliedOut"][];
+            /** Ignored */
+            ignored: number;
+        };
         /** CookIn */
         CookIn: {
             /**
@@ -659,6 +796,27 @@ export interface components {
             name: string;
             /** Product Id */
             product_id: number;
+        };
+        /** DecisionIn */
+        DecisionIn: {
+            /**
+             * Amount
+             * @description overrides the proposed amount
+             */
+            amount?: number | string | null;
+            /**
+             * Ignore
+             * @default false
+             */
+            ignore: boolean;
+            /** Line Id */
+            line_id: number;
+            /**
+             * Product Id
+             * @description the product the person chose (or accepted) for this line
+             */
+            product_id?: number | null;
+            unit?: components["schemas"]["Unit"] | null;
         };
         /**
          * Diet
@@ -1198,6 +1356,15 @@ export interface components {
             /** Unit Weight G */
             unit_weight_g?: number | string | null;
         };
+        /** ProductRef */
+        ProductRef: {
+            /** Confidence */
+            confidence?: string | null;
+            /** Name */
+            name: string;
+            /** Product Id */
+            product_id: number;
+        };
         /** ProfileIn */
         ProfileIn: {
             activity: components["schemas"]["ActivityLevel"];
@@ -1242,6 +1409,94 @@ export interface components {
             profile: components["schemas"]["UserProfile"];
             targets: components["schemas"]["DailyTargets"];
         };
+        /** ReceiptLineOut */
+        ReceiptLineOut: {
+            /** Alternatives */
+            alternatives: components["schemas"]["ProductRef"][];
+            /** Confidence */
+            confidence: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Issues
+             * @description line_math: quantity x unit price != total
+             */
+            issues: string[];
+            /**
+             * Notes
+             * @description assumed_one_pack | unknown_pack_size | price_from_weight | no_price
+             */
+            notes: string[];
+            /**
+             * Preselected
+             * @description confident enough to pre-select (still needs confirming)
+             */
+            preselected: boolean;
+            /** @description the suggested product, if any */
+            product: components["schemas"]["ProductRef"] | null;
+            /**
+             * Proposed Amount
+             * @description what would go to the pantry; null = unknown
+             */
+            proposed_amount: string | null;
+            /**
+             * Proposed Price Cents
+             * @description per pack of the product
+             */
+            proposed_price_cents: number | null;
+            /** Proposed Unit */
+            proposed_unit: string | null;
+            /**
+             * Quantity
+             * @description as printed: units, or a weight in g/ml
+             */
+            quantity: string | null;
+            /** Raw Text */
+            raw_text: string;
+            /** Status */
+            status: string;
+            /** Total Cents */
+            total_cents: number;
+            /** Unit */
+            unit: string | null;
+        };
+        /** ReceiptOut */
+        ReceiptOut: {
+            /** Has Image */
+            has_image: boolean;
+            /** Id */
+            id: number;
+            /** Issues */
+            issues: string[];
+            /** Lines */
+            lines: components["schemas"]["ReceiptLineOut"][];
+            /** Lines Total Cents */
+            lines_total_cents: number;
+            /** Purchased On */
+            purchased_on: string | null;
+            /**
+             * Skipped
+             * @description lines the AI read without a legible amount
+             */
+            skipped: string[];
+            status: components["schemas"]["ReceiptStatus"];
+            /** Store Id */
+            store_id: string | null;
+            /** Store Text */
+            store_text: string | null;
+            /** Total Cents */
+            total_cents: number | null;
+            /**
+             * Total Matches
+             * @description do the lines add up to the printed total? null if it could not be read
+             */
+            total_matches: boolean | null;
+        };
+        /**
+         * ReceiptStatus
+         * @enum {string}
+         */
+        ReceiptStatus: "pending_review" | "confirmed" | "discarded";
         /** RecipeIn */
         RecipeIn: {
             /**
@@ -2498,6 +2753,175 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_receipt_api_v1_receipts_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_receipt_api_v1_receipts_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReceiptOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_receipt_api_v1_receipts__receipt_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receipt_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReceiptOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_api_v1_receipts__receipt_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receipt_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfirmOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    discard_api_v1_receipts__receipt_id__discard_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receipt_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_receipt_image_api_v1_receipts__receipt_id__image_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                receipt_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
             };
             /** @description Validation Error */
             422: {

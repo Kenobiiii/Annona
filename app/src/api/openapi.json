@@ -160,6 +160,74 @@
         "title": "Appliance",
         "type": "string"
       },
+      "AppliedOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "line_id": {
+            "title": "Line Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "line_id",
+          "product_id",
+          "name",
+          "amount",
+          "unit",
+          "price_cents",
+          "notes"
+        ],
+        "title": "AppliedOut",
+        "type": "object"
+      },
+      "Body_upload_receipt_api_v1_receipts_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "a JPEG, PNG or WebP photo of the receipt (max 8 MB)",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_receipt_api_v1_receipts_post",
+        "type": "object"
+      },
       "BuildListIn": {
         "properties": {
           "refresh": {
@@ -233,6 +301,44 @@
         ],
         "title": "CategorySource",
         "type": "string"
+      },
+      "ConfirmIn": {
+        "properties": {
+          "lines": {
+            "description": "only the lines named here with a product are applied; the rest are ignored",
+            "items": {
+              "$ref": "#/components/schemas/DecisionIn"
+            },
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "lines"
+        ],
+        "title": "ConfirmIn",
+        "type": "object"
+      },
+      "ConfirmOut": {
+        "properties": {
+          "applied": {
+            "items": {
+              "$ref": "#/components/schemas/AppliedOut"
+            },
+            "title": "Applied",
+            "type": "array"
+          },
+          "ignored": {
+            "title": "Ignored",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "applied",
+          "ignored"
+        ],
+        "title": "ConfirmOut",
+        "type": "object"
       },
       "CookIn": {
         "properties": {
@@ -429,6 +535,62 @@
           "detail"
         ],
         "title": "DataWarning",
+        "type": "object"
+      },
+      "DecisionIn": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "overrides the proposed amount",
+            "title": "Amount"
+          },
+          "ignore": {
+            "default": false,
+            "title": "Ignore",
+            "type": "boolean"
+          },
+          "line_id": {
+            "title": "Line Id",
+            "type": "integer"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the product the person chose (or accepted) for this line",
+            "title": "Product Id"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Unit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "line_id"
+        ],
+        "title": "DecisionIn",
         "type": "object"
       },
       "Diet": {
@@ -1979,6 +2141,35 @@
         "title": "ProductPatch",
         "type": "object"
       },
+      "ProductRef": {
+        "properties": {
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "product_id",
+          "name"
+        ],
+        "title": "ProductRef",
+        "type": "object"
+      },
       "ProfileIn": {
         "properties": {
           "activity": {
@@ -2120,6 +2311,276 @@
         ],
         "title": "ProfileOut",
         "type": "object"
+      },
+      "ReceiptLineOut": {
+        "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/ProductRef"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "issues": {
+            "description": "line_math: quantity x unit price != total",
+            "items": {
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "notes": {
+            "description": "assumed_one_pack | unknown_pack_size | price_from_weight | no_price",
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "preselected": {
+            "description": "confident enough to pre-select (still needs confirming)",
+            "title": "Preselected",
+            "type": "boolean"
+          },
+          "product": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProductRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the suggested product, if any"
+          },
+          "proposed_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what would go to the pantry; null = unknown",
+            "title": "Proposed Amount"
+          },
+          "proposed_price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "per pack of the product",
+            "title": "Proposed Price Cents"
+          },
+          "proposed_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposed Unit"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "as printed: units, or a weight in g/ml",
+            "title": "Quantity"
+          },
+          "raw_text": {
+            "title": "Raw Text",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "total_cents": {
+            "title": "Total Cents",
+            "type": "integer"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "id",
+          "raw_text",
+          "total_cents",
+          "quantity",
+          "unit",
+          "product",
+          "confidence",
+          "preselected",
+          "alternatives",
+          "proposed_amount",
+          "proposed_unit",
+          "proposed_price_cents",
+          "notes",
+          "issues",
+          "status"
+        ],
+        "title": "ReceiptLineOut",
+        "type": "object"
+      },
+      "ReceiptOut": {
+        "properties": {
+          "has_image": {
+            "title": "Has Image",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/ReceiptLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "lines_total_cents": {
+            "title": "Lines Total Cents",
+            "type": "integer"
+          },
+          "purchased_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchased On"
+          },
+          "skipped": {
+            "description": "lines the AI read without a legible amount",
+            "items": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ReceiptStatus"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          },
+          "store_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Text"
+          },
+          "total_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Cents"
+          },
+          "total_matches": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "do the lines add up to the printed total? null if it could not be read",
+            "title": "Total Matches"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "store_id",
+          "store_text",
+          "purchased_on",
+          "total_cents",
+          "lines_total_cents",
+          "total_matches",
+          "issues",
+          "skipped",
+          "lines",
+          "has_image"
+        ],
+        "title": "ReceiptOut",
+        "type": "object"
+      },
+      "ReceiptStatus": {
+        "enum": [
+          "pending_review",
+          "confirmed",
+          "discarded"
+        ],
+        "title": "ReceiptStatus",
+        "type": "string"
       },
       "RecipeIn": {
         "properties": {
@@ -4643,6 +5104,302 @@
         "summary": "Update Profile",
         "tags": [
           "household"
+        ]
+      }
+    },
+    "/api/v1/receipts": {
+      "post": {
+        "description": "Read a receipt photo with the AI (5-20 s). Nothing is applied until you confirm.",
+        "operationId": "upload_receipt_api_v1_receipts_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_receipt_api_v1_receipts_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Receipt",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/v1/receipts/{receipt_id}": {
+      "get": {
+        "operationId": "get_receipt_api_v1_receipts__receipt_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "title": "Receipt Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Receipt",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/v1/receipts/{receipt_id}/confirm": {
+      "post": {
+        "description": "Add the confirmed lines to the pantry and save their prices (source=receipt).",
+        "operationId": "confirm_api_v1_receipts__receipt_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "title": "Receipt Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/v1/receipts/{receipt_id}/discard": {
+      "post": {
+        "description": "Throw the scan away: nothing is applied and the photo is deleted.",
+        "operationId": "discard_api_v1_receipts__receipt_id__discard_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "title": "Receipt Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Discard",
+        "tags": [
+          "receipts"
+        ]
+      }
+    },
+    "/api/v1/receipts/{receipt_id}/image": {
+      "get": {
+        "description": "The original photo, from this server's disk.",
+        "operationId": "get_receipt_image_api_v1_receipts__receipt_id__image_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "title": "Receipt Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Receipt Image",
+        "tags": [
+          "receipts"
         ]
       }
     },
