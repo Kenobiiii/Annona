@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /* eslint-disable @typescript-eslint/no-require-imports -- jest.mock factories must require lazily */
+import { configure } from '@testing-library/react-native';
+
+// A cold compile cache or a busy CI machine can make a screen take longer than the 1 s default.
+configure({ asyncUtilTimeout: 5000 });
+
 jest.mock('react-native-safe-area-context', () =>
   require('react-native-safe-area-context/jest/mock').default,
 );

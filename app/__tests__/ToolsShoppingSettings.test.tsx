@@ -120,9 +120,9 @@ describe('settings', () => {
     expect(screen.getByText('clave configurada en el servidor')).toBeTruthy();
     expect(screen.getByText('falta la clave en el servidor')).toBeTruthy();
     expect(screen.getByText('Gasto de IA registrado: 0.12 $')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Pablo' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Pablo' }));
     expect(router.push).toHaveBeenCalledWith('/settings/profile/1');
-    await fireEvent.press(screen.getByRole('button', { name: 'Añadir persona' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Añadir persona' }));
     expect(router.push).toHaveBeenCalledWith('/settings/profile/new');
   });
 

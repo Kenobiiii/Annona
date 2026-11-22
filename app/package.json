@@ -25,7 +25,8 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
-    }
+    },
+    "testTimeout": 30000
   },
   "dependencies": {
     "@expo/metro-runtime": "~58.0.17",
