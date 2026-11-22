@@ -56,6 +56,7 @@ def plan_job(
             result |= {
                 "accepted": week.outcome.accepted,
                 "issues": [i.message for i in week.outcome.verification.issues],
+                "issue_codes": sorted({i.code for i in week.outcome.verification.issues}),
                 "extra_purchases": [e.__dict__ for e in week.outcome.extra_purchases],
             }
         return result

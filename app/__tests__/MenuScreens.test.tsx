@@ -146,17 +146,21 @@ describe('create menu', () => {
     await fireEvent.press(await screen.findByRole('button', { name: 'Generar menú' }));
     expect(await screen.findByText('Con estos datos no hay una compra posible')).toBeTruthy();
     expect(screen.getByText(/Faltan 7,40 € de presupuesto/)).toBeTruthy();
+    expect(screen.getByText(/bajar la proteína en Ajustes/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Intentar de nuevo' })).toBeTruthy();
   });
 
   it('lists the problems of a menu that failed the checks', async () => {
     const api = server({
-      'GET /api/v1/jobs/j1': job('done', { shopping_status: 'optimal', accepted: false, issues: ['Pablo wants fish at least 2 times'] }),
+      'GET /api/v1/jobs/j1': job('done', { shopping_status: 'optimal', accepted: false, issues: ['Pablo wants fish at least 2 times'], issue_codes: ['servings_missing', 'protein_low', 'something_new'] }),
     });
     await renderConnected(<CreateMenuScreen />, api.fetchImpl);
     await fireEvent.press(await screen.findByRole('button', { name: 'Generar menú' }));
     expect(await screen.findByText('El menú no ha pasado las comprobaciones')).toBeTruthy();
-    expect(screen.getByText(/Pablo wants fish/)).toBeTruthy();
+    expect(screen.getByText(/raciones mínimas de carne, pescado o huevos/)).toBeTruthy();
+    expect(screen.getByText(/proteína de la semana se queda corta/)).toBeTruthy();
+    expect(screen.getByText(/problema que no se ha podido corregir/)).toBeTruthy(); // unknown code
+    expect(screen.queryByText(/Pablo wants fish/)).toBeNull(); // the AI-facing text is not shown
   });
 
   it('reports a failed job and lets the person try again', async () => {

@@ -106,7 +106,20 @@ export const es = {
   'create.done': 'Menú creado',
   'create.view': 'Ver menú',
   'create.rejected': 'El menú no ha pasado las comprobaciones',
-  'create.rejected.hint': 'Es normal que a veces ocurra. Puedes intentarlo otra vez.',
+  'create.rejected.hint':
+    'La IA propuso un menú que no cumple tus objetivos con la compra hecha. Suele arreglarse intentándolo otra vez. Si se repite, revisa tus objetivos en Ajustes (proteína, actividad) o los productos disponibles.',
+  'create.issue.portions_unrealistic':
+    'Las calorías de algún día no cuadran con tu objetivo usando los productos comprados.',
+  'create.issue.protein_low': 'La proteína de la semana se queda corta con los productos comprados.',
+  'create.issue.servings_missing':
+    'No se alcanzan las raciones mínimas de carne, pescado o huevos que pediste.',
+  'create.issue.stock_exceeded':
+    'El menú necesita más cantidad de algún producto de la que se compra.',
+  'create.issue.appliance': 'Alguna receta usa un aparato que no tienes, por ejemplo el horno.',
+  'create.issue.not_allowed': 'Alguna comida lleva un alimento que alguien no puede comer.',
+  'create.issue.other': 'El menú tiene un problema que no se ha podido corregir.',
+  'create.infeasible.hint':
+    'Puedes subir el presupuesto, quitar comidas del horario o bajar la proteína en Ajustes → persona.',
   'create.infeasible': 'Con estos datos no hay una compra posible',
   'create.shortfall.budget': 'Faltan {amount} de presupuesto.',
   'create.shortfall.other': '{detail} ({amount} {unit})',

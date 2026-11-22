@@ -236,6 +236,7 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
         name = member.profile.name
         for group, wanted in sorted(member.profile.weekly_servings.items()):
             got = 0
+            present = 0  # meals that contain the group at all
             for final in result.meals:
                 for portion in final.portions:
                     if portion.member != name:
@@ -249,12 +250,21 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
                         Decimal(0),
                     )
                     got += grams >= SERVING_COUNT_MIN_G
+                    present += grams > 0
             if got < wanted:
+                if present > got:
+                    advice = (
+                        f"{group} appears in {present} meals but only {got} have at least "
+                        f"{SERVING_COUNT_MIN_G} g per serving, and the week's total is limited: "
+                        f"use it in {wanted} meals and leave it out of the others"
+                    )
+                else:
+                    advice = f"add {group} to more of {name}'s meals"
                 issues.append(
                     Issue(
                         code="servings_missing",
                         message=f"{name} wants {group} at least {wanted} times this week but the "
-                        f"plan has it {got} times: add {group} to more of {name}'s meals",
+                        f"plan has it {got} times: {advice}",
                     )
                 )
     result.kcal_by_member_day = {k: _q(v) for k, v in result.kcal_by_member_day.items()}

@@ -166,6 +166,7 @@ def test_plan_generation_job_today_and_shopping_list(client, shop):
     job = client.get(accepted.json()["status_url"], headers=AUTH).json()
     assert job["status"] == "done", job
     assert job["result"]["accepted"] is True
+    assert job["result"]["issue_codes"] == []
     plan_id = job["result"]["plan_id"]
 
     week = client.get("/api/v1/plans", params={"week": MONDAY.isoformat()}, headers=AUTH).json()

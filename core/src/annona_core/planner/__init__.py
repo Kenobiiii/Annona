@@ -4,6 +4,7 @@
 from .draft import Appliance, DraftIngredient, DraftMeal, PlanDraft
 from .planner import TASK, ExtraPurchase, PlanOutcome, TopUp, plan_week
 from .prompt import LANGUAGES, build_prompt
+from .scale import scale_to_energy
 from .schedule import DEFAULT_SLOT_SHARES, MealSchedule, PlannedSlot
 from .topup import make_top_up
 from .verify import (
@@ -42,5 +43,6 @@ __all__ = [
     "build_prompt",
     "make_top_up",
     "plan_week",
+    "scale_to_energy",
     "verify",
 ]

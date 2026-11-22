@@ -47,6 +47,25 @@ def _d(value: float, places: str = "0.001") -> Decimal:
     return Decimal(str(value)).quantize(Decimal(places), rounding=ROUND_HALF_UP)
 
 
+def _stock_left(pairs, product, base, meals, members, ratio, x, ctx) -> str:
+    """ " (stock left: oats 800 g, ...)" - what the plan has not used yet, most energy first."""
+    n = len(pairs)
+    used: dict[int, float] = {}
+    for j in range(n):
+        key = pairs[j][0]
+        eaters = sum(
+            ratio[m.profile.name] for m in members if m.profile.name not in meals[key].skipped_by
+        )
+        used[product[j]] = used.get(product[j], 0.0) + float(x[j]) * base[j] * eaters
+    rows = []
+    for a in ctx.available:
+        free = float(a.available) - used.get(a.product.id, 0.0)
+        if free >= 50:
+            rows.append((free * float(a.kcal), f"{a.product.name} {round(free)} {a.basis}"))
+    rows.sort(reverse=True)
+    return f" (stock left: {', '.join(r[1] for r in rows[:4])})" if rows else ""
+
+
 def solve_portions(meals: dict[Key, DraftMeal], ctx) -> PortionSolution:  # ctx: PlanContext
     by_id = {a.product.id: a for a in ctx.available}
     members = list(ctx.members)
@@ -178,6 +197,7 @@ def solve_portions(meals: dict[Key, DraftMeal], ctx) -> PortionSolution:  # ctx:
         return solution
     solution.multipliers = {pairs[j]: _d(res.x[j]) for j in range(n)}
     names = {a.product.id: (a.product.name, a.basis, a.available) for a in ctx.available}
+    left = _stock_left(pairs, product, base, meals, members, ratio, res.x, ctx)
     for i, (kind, _scale, ref_, _sign) in enumerate(slacks):
         value = float(res.x[2 * n + i])
         if value <= 0.5:
@@ -187,13 +207,14 @@ def solve_portions(meals: dict[Key, DraftMeal], ctx) -> PortionSolution:  # ctx:
             weekday = date.fromisoformat(day).strftime("%A")
             if kind == "energy_low":
                 msg = (
-                    f"{name}'s meals on {weekday} are {round(value)} kcal short of the target even "
-                    f"at {hi:g}x the drafted amounts: add more or more energy-dense ingredients"
+                    f"{name}'s meals on {weekday} are {round(value)} kcal short of the target "
+                    f"even after scaling the amounts: add more energy-dense ingredients or use "
+                    f"products that are still unused{left}"
                 )
             else:
                 msg = (
-                    f"{name}'s meals on {weekday} are {round(value)} kcal over the target even at "
-                    f"{lo:g}x the drafted amounts: use smaller or lighter dishes"
+                    f"{name}'s meals on {weekday} are {round(value)} kcal over the target even "
+                    f"after scaling the amounts down: use lighter dishes"
                 )
             solution.problems.append(("portions_unrealistic", msg))
         elif kind == "protein":

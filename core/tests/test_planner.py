@@ -29,6 +29,7 @@ from annona_core.planner import (
     plan_week,
     verify,
 )
+from annona_core.planner.planner import _with_top_up
 
 MONDAY = date(2026, 11, 23)
 MODELS = {Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"}
@@ -129,14 +130,25 @@ def test_valid_plan_is_accepted_and_portions_hit_the_targets():
     assert fake.requests[0][0] == "fake/l"  # large tier
 
 
-def test_off_target_portions_are_repaired():
+def test_tiny_portions_are_scaled_by_the_code_not_sent_back_to_the_model():
     ctx = context()
-    tiny = draft_json(ctx, grams_factor=0.1)  # ten times too small
-    outcome, fake = run(ctx, tiny, draft_json(ctx))
-    assert "portions_unrealistic" in {i.code for i in outcome.first_issues}
-    assert outcome.repaired and outcome.accepted
+    outcome, fake = run(ctx, draft_json(ctx, grams_factor=0.1))  # ten times too small
+    assert outcome.accepted and not outcome.repaired and len(fake.requests) == 1
+
+
+def test_repair_request_names_the_gap_and_the_unused_stock():
+    """When no scaling can reach the energy (the food bought is too little), the model is told
+    exactly how many kcal are missing and which products still have stock."""
+    little = tuple(
+        a.model_copy(update={"available": a.available / 10, "intended": a.intended / 10})
+        for a in AVAILABLE
+    )
+    ctx = context(available=little)
+    outcome, fake = run(ctx, draft_json(ctx), draft_json(ctx))
+    assert outcome.repaired and not outcome.accepted
     repair_text = fake.requests[1][1].messages[-1].text
-    assert "kcal short" in repair_text and "3x the drafted amounts" in repair_text
+    assert "kcal short of the target" in repair_text
+    assert "x the drafted amounts" not in repair_text
 
 
 def test_unknown_ingredient_is_rejected():
@@ -291,11 +303,11 @@ def test_small_stock_shortfall_is_fixed_by_buying_one_more_pack():
     )
     ctx = context(available=scarce)
     top_up = make_top_up(ctx, _shopping_with_chicken(100, budget_left_cents=2000), 10_000)
-    fake = FakeLLM([draft_json(ctx)])
-    outcome = plan_week(LLMClient(fake, MODELS), ctx, top_up=top_up)
-    assert outcome.accepted and not outcome.repaired and len(fake.requests) == 1
-    assert [(e.name, e.packs) for e in outcome.extra_purchases][0][0] == "chicken"
-    assert sum(e.cost_cents for e in outcome.extra_purchases) <= 2000
+    draft = PlanDraft.model_validate_json(draft_json(ctx))
+    result, extras = _with_top_up(draft, verify(draft, ctx), top_up)
+    assert result.ok
+    assert [(e.name, e.packs) for e in extras][0][0] == "chicken"
+    assert sum(e.cost_cents for e in extras) <= 2000
 
 
 def test_top_up_respects_the_budget():
@@ -307,9 +319,9 @@ def test_top_up_respects_the_budget():
     )
     ctx = context(available=scarce)
     top_up = make_top_up(ctx, _shopping_with_chicken(100, budget_left_cents=100), 10_000)
-    bad = draft_json(ctx)
-    outcome = plan_week(LLMClient(FakeLLM([bad, bad]), MODELS), ctx, top_up=top_up)
-    assert not outcome.accepted and outcome.repaired and outcome.extra_purchases == []
+    draft = PlanDraft.model_validate_json(draft_json(ctx))
+    result, extras = _with_top_up(draft, verify(draft, ctx), top_up)
+    assert not result.ok and extras == []
 
 
 def test_weekly_servings_are_checked_in_the_menu():
@@ -339,3 +351,25 @@ def test_preferences_reach_the_prompt():
     _, user = build_prompt(context(members=[pablo]))
     assert "wants at least these meals this week: fish 2, meat 3" in user
     assert "likes little carrot" in user
+
+
+def test_servings_message_says_when_the_group_is_spread_too_thin():
+    from annona_core.domain import Category
+
+    meat = tuple(
+        a.model_copy(update={"product": a.product.model_copy(update={"category": Category.MEAT})})
+        if a.product.id == 5
+        else a
+        for a in AVAILABLE
+    )
+    wants = person().model_copy(update={"weekly_servings": {"meat": 3}})
+    ctx = context(members=[wants], available=meat)
+
+    def a_little_chicken_everywhere(meal):
+        if meal["slot"] != "dinner":
+            meal["ingredients"].append({"product_id": 5, "amount": 10})
+
+    draft = PlanDraft.model_validate_json(draft_json(ctx, tweak=a_little_chicken_everywhere))
+    issues = [i for i in verify(draft, ctx).issues if i.code == "servings_missing"]
+    assert issues and "appears in" in issues[0].message
+    assert "leave it out of the others" in issues[0].message

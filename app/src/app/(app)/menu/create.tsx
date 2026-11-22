@@ -23,9 +23,26 @@ type JobResult = {
   accepted?: boolean;
   shopping_status?: string;
   issues?: string[];
+  issue_codes?: string[];
   shortfalls?: { constraint: string; amount: string; unit: string; detail: string }[];
   extra_purchases?: { name: string; packs: number }[];
 };
+
+const ISSUE_KEYS: Record<string, MessageKey> = {
+  portions_unrealistic: 'create.issue.portions_unrealistic',
+  protein_low: 'create.issue.protein_low',
+  servings_missing: 'create.issue.servings_missing',
+  stock_exceeded: 'create.issue.stock_exceeded',
+  appliance: 'create.issue.appliance',
+  not_allowed: 'create.issue.not_allowed',
+};
+
+/** What went wrong, in Spanish: one line per kind of problem (the raw messages are for the AI). */
+function issueLines(result: JobResult): string[] {
+  const codes = result.issue_codes ?? [];
+  if (codes.length === 0) return [];
+  return codes.map((code) => `• ${t(ISSUE_KEYS[code] ?? 'create.issue.other')}`);
+}
 
 function Outcome({ jobId, week, onRetry }: { jobId: string; week: string; onRetry: () => void }) {
   const router = useRouter();
@@ -70,6 +87,7 @@ function Outcome({ jobId, week, onRetry }: { jobId: string; week: string; onRetr
                 ? t('create.shortfall.budget', { amount: formatMoney(Number(s.amount)) })
                 : t('create.shortfall.other', { detail: s.detail, amount: s.amount, unit: s.unit }),
             )
+            .concat(t('create.infeasible.hint'))
             .join('\n')}
         </Banner>
         <Button label={t('create.retry')} onPress={onRetry} />
@@ -80,7 +98,7 @@ function Outcome({ jobId, week, onRetry }: { jobId: string; week: string; onRetr
     return (
       <View style={{ gap: spacing.md }}>
         <Banner kind="warning" title={t('create.rejected')}>
-          {[t('create.rejected.hint'), ...(result.issues ?? [])].join('\n')}
+          {[t('create.rejected.hint'), ...issueLines(result)].join('\n')}
         </Banner>
         <Button label={t('create.retry')} onPress={onRetry} />
       </View>

@@ -17,6 +17,7 @@ from annona_core.llm import CallStats, LLMClient, LLMRequest, Message, Tier
 
 from .draft import PlanDraft
 from .prompt import build_prompt
+from .scale import scale_to_energy
 from .verify import Issue, PlanContext, Verification, verify
 
 TASK = "plan_week"
@@ -87,6 +88,7 @@ def plan_week(
         max_tokens=max_tokens,
     )
     draft = llm.complete_json(request, PlanDraft, use_cache=use_cache, stats=first_stats)
+    draft = scale_to_energy(draft, ctx)
     first = verify(draft, ctx)
     result, extras = _with_top_up(draft, first, top_up)
     if result.ok:
@@ -114,6 +116,7 @@ def plan_week(
     )
     repair_stats = CallStats()
     fixed = llm.complete_json(repair_request, PlanDraft, use_cache=use_cache, stats=repair_stats)
+    fixed = scale_to_energy(fixed, ctx)
     fixed_result, extras = _with_top_up(fixed, verify(fixed, ctx), top_up)
     return PlanOutcome(
         accepted=fixed_result.ok,
