@@ -1,0 +1,5644 @@
+{
+  "meta": {
+    "task": "receipt_scan",
+    "model": "deepseek/deepseek-flash",
+    "n": 30,
+    "seed": 7,
+    "dataset_hash": "522102a54ac7",
+    "renderer_version": "1",
+    "started_at": "2026-11-22T17:33:43+00:00",
+    "git_commit": "fc84d58"
+  },
+  "metrics": {
+    "receipts": 30,
+    "lines_expected": 304,
+    "line_recall": 0.9737,
+    "line_precision": 1.0,
+    "amount_exact": 1.0,
+    "quantity_exact": 1.0,
+    "weight_exact": 0.9561,
+    "total_exact": 1.0,
+    "receipts_with_errors": 7,
+    "errors_caught_by_sum_check": 5,
+    "silent_errors": 2,
+    "false_alarms": 0,
+    "product_accuracy": 0.9536,
+    "preselected_rate": 0.8986,
+    "confident_wrong": 0,
+    "cost_usd": "0.00795437699999999962",
+    "cost_per_receipt_usd": "0.000265",
+    "input_tokens": 25600,
+    "output_tokens": 11686,
+    "latency_ms_p50": 1993,
+    "latency_ms_p95": 2302
+  },
+  "by_difficulty": {
+    "clean": {
+      "receipts": 10,
+      "lines_expected": 101,
+      "line_recall": 0.9703,
+      "line_precision": 1.0,
+      "amount_exact": 1.0,
+      "quantity_exact": 1.0,
+      "weight_exact": 0.9388,
+      "total_exact": 1.0,
+      "receipts_with_errors": 3,
+      "errors_caught_by_sum_check": 3,
+      "silent_errors": 0,
+      "false_alarms": 0,
+      "product_accuracy": 0.9362,
+      "preselected_rate": 0.8878,
+      "confident_wrong": 0,
+      "cost_usd": "0.00261089999999999986",
+      "cost_per_receipt_usd": "0.000261",
+      "input_tokens": 8378,
+      "output_tokens": 3825,
+      "latency_ms_p50": 2134,
+      "latency_ms_p95": 2281
+    },
+    "noisy": {
+      "receipts": 10,
+      "lines_expected": 94,
+      "line_recall": 0.9574,
+      "line_precision": 1.0,
+      "amount_exact": 1.0,
+      "quantity_exact": 1.0,
+      "weight_exact": 1.0,
+      "total_exact": 1.0,
+      "receipts_with_errors": 1,
+      "errors_caught_by_sum_check": 1,
+      "silent_errors": 0,
+      "false_alarms": 0,
+      "product_accuracy": 0.9765,
+      "preselected_rate": 0.9222,
+      "confident_wrong": 0,
+      "cost_usd": "0.00253124999999999991",
+      "cost_per_receipt_usd": "0.000253",
+      "input_tokens": 8395,
+      "output_tokens": 3688,
+      "latency_ms_p50": 1941,
+      "latency_ms_p95": 2300
+    },
+    "hard": {
+      "receipts": 10,
+      "lines_expected": 109,
+      "line_recall": 0.9908,
+      "line_precision": 1.0,
+      "amount_exact": 1.0,
+      "quantity_exact": 1.0,
+      "weight_exact": 0.9352,
+      "total_exact": 1.0,
+      "receipts_with_errors": 3,
+      "errors_caught_by_sum_check": 1,
+      "silent_errors": 2,
+      "false_alarms": 0,
+      "product_accuracy": 0.9505,
+      "preselected_rate": 0.8889,
+      "confident_wrong": 0,
+      "cost_usd": "0.00281222699999999985",
+      "cost_per_receipt_usd": "0.000281",
+      "input_tokens": 8827,
+      "output_tokens": 4173,
+      "latency_ms_p50": 1978,
+      "latency_ms_p95": 2251
+    }
+  },
+  "items": [
+    {
+      "id": "r01",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r01",
+        "difficulty": "clean",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-19",
+        "total_cents": 2254,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "LENTEJA PARDINA 1KG",
+            "total_cents": 185,
+            "product_id": 12,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMI 6X1L",
+            "total_cents": 498,
+            "product_id": 4,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 270,
+            "product_id": 2,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANO CANARIAS",
+            "total_cents": 143,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": 190,
+            "weight_g": 750
+          },
+          {
+            "printed": "MANZANA GOLDEN",
+            "total_cents": 90,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 430
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 300,
+            "product_id": 21,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "19/11/2026",
+        "total": "22,54",
+        "lines": [
+          {
+            "raw_text": "1 LENTEJA PARDINA 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,85",
+            "total": "1,85"
+          },
+          {
+            "raw_text": "1 LECHE SEMI 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "3 MACARRON HACENDADO",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "2 GARBANZO COCIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 PLATANO CANARIAS",
+            "quantity": "1",
+            "weight": "0,750 kg",
+            "unit_price": "1,90 EUR/kg",
+            "total": "1,43"
+          },
+          {
+            "raw_text": "1 MANZANA GOLDEN",
+            "quantity": "1",
+            "weight": "0,430 kg",
+            "unit_price": "2,10 EUR/kg",
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "2 CEBOLLAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 ESPAGUETI 500G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r02",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r02",
+        "difficulty": "noisy",
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "2026-11-02",
+        "total_cents": 3379,
+        "discount_cents": -20,
+        "lines": [
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 330,
+            "product_id": 24,
+            "quantity": 3,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "MUSLOS POLLO",
+            "total_cents": 359,
+            "product_id": 10,
+            "quantity": null,
+            "unit_price_cents": 520,
+            "weight_g": 690
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI BANDEJA",
+            "total_cents": 180,
+            "product_id": 23,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRAS NAT. 200G",
+            "total_cents": 460,
+            "product_id": 25,
+            "quantity": 2,
+            "unit_price_cents": 230,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 420,
+            "product_id": 11,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MANZANA GOLDEN",
+            "total_cents": 210,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NATURAL 4X125",
+            "total_cents": 210,
+            "product_id": 6,
+            "quantity": 2,
+            "unit_price_cents": 105,
+            "weight_g": null
+          },
+          {
+            "printed": "LENTEJA PARDINA 1KG",
+            "total_cents": 185,
+            "product_id": 12,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANO CANARIAS",
+            "total_cents": 175,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": 190,
+            "weight_g": 920
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "02/11/2026",
+        "total": "33,79",
+        "lines": [
+          {
+            "raw_text": "3 QUESO FRESCO BATIDO",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "3,30"
+          },
+          {
+            "raw_text": "1 MUSLOS POLLO",
+            "quantity": "1",
+            "weight": "0,690 kg",
+            "unit_price": "5,20 EUR/kg",
+            "total": "3,59"
+          },
+          {
+            "raw_text": "1 AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "1 BROCOLI BANDEJA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,80"
+          },
+          {
+            "raw_text": "2 ALMENDRAS NAT. 200G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "2,30",
+            "total": "4,60"
+          },
+          {
+            "raw_text": "1 ATUN CLARO NAT. P3",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,20"
+          },
+          {
+            "raw_text": "1 MANZANA GOLDEN",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,10"
+          },
+          {
+            "raw_text": "2 YOGUR NATURAL 4X125",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,05",
+            "total": "2,10"
+          },
+          {
+            "raw_text": "1 LENTEJA PARDINA 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,85"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 PLATANO CANARIAS",
+            "quantity": "1",
+            "weight": "0,920 kg",
+            "unit_price": "1,90 EUR/kg",
+            "total": "1,75"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,20"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r03",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r03",
+        "difficulty": "hard",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-04",
+        "total_cents": 4673,
+        "discount_cents": -30,
+        "lines": [
+          {
+            "printed": "YOGUR NAT.",
+            "total_cents": 105,
+            "product_id": 6,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANOS",
+            "total_cents": 124,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": 190,
+            "weight_g": 650
+          },
+          {
+            "printed": "PATATAS FRITAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FILETE PECHUGA POLLO",
+            "total_cents": 693,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 900
+          },
+          {
+            "printed": "GARBANZOS COC. 400G",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AOVE 1L",
+            "total_cents": 1798,
+            "product_id": 16,
+            "quantity": 2,
+            "unit_price_cents": 899,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 300,
+            "product_id": 15,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "04/11/2026",
+        "total": "46,73",
+        "lines": [
+          {
+            "raw_text": "1 YOGUR NAT.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,05"
+          },
+          {
+            "raw_text": "1 ESPAGUETI 500G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 PLATANOS",
+            "quantity": "1",
+            "weight": "0,650 kg",
+            "unit_price": "1,90 EUR/kg",
+            "total": "1,24"
+          },
+          {
+            "raw_text": "1 PATATAS FRITAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          },
+          {
+            "raw_text": "1 FILETE PECHUGA POLLO",
+            "quantity": "1",
+            "weight": "0,900 kg",
+            "unit_price": "7,70 EUR/kg",
+            "total": "6,93"
+          },
+          {
+            "raw_text": "1 GARBANZOS COC. 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 AOVE 1L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "8,99",
+            "total": "17,98"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "2 PAN MOLDE INTEGRAL",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,30"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r04",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r04",
+        "difficulty": "clean",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-09",
+        "total_cents": 1717,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 270,
+            "product_id": 13,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "FILETE PECHUGA POLLO",
+            "total_cents": 393,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 510
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 96,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 640
+          },
+          {
+            "printed": "LECHE ENT.",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "09/11/2026",
+        "total": "17,17",
+        "lines": [
+          {
+            "raw_text": "3 GARBANZO COCIDO",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 FILETE PECHUGA POLLO",
+            "quantity": "1",
+            "weight": "0,510 kg",
+            "unit_price": "7,70 EUR/kg",
+            "total": "3,93"
+          },
+          {
+            "raw_text": "1 CEBOLLAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 SPAGHETTI",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 4X125G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 NARANJAS KG",
+            "quantity": "1",
+            "weight": "0,640 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "0,96"
+          },
+          {
+            "raw_text": "1 LECHE ENT.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r05",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r05",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-04",
+        "total_cents": 2819,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANO CANARIAS",
+            "total_cents": 167,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": 190,
+            "weight_g": 880
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 57,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 380
+          },
+          {
+            "printed": "ALMENDRA NATURAL",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRIT. CLASICAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NATURAL",
+            "total_cents": 1260,
+            "product_id": 11,
+            "quantity": 3,
+            "unit_price_cents": 420,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "04/11/2026",
+        "total": "28,19",
+        "lines": [
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 PLATANO CANARIAS",
+            "quantity": "1",
+            "weight": "0,880 kg",
+            "unit_price": "1,90 EUR/kg",
+            "total": "1,67"
+          },
+          {
+            "raw_text": "1 NARANJAS KG",
+            "quantity": "1",
+            "weight": "0,380 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "0,57"
+          },
+          {
+            "raw_text": "1 ALMENDRA NATURAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "1 CEBOLLAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 TOMATE FRITO 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 PATATAS FRIT. CLASICAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          },
+          {
+            "raw_text": "3 ATUN CLARO NATURAL",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "4,20",
+            "total": "12,60"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r06",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r06",
+        "difficulty": "hard",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-05",
+        "total_cents": 2975,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "ZANAHORIA BOLSA 1KG",
+            "total_cents": 100,
+            "product_id": 22,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRITAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NAT.",
+            "total_cents": 210,
+            "product_id": 6,
+            "quantity": 2,
+            "unit_price_cents": 105,
+            "weight_g": null
+          },
+          {
+            "printed": "COPOS AVENA 800G",
+            "total_cents": 260,
+            "product_id": 14,
+            "quantity": 2,
+            "unit_price_cents": 130,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NATURAL",
+            "total_cents": 1260,
+            "product_id": 11,
+            "quantity": 3,
+            "unit_price_cents": 420,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 270,
+            "product_id": 3,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI",
+            "total_cents": 360,
+            "product_id": 23,
+            "quantity": 2,
+            "unit_price_cents": 180,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A",
+        "date": "05/11/2026",
+        "total": "29,75",
+        "lines": [
+          {
+            "raw_text": "1 ZANAHORIA BOLSA 1KG 1,00",
+            "quantity": "1",
+            "weight": "1KG",
+            "unit_price": null,
+            "total": "1,00"
+          },
+          {
+            "raw_text": "1 CEBOLLAS 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO 0,05",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 PATATAS FRITAS 1,20",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          },
+          {
+            "raw_text": "2 YOGUR NAT. 1,05 2,10",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,05",
+            "total": "2,10"
+          },
+          {
+            "raw_text": "2 COPOS AVENA 800G 1,30 2,60",
+            "quantity": "2",
+            "weight": "800G",
+            "unit_price": "1,30",
+            "total": "2,60"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 GARBANZO COCIDO 0,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "3 ATUN CLARO NATURAL 4,20 12,60",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "4,20",
+            "total": "12,60"
+          },
+          {
+            "raw_text": "3 ESPAGUETI 500G 0,90 2,70",
+            "quantity": "3",
+            "weight": "500G",
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "2 BROCOLI 1,80 3,60",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,80",
+            "total": "3,60"
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": true,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r07",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r07",
+        "difficulty": "clean",
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "2026-11-03",
+        "total_cents": 3440,
+        "discount_cents": -30,
+        "lines": [
+          {
+            "printed": "LECHE SEMI 6X1L",
+            "total_cents": 498,
+            "product_id": 4,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRA NATURAL",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 345,
+            "product_id": 1,
+            "quantity": 3,
+            "unit_price_cents": 115,
+            "weight_g": null
+          },
+          {
+            "printed": "ACEITE OLIVA V.EXTRA",
+            "total_cents": 899,
+            "product_id": 16,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN M. INTEGRAL AVENA",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRITAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NAT.",
+            "total_cents": 210,
+            "product_id": 6,
+            "quantity": 2,
+            "unit_price_cents": 105,
+            "weight_g": null
+          },
+          {
+            "printed": "ZANAHORIAS",
+            "total_cents": 100,
+            "product_id": 22,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJA MESA",
+            "total_cents": 150,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "03/11/2026",
+        "total": "34,40",
+        "lines": [
+          {
+            "raw_text": "1 LECHE SEMI 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 ALMENDRA NATURAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 AGUA MIN. PACK 6",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "3 ARROZ REDONDO 1KG",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,15",
+            "total": "3,45"
+          },
+          {
+            "raw_text": "1 ACEITE OLIVA V.EXTRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "8,99"
+          },
+          {
+            "raw_text": "1 PAN M. INTEGRAL AVENA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 PATATAS FRITAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          },
+          {
+            "raw_text": "2 YOGUR NAT.",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,05",
+            "total": "2,10"
+          },
+          {
+            "raw_text": "1 ZANAHORIAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,00"
+          },
+          {
+            "raw_text": "1 NARANJA MESA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,30"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r08",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r08",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-09",
+        "total_cents": 6201,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "BROCOLI",
+            "total_cents": 360,
+            "product_id": 23,
+            "quantity": 2,
+            "unit_price_cents": 180,
+            "weight_g": null
+          },
+          {
+            "printed": "ZANAHORIAS",
+            "total_cents": 300,
+            "product_id": 22,
+            "quantity": 3,
+            "unit_price_cents": 100,
+            "weight_g": null
+          },
+          {
+            "printed": "ACEITE OLIVA V.EXTRA",
+            "total_cents": 899,
+            "product_id": 16,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMI 6X1L",
+            "total_cents": 498,
+            "product_id": 4,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 1180,
+            "product_id": 8,
+            "quantity": 2,
+            "unit_price_cents": 590,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 300,
+            "product_id": 15,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 300,
+            "product_id": 21,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "FILETE PECHUGA POLLO",
+            "total_cents": 701,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 910
+          },
+          {
+            "printed": "LENTEJAS PARDINAS",
+            "total_cents": 555,
+            "product_id": 12,
+            "quantity": 3,
+            "unit_price_cents": 185,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "09/11/2026",
+        "total": "62,01",
+        "lines": [
+          {
+            "raw_text": "2 BROCOLI",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,80",
+            "total": "3,60"
+          },
+          {
+            "raw_text": "3 ZANAHORIAS",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,00",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 ACEITE OLIVA V.EXTRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "8,99"
+          },
+          {
+            "raw_text": "2 GARBANZO COCIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 LECHE SEMI 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 AGUA MIN. PACK 6",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "2 HUEVOS 30 L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "5,90",
+            "total": "11,80"
+          },
+          {
+            "raw_text": "2 PAN MOLDE INTEGRAL",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "2 CEBOLLAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 FILETE PECHUGA POLLO",
+            "quantity": "1",
+            "weight": "0,910 kg",
+            "unit_price": null,
+            "total": "7,01"
+          },
+          {
+            "raw_text": "3 LENTEJAS PARDINAS",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,85",
+            "total": "5,55"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r09",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r09",
+        "difficulty": "hard",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-09",
+        "total_cents": 1969,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 540,
+            "product_id": 28,
+            "quantity": 2,
+            "unit_price_cents": 270,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRITAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 45,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 300
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 424,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "09/11/2026",
+        "total": "19,69",
+        "lines": [
+          {
+            "raw_text": "2 AGUA MINERAL 6X1,5L 2,70 5,40",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "2,70",
+            "total": "5,40"
+          },
+          {
+            "raw_text": "1 PATATAS FRITAS 1,20",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 1,60",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 NARANJAS KG 0,45",
+            "quantity": "1",
+            "weight": "0,300 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "0,45"
+          },
+          {
+            "raw_text": "1 SPAGHETTI 0,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO 4,24",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,24"
+          },
+          {
+            "raw_text": "1 HUEVOS 30 L 5,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r10",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r10",
+        "difficulty": "clean",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-07",
+        "total_cents": 5524,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "QUESO F.BATIDO 0%",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 300,
+            "product_id": 15,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMIDESN.",
+            "total_cents": 498,
+            "product_id": 4,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 260,
+            "product_id": 14,
+            "quantity": 2,
+            "unit_price_cents": 130,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANO CANARIAS",
+            "total_cents": 249,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": 190,
+            "weight_g": 1310
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZOS COC. 400G",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AOVE 1L",
+            "total_cents": 2697,
+            "product_id": 16,
+            "quantity": 3,
+            "unit_price_cents": 899,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "07/11/2026",
+        "total": "55,24",
+        "lines": [
+          {
+            "raw_text": "2 QUESO F.BATIDO 0%",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "2 PAN MOLDE INTEGRAL",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 LECHE SEMIDESN.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "2 AVENA COPOS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,30",
+            "total": "2,60"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": null
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 PLATANO CANARIAS",
+            "quantity": "1",
+            "weight": "1,310 kg",
+            "unit_price": "1,90 EUR/kg",
+            "total": "2,49"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 GARBANZOS COC. 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "3 AOVE 1L",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "8,99",
+            "total": "26,97"
+          },
+          {
+            "raw_text": "1 TOMATE FRITO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "1 AGUA MIN. PACK 6",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [
+          "YOGUR FRESA"
+        ],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r11",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r11",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-21",
+        "total_cents": 2168,
+        "discount_cents": -20,
+        "lines": [
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 90,
+            "product_id": 2,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENT.",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 485,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 630
+          },
+          {
+            "printed": "MANZANA GOLDEN",
+            "total_cents": 275,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 1310
+          },
+          {
+            "printed": "GARBANZOS COC. 400G",
+            "total_cents": 270,
+            "product_id": 13,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA",
+            "total_cents": 480,
+            "product_id": 27,
+            "quantity": 3,
+            "unit_price_cents": 160,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "21/11/2026",
+        "total": "21,68",
+        "lines": [
+          {
+            "raw_text": "1 MACARRON HACENDADO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 LECHE ENT.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 ESPAGUETI 500G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO",
+            "quantity": "1",
+            "weight": "0,630 kg",
+            "unit_price": "7,70 EUR/kg",
+            "total": "4,85"
+          },
+          {
+            "raw_text": "1 MANZANA GOLDEN",
+            "quantity": "1",
+            "weight": "1,310 kg",
+            "unit_price": "2,10 EUR/kg",
+            "total": "2,75"
+          },
+          {
+            "raw_text": "3 GARBANZOS COC. 400G",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "3 GALLETAS MARIA",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,60",
+            "total": "4,80"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,20"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r12",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r12",
+        "difficulty": "hard",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-10",
+        "total_cents": 5882,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 180,
+            "product_id": 2,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRAS NAT. 200G",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 480,
+            "product_id": 27,
+            "quantity": 3,
+            "unit_price_cents": 160,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANO CANARIAS",
+            "total_cents": 190,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 924,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 1200
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 300,
+            "product_id": 21,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 270,
+            "product_id": 3,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 540,
+            "product_id": 28,
+            "quantity": 2,
+            "unit_price_cents": 270,
+            "weight_g": null
+          },
+          {
+            "printed": "AOVE 1L",
+            "total_cents": 1798,
+            "product_id": 16,
+            "quantity": 2,
+            "unit_price_cents": 899,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 110,
+            "product_id": 24,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "10/11/2026",
+        "total": "58,82",
+        "lines": [
+          {
+            "raw_text": "2 MACARRON HACENDADO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 ALMENDRAS NAT. 200G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "3 GALLETAS MARIA 800G",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,60",
+            "total": "4,80"
+          },
+          {
+            "raw_text": "1 PLATANO CANARIAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,90"
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO",
+            "quantity": "1",
+            "weight": "1,200 kg",
+            "unit_price": "7,70 EUR/kg",
+            "total": "9,24"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "2 CEBOLLAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "3 SPAGHETTI",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "2 AGUA MINERAL 6X1,5L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "2,70",
+            "total": "5,40"
+          },
+          {
+            "raw_text": "2 AOVE 1L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "8,99",
+            "total": "17,98"
+          },
+          {
+            "raw_text": "1 ARROZ REDONDO 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 QUESO FRESCO BATIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r13",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r13",
+        "difficulty": "clean",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-09",
+        "total_cents": 3141,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 160,
+            "product_id": 17,
+            "quantity": 2,
+            "unit_price_cents": 80,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZOS COC. 400G",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRIT. CLASICAS",
+            "total_cents": 240,
+            "product_id": 26,
+            "quantity": 2,
+            "unit_price_cents": 120,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 993,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 1290
+          },
+          {
+            "printed": "MANZANAS GOLDEN KG",
+            "total_cents": 90,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 430
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 540,
+            "product_id": 28,
+            "quantity": 2,
+            "unit_price_cents": 270,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "09/11/2026",
+        "total": "31,41",
+        "lines": [
+          {
+            "raw_text": "2 TOMATE FRITO 400G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,80",
+            "total": "1,60"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 4X125G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 GARBANZOS COC. 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 QUESO FRESCO BATIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "2 PATATAS FRIT. CLASICAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,20",
+            "total": "2,40"
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO",
+            "quantity": "1",
+            "weight": "1,290 kg",
+            "unit_price": null,
+            "total": "9,93"
+          },
+          {
+            "raw_text": "1 MANZANAS GOLDEN KG",
+            "quantity": "1",
+            "weight": "0,430 kg",
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 AGUA MIN. PACK 6",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "2,70",
+            "total": "5,40"
+          },
+          {
+            "raw_text": "1 SPAGHETTI",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r14",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r14",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-07",
+        "total_cents": 2852,
+        "discount_cents": -30,
+        "lines": [
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "LENTEJAS PARDINAS",
+            "total_cents": 370,
+            "product_id": 12,
+            "quantity": 2,
+            "unit_price_cents": 185,
+            "weight_g": null
+          },
+          {
+            "printed": "FILETE PECHUGA POLLO",
+            "total_cents": 424,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENT.",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NATURAL",
+            "total_cents": 420,
+            "product_id": 11,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "07/11/2026",
+        "total": "28,52",
+        "lines": [
+          {
+            "raw_text": "1 CEBOLLAS 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "1,50"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 1,10 2,20",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "2 LENTEJAS PARDINAS 1,85 3,70",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,85",
+            "total": "3,70"
+          },
+          {
+            "raw_text": "1 FILETE PECHUGA POLLO 4,24",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,24"
+          },
+          {
+            "raw_text": "1 HUEVOS 30 L 5,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 LECHE ENT. 4,98",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 TOMATE FRITO 400G 0,80",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "1 ATUN CLARO NATURAL 4,20",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,20"
+          },
+          {
+            "raw_text": "1 AVENA COPOS 1,30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "DESCUENTO -0,30",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,30"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r15",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r15",
+        "difficulty": "hard",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-05",
+        "total_cents": 2683,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 300,
+            "product_id": 15,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRAS NAT. 200G",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PLATANOS",
+            "total_cents": 190,
+            "product_id": 18,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 840,
+            "product_id": 11,
+            "quantity": 2,
+            "unit_price_cents": 420,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "05/11/2026",
+        "total": "26,83",
+        "lines": [
+          {
+            "raw_text": "2 PAN MOLDE INTEGRAL",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 ALMENDRAS NAT. 200G",
+            "quantity": "1",
+            "weight": "200G",
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "1 PLATANOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,90",
+            "total": "1,90"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 4X125G",
+            "quantity": "2",
+            "weight": "4X125G",
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": "6X1L",
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 AGUA MINERAL 6X1,5L",
+            "quantity": "1",
+            "weight": "6X1,5L",
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "2 ATUN CLARO NAT. P3",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "4,20",
+            "total": "8,40"
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": true,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r16",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r16",
+        "difficulty": "clean",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-14",
+        "total_cents": 3585,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI BANDEJA",
+            "total_cents": 180,
+            "product_id": 23,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 180,
+            "product_id": 3,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLA MALLA 1KG",
+            "total_cents": 300,
+            "product_id": 21,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMIDESN.",
+            "total_cents": 498,
+            "product_id": 4,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AOVE 1L",
+            "total_cents": 899,
+            "product_id": 16,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "14/11/2026",
+        "total": "35,85",
+        "lines": [
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 BROCOLI BANDEJA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 GARBANZO COCIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 ARROZ REDONDO 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "2 SPAGHETTI",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "2 CEBOLLA MALLA 1KG",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 TOMATE FRITO 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "1 LECHE SEMIDESN.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 AOVE 1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "8,99"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r17",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r17",
+        "difficulty": "noisy",
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "2026-11-14",
+        "total_cents": 3027,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "ACEITE OLIVA V.EXTRA",
+            "total_cents": 1798,
+            "product_id": 16,
+            "quantity": 2,
+            "unit_price_cents": 899,
+            "weight_g": null
+          },
+          {
+            "printed": "COPOS AVENA 800G",
+            "total_cents": 260,
+            "product_id": 14,
+            "quantity": 2,
+            "unit_price_cents": 130,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 180,
+            "product_id": 3,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 424,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ZANAHORIAS",
+            "total_cents": 100,
+            "product_id": 22,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "14/11/2026",
+        "total": "30,27",
+        "lines": [
+          {
+            "raw_text": "2 ACEITE OLIVA V.EXTRA",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "8,99",
+            "total": "17,98"
+          },
+          {
+            "raw_text": "2 COPOS AVENA 800G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,30",
+            "total": "2,60"
+          },
+          {
+            "raw_text": "2 ESPAGUETI 500G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": null
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "4,24",
+            "total": null
+          },
+          {
+            "raw_text": "1 ZANAHORIAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,00",
+            "total": null
+          },
+          {
+            "raw_text": "1 CEBOLLAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": null
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [
+          "YOGUR FRESA",
+          "FIL.PECH.POLLO",
+          "ZANAHORIAS",
+          "CEBOLLAS"
+        ],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r18",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r18",
+        "difficulty": "hard",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-12",
+        "total_cents": 1843,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 165,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 1100
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENT.",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA",
+            "total_cents": 320,
+            "product_id": 27,
+            "quantity": 2,
+            "unit_price_cents": 160,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO",
+            "total_cents": 345,
+            "product_id": 1,
+            "quantity": 3,
+            "unit_price_cents": 115,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 90,
+            "product_id": 2,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "12/11/2026",
+        "total": "18,43",
+        "lines": [
+          {
+            "raw_text": "BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "NARANJAS KG",
+            "quantity": "1",
+            "weight": "1,100 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "1,65"
+          },
+          {
+            "raw_text": "GARBANZO COCIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "LECHE ENT.",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "YOGUR FRESA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "GALLETAS MARIA",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,60",
+            "total": "3,20"
+          },
+          {
+            "raw_text": "ARROZ REDONDO",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,15",
+            "total": "3,45"
+          },
+          {
+            "raw_text": "MACARRON HACENDADO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r19",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r19",
+        "difficulty": "clean",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-10",
+        "total_cents": 4113,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "ACEITE OLIVA V.EXTRA",
+            "total_cents": 1798,
+            "product_id": 16,
+            "quantity": 2,
+            "unit_price_cents": 899,
+            "weight_g": null
+          },
+          {
+            "printed": "LENTEJA PARDINA 1KG",
+            "total_cents": 185,
+            "product_id": 12,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "COPOS AVENA 800G",
+            "total_cents": 390,
+            "product_id": 14,
+            "quantity": 3,
+            "unit_price_cents": 130,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 480,
+            "product_id": 27,
+            "quantity": 3,
+            "unit_price_cents": 160,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "10/11/2026",
+        "total": "41,13",
+        "lines": [
+          {
+            "raw_text": "2 GARBANZO COCIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "2 ACEITE OLIVA V.EXTRA",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "8,99",
+            "total": "17,98"
+          },
+          {
+            "raw_text": "1 LENTEJA PARDINA 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,85"
+          },
+          {
+            "raw_text": "3 COPOS AVENA 800G",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,30",
+            "total": "3,90"
+          },
+          {
+            "raw_text": "2 QUESO FRESCO BATIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 ARROZ REDONDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "3 GALLETAS MARIA 800G",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,60",
+            "total": "4,80"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 CEBOLLAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": null
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [
+          "CEBOLLAS"
+        ],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r20",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r20",
+        "difficulty": "noisy",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-09",
+        "total_cents": 1835,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "ATUN CLARO NATURAL",
+            "total_cents": 420,
+            "product_id": 11,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "LENTEJAS PARDINAS",
+            "total_cents": 370,
+            "product_id": 12,
+            "quantity": 2,
+            "unit_price_cents": 185,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJA MESA",
+            "total_cents": 150,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 160,
+            "product_id": 17,
+            "quantity": 2,
+            "unit_price_cents": 80,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "09/11/2026",
+        "total": "18,35",
+        "lines": [
+          {
+            "raw_text": "1 ATUN CLARO NATURAL 4,20",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,20"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 4X125G 1,10 2,20",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "2 LENTEJAS PARDINAS 1,85 3,70",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,85",
+            "total": "3,70"
+          },
+          {
+            "raw_text": "1 NARANJA MESA 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 SPAGHETTI 0,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "2 TOMATE FRITO 400G 0,80 1,60",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,80",
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 AGUA MINERAL 6X1,5L 2,70",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO 0,05",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r21",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r21",
+        "difficulty": "hard",
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "2026-11-05",
+        "total_cents": 3705,
+        "discount_cents": -50,
+        "lines": [
+          {
+            "printed": "MUSLO POLLO BANDEJA",
+            "total_cents": 442,
+            "product_id": 10,
+            "quantity": null,
+            "unit_price_cents": 520,
+            "weight_g": 850
+          },
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 498,
+            "product_id": 5,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 1180,
+            "product_id": 8,
+            "quantity": 2,
+            "unit_price_cents": 590,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 840,
+            "product_id": 11,
+            "quantity": 2,
+            "unit_price_cents": 420,
+            "weight_g": null
+          },
+          {
+            "printed": "MANZANA GOLDEN",
+            "total_cents": 210,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPERMERCADOS EJEMPLO S.L.",
+        "date": "05/11/2026",
+        "total": "37,05",
+        "lines": [
+          {
+            "raw_text": "1 MUSLO POLLO BANDEJA",
+            "quantity": "1",
+            "weight": "0,850 kg",
+            "unit_price": "5,20 EUR/kg",
+            "total": "4,42"
+          },
+          {
+            "raw_text": "1 AGUA MINERAL 6X1,5L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 LECHE ENTERA 6X1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,98"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "2 HUEVOS GRANDES 30",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "5,90",
+            "total": "11,80"
+          },
+          {
+            "raw_text": "2 YOGUR FRESA 4X125G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "2 ATUN CLARO NAT. P3",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "4,20",
+            "total": "8,40"
+          },
+          {
+            "raw_text": "1 MANZANA GOLDEN",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,10"
+          },
+          {
+            "raw_text": "1 ESPAGUETI 500G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,50"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r22",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r22",
+        "difficulty": "clean",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-07",
+        "total_cents": 1346,
+        "discount_cents": -50,
+        "lines": [
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 420,
+            "product_id": 11,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO F.BATIDO 0%",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 300,
+            "product_id": 21,
+            "quantity": 2,
+            "unit_price_cents": 150,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 96,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 640
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "07/11/2026",
+        "total": "13,46",
+        "lines": [
+          {
+            "raw_text": "1 ATUN CLARO NAT. P3",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,20"
+          },
+          {
+            "raw_text": "1 AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "2 QUESO F.BATIDO 0%",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "2 CEBOLLAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,50",
+            "total": "3,00"
+          },
+          {
+            "raw_text": "1 NARANJAS KG",
+            "quantity": "1",
+            "weight": "0,640 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "0,96"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA 4X125G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 ARROZ REDONDO 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,50"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r23",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r23",
+        "difficulty": "noisy",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-13",
+        "total_cents": 2448,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "MANZANA GOLDEN",
+            "total_cents": 69,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 330
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AVENA COPOS",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NAT.",
+            "total_cents": 210,
+            "product_id": 6,
+            "quantity": 2,
+            "unit_price_cents": 105,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMIDESN.",
+            "total_cents": 1494,
+            "product_id": 4,
+            "quantity": 3,
+            "unit_price_cents": 498,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "13/11/2026",
+        "total": "24,48",
+        "lines": [
+          {
+            "raw_text": "1 MANZANA GOLDEN",
+            "quantity": "1",
+            "weight": "0,330 kg",
+            "unit_price": "2,10 EUR/kg",
+            "total": "0,69"
+          },
+          {
+            "raw_text": "1 SPAGHETTI",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 GARBANZO COCIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 AVENA COPOS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "2 YOGUR NAT.",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,05",
+            "total": "2,10"
+          },
+          {
+            "raw_text": "1 AGUA MINERAL 6X1,5L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "3 LECHE SEMIDESN.",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "4,98",
+            "total": "14,94"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r24",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r24",
+        "difficulty": "hard",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-02",
+        "total_cents": 4729,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "PATATAS FRIT. CLASICAS",
+            "total_cents": 360,
+            "product_id": 26,
+            "quantity": 3,
+            "unit_price_cents": 120,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI BANDEJA",
+            "total_cents": 180,
+            "product_id": 23,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRAS NAT. 200G",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON 500G",
+            "total_cents": 270,
+            "product_id": 2,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "MANZANAS GOLDEN KG",
+            "total_cents": 151,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 720
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 1770,
+            "product_id": 8,
+            "quantity": 3,
+            "unit_price_cents": 590,
+            "weight_g": null
+          },
+          {
+            "printed": "ACEITE OLIVA V.EXTRA",
+            "total_cents": 899,
+            "product_id": 16,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLAS",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJA MESA",
+            "total_cents": 144,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 960
+          },
+          {
+            "printed": "YOGUR NATURAL 4X125",
+            "total_cents": 105,
+            "product_id": 6,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "02/11/2026",
+        "total": "47,29",
+        "lines": [
+          {
+            "raw_text": "3 PATATAS FRIT. CLASICAS",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,20",
+            "total": "3,60"
+          },
+          {
+            "raw_text": "1 BROCOLI BANDEJA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 AGUA MIN. PACK 6",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA 4X125G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 GARBANZO COCIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 ALMENDRAS NAT. 200G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "3 MACARRON 500G",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 MANZANAS GOLDEN KG",
+            "quantity": "1",
+            "weight": "0,720 kg",
+            "unit_price": "2,10 EUR/kg",
+            "total": "1,51"
+          },
+          {
+            "raw_text": "3 HUEVOS 30 L",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "5,90",
+            "total": "17,70"
+          },
+          {
+            "raw_text": "1 ACEITE OLIVA V.EXTRA",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "8,99"
+          },
+          {
+            "raw_text": "1 CEBOLLAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 NARANJA MESA",
+            "quantity": "1",
+            "weight": "0,960 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "1,44"
+          },
+          {
+            "raw_text": "1 YOGUR NATURAL 4X125",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,05"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r25",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r25",
+        "difficulty": "clean",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-05",
+        "total_cents": 4707,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 840,
+            "product_id": 11,
+            "quantity": 2,
+            "unit_price_cents": 420,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMIDESN.",
+            "total_cents": 996,
+            "product_id": 4,
+            "quantity": 2,
+            "unit_price_cents": 498,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 480,
+            "product_id": 27,
+            "quantity": 3,
+            "unit_price_cents": 160,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 160,
+            "product_id": 17,
+            "quantity": 2,
+            "unit_price_cents": 80,
+            "weight_g": null
+          },
+          {
+            "printed": "SPAGHETTI",
+            "total_cents": 270,
+            "product_id": 3,
+            "quantity": 3,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO F.BATIDO 0%",
+            "total_cents": 110,
+            "product_id": 24,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRAS NAT. 200G",
+            "total_cents": 230,
+            "product_id": 25,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 230,
+            "product_id": 1,
+            "quantity": 2,
+            "unit_price_cents": 115,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE ENTERA 6X1L",
+            "total_cents": 996,
+            "product_id": 5,
+            "quantity": 2,
+            "unit_price_cents": 498,
+            "weight_g": null
+          },
+          {
+            "printed": "GARBANZOS COC. 400G",
+            "total_cents": 180,
+            "product_id": 13,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 90,
+            "product_id": 2,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRIT. CLASICAS",
+            "total_cents": 120,
+            "product_id": 26,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.",
+        "date": "05/11/2026",
+        "total": "47,07",
+        "lines": [
+          {
+            "raw_text": "2 ATUN CLARO NAT. P3",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "4,20",
+            "total": "8,40"
+          },
+          {
+            "raw_text": "2 LECHE SEMIDESN.",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "4,98",
+            "total": "9,96"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "0,05",
+            "total": null
+          },
+          {
+            "raw_text": "3 GALLETAS MARIA 800G",
+            "quantity": "3",
+            "weight": "800G",
+            "unit_price": "1,60",
+            "total": "4,80"
+          },
+          {
+            "raw_text": "2 TOMATE FRITO 400G",
+            "quantity": "2",
+            "weight": "400G",
+            "unit_price": "0,80",
+            "total": "1,60"
+          },
+          {
+            "raw_text": "3 SPAGHETTI",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "2,70"
+          },
+          {
+            "raw_text": "1 QUESO F.BATIDO 0%",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 ALMENDRAS NAT. 200G",
+            "quantity": "1",
+            "weight": "200G",
+            "unit_price": null,
+            "total": "2,30"
+          },
+          {
+            "raw_text": "2 ARROZ REDONDO 1KG",
+            "quantity": "2",
+            "weight": "1KG",
+            "unit_price": "1,15",
+            "total": "2,30"
+          },
+          {
+            "raw_text": "2 LECHE ENTERA 6X1L",
+            "quantity": "2",
+            "weight": "6X1L",
+            "unit_price": "4,98",
+            "total": "9,96"
+          },
+          {
+            "raw_text": "2 GARBANZOS COC. 400G",
+            "quantity": "2",
+            "weight": "400G",
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "1 MACARRON HACENDADO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 PATATAS FRIT. CLASICAS",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,20"
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [
+          "BOLSA PLASTICO"
+        ],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r26",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r26",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-21",
+        "total_cents": 3225,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "MUSLOS POLLO",
+            "total_cents": 473,
+            "product_id": 10,
+            "quantity": null,
+            "unit_price_cents": 520,
+            "weight_g": 910
+          },
+          {
+            "printed": "MANZANAS GOLDEN KG",
+            "total_cents": 55,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 260
+          },
+          {
+            "printed": "MACARRON 500G",
+            "total_cents": 180,
+            "product_id": 2,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI",
+            "total_cents": 540,
+            "product_id": 23,
+            "quantity": 3,
+            "unit_price_cents": 180,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NAT.",
+            "total_cents": 210,
+            "product_id": 6,
+            "quantity": 2,
+            "unit_price_cents": 105,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS GRANDES 30",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "FIL.PECH.POLLO",
+            "total_cents": 770,
+            "product_id": 9,
+            "quantity": null,
+            "unit_price_cents": 770,
+            "weight_g": 1000
+          },
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 107,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 710
+          },
+          {
+            "printed": "QUESO F.BATIDO 0%",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "21/11/2026",
+        "total": "32,25",
+        "lines": [
+          {
+            "raw_text": "1 MUSLOS POLLO",
+            "quantity": "1",
+            "weight": "0,910 kg",
+            "unit_price": "5,20 EUR/kg",
+            "total": "4,73"
+          },
+          {
+            "raw_text": "1 MANZANAS GOLDEN KG",
+            "quantity": "1",
+            "weight": "0,260 kg",
+            "unit_price": "2,10 EUR/kg",
+            "total": "0,55"
+          },
+          {
+            "raw_text": "2 MACARRON 500G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "3 BROCOLI",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,80",
+            "total": "5,40"
+          },
+          {
+            "raw_text": "2 YOGUR NAT.",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,05",
+            "total": "2,10"
+          },
+          {
+            "raw_text": "1 TOMATE FRITO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "1 HUEVOS GRANDES 30",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "1 FIL.PECH.POLLO",
+            "quantity": "1",
+            "weight": "1,000 kg",
+            "unit_price": "7,70 EUR/kg",
+            "total": "7,70"
+          },
+          {
+            "raw_text": "1 NARANJAS KG",
+            "quantity": "1",
+            "weight": "0,710 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "1,07"
+          },
+          {
+            "raw_text": "2 QUESO F.BATIDO 0%",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r27",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r27",
+        "difficulty": "hard",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-09",
+        "total_cents": 4082,
+        "discount_cents": -20,
+        "lines": [
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 90,
+            "product_id": 2,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 160,
+            "product_id": 17,
+            "quantity": 2,
+            "unit_price_cents": 80,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NATURAL 4X125",
+            "total_cents": 105,
+            "product_id": 6,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "NARANJA MESA",
+            "total_cents": 143,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 950
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PATATAS FRIT. CLASICAS",
+            "total_cents": 240,
+            "product_id": 26,
+            "quantity": 2,
+            "unit_price_cents": 120,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 1180,
+            "product_id": 8,
+            "quantity": 2,
+            "unit_price_cents": 590,
+            "weight_g": null
+          },
+          {
+            "printed": "AGUA MIN. PACK 6",
+            "total_cents": 810,
+            "product_id": 28,
+            "quantity": 3,
+            "unit_price_cents": 270,
+            "weight_g": null
+          },
+          {
+            "printed": "MANZANAS GOLDEN KG",
+            "total_cents": 95,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": 210,
+            "weight_g": 450
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 110,
+            "product_id": 24,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "AOVE 1L",
+            "total_cents": 899,
+            "product_id": 16,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "PAN MOLDE INTEGRAL",
+            "total_cents": 150,
+            "product_id": 15,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "09/11/2026",
+        "total": "40,82",
+        "lines": [
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 MACARRON HACENDADO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "2 TOMATE FRITO 400G",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,80",
+            "total": "1,60"
+          },
+          {
+            "raw_text": "1 YOGUR NATURAL 4X125",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,05"
+          },
+          {
+            "raw_text": "1 NARANJA MESA",
+            "quantity": "1",
+            "weight": "0,950 kg",
+            "unit_price": "1,50 EUR/kg",
+            "total": "1,43"
+          },
+          {
+            "raw_text": "1 ARROZ REDONDO 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "2 PATATAS FRIT. CLASICAS",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,20",
+            "total": "2,40"
+          },
+          {
+            "raw_text": "2 HUEVOS 30 L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "5,90",
+            "total": "11,80"
+          },
+          {
+            "raw_text": "3 AGUA MIN. PACK 6",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "2,70",
+            "total": "8,10"
+          },
+          {
+            "raw_text": "1 MANZANAS GOLDEN KG",
+            "quantity": "1",
+            "weight": "0,450 kg",
+            "unit_price": null,
+            "total": "0,95"
+          },
+          {
+            "raw_text": "1 QUESO FRESCO BATIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 AOVE 1L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "8,99"
+          },
+          {
+            "raw_text": "1 PAN MOLDE INTEGRAL",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,20"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r28",
+      "difficulty": "clean",
+      "truth": {
+        "id": "r28",
+        "difficulty": "clean",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-18",
+        "total_cents": 2536,
+        "discount_cents": -50,
+        "lines": [
+          {
+            "printed": "NARANJAS KG",
+            "total_cents": 51,
+            "product_id": 20,
+            "quantity": null,
+            "unit_price_cents": 150,
+            "weight_g": 340
+          },
+          {
+            "printed": "GARBANZO COCIDO",
+            "total_cents": 90,
+            "product_id": 13,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA 800G",
+            "total_cents": 160,
+            "product_id": 27,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 1180,
+            "product_id": 8,
+            "quantity": 2,
+            "unit_price_cents": 590,
+            "weight_g": null
+          },
+          {
+            "printed": "ATUN CLARO NAT. P3",
+            "total_cents": 420,
+            "product_id": 11,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ALMENDRA NATURAL",
+            "total_cents": 460,
+            "product_id": 25,
+            "quantity": 2,
+            "unit_price_cents": 230,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA PLASTICO",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 110,
+            "product_id": 24,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "18/11/2026",
+        "total": "25,36",
+        "lines": [
+          {
+            "raw_text": "1 NARANJAS KG",
+            "quantity": "1",
+            "weight": "0,340 kg",
+            "unit_price": null,
+            "total": "0,51"
+          },
+          {
+            "raw_text": "1 GARBANZO COCIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA 4X125G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 GALLETAS MARIA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,60"
+          },
+          {
+            "raw_text": "2 HUEVOS 30 L",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "5,90",
+            "total": "11,80"
+          },
+          {
+            "raw_text": "1 ATUN CLARO NAT. P3",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "4,20"
+          },
+          {
+            "raw_text": "2 ALMENDRA NATURAL",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "2,30",
+            "total": "4,60"
+          },
+          {
+            "raw_text": "1 BOLSA PLASTICO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          },
+          {
+            "raw_text": "1 QUESO FRESCO BATIDO",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "DESCUENTO",
+            "quantity": null,
+            "weight": null,
+            "unit_price": null,
+            "total": "-0,50"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r29",
+      "difficulty": "noisy",
+      "truth": {
+        "id": "r29",
+        "difficulty": "noisy",
+        "store": "MERCADONA S.A.",
+        "date": "2026-11-12",
+        "total_cents": 2621,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 110,
+            "product_id": 24,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "LECHE SEMI 6X1L",
+            "total_cents": 996,
+            "product_id": 4,
+            "quantity": 2,
+            "unit_price_cents": 498,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA 4X125G",
+            "total_cents": 110,
+            "product_id": 7,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "HUEVOS 30 L",
+            "total_cents": 590,
+            "product_id": 8,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MACARRON HACENDADO",
+            "total_cents": 180,
+            "product_id": 2,
+            "quantity": 2,
+            "unit_price_cents": 90,
+            "weight_g": null
+          },
+          {
+            "printed": "GALLETAS MARIA",
+            "total_cents": 480,
+            "product_id": 27,
+            "quantity": 3,
+            "unit_price_cents": 160,
+            "weight_g": null
+          },
+          {
+            "printed": "CEBOLLA MALLA 1KG",
+            "total_cents": 150,
+            "product_id": 21,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BOLSA COMPRA",
+            "total_cents": 5,
+            "product_id": null,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "MERCADONA S.A.",
+        "date": "12/11/2026",
+        "total": "26,21",
+        "lines": [
+          {
+            "raw_text": "1 QUESO FRESCO BATIDO 1,10",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "2 LECHE SEMI 6X1L 4,98 9,96",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "4,98",
+            "total": "9,96"
+          },
+          {
+            "raw_text": "1 YOGUR FRESA 4X125G 1,10",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,10"
+          },
+          {
+            "raw_text": "1 HUEVOS 30 L 5,90",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "5,90"
+          },
+          {
+            "raw_text": "2 MACARRON HACENDADO 0,90 1,80",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "0,90",
+            "total": "1,80"
+          },
+          {
+            "raw_text": "3 GALLETAS MARIA 1,60 4,80",
+            "quantity": "3",
+            "weight": null,
+            "unit_price": "1,60",
+            "total": "4,80"
+          },
+          {
+            "raw_text": "1 CEBOLLA MALLA 1KG 1,50",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,50"
+          },
+          {
+            "raw_text": "1 BOLSA COMPRA 0,05",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,05"
+          }
+        ]
+      },
+      "score": {
+        "any_error": false,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    },
+    {
+      "id": "r30",
+      "difficulty": "hard",
+      "truth": {
+        "id": "r30",
+        "difficulty": "hard",
+        "store": "SUPER DEMO S.A.",
+        "date": "2026-11-08",
+        "total_cents": 1854,
+        "discount_cents": 0,
+        "lines": [
+          {
+            "printed": "AGUA MINERAL 6X1,5L",
+            "total_cents": 270,
+            "product_id": 28,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "TOMATE FRITO 400G",
+            "total_cents": 80,
+            "product_id": 17,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "MUSLOS POLLO",
+            "total_cents": 234,
+            "product_id": 10,
+            "quantity": null,
+            "unit_price_cents": 520,
+            "weight_g": 450
+          },
+          {
+            "printed": "MANZANAS GOLDEN KG",
+            "total_cents": 210,
+            "product_id": 19,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ARROZ REDONDO 1KG",
+            "total_cents": 115,
+            "product_id": 1,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "ESPAGUETI 500G",
+            "total_cents": 90,
+            "product_id": 3,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "QUESO FRESCO BATIDO",
+            "total_cents": 220,
+            "product_id": 24,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR NATURAL 4X125",
+            "total_cents": 105,
+            "product_id": 6,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "YOGUR FRESA",
+            "total_cents": 220,
+            "product_id": 7,
+            "quantity": 2,
+            "unit_price_cents": 110,
+            "weight_g": null
+          },
+          {
+            "printed": "COPOS AVENA 800G",
+            "total_cents": 130,
+            "product_id": 14,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          },
+          {
+            "printed": "BROCOLI",
+            "total_cents": 180,
+            "product_id": 23,
+            "quantity": null,
+            "unit_price_cents": null,
+            "weight_g": null
+          }
+        ]
+      },
+      "prediction": {
+        "store": "SUPER DEMO S.A.\nAV. DEL EJEMPLO 1 29010 MALAGA",
+        "date": "08/11/2026 18:42",
+        "total": "18,54",
+        "lines": [
+          {
+            "raw_text": "AGUA MINERAL 6X1,5L",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,70"
+          },
+          {
+            "raw_text": "TOMATE FRITO 400G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,80"
+          },
+          {
+            "raw_text": "MUSLOS POLLO\n0,450 kg 5,20 EUR/kg",
+            "quantity": "1",
+            "weight": "0,450 kg",
+            "unit_price": null,
+            "total": "2,34"
+          },
+          {
+            "raw_text": "MANZANAS GOLDEN KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "2,10"
+          },
+          {
+            "raw_text": "ARROZ REDONDO 1KG",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,15"
+          },
+          {
+            "raw_text": "ESPAGUETI 500G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "0,90"
+          },
+          {
+            "raw_text": "QUESO FRESCO BATIDO",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "YOGUR NATURAL 4X125",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,05"
+          },
+          {
+            "raw_text": "YOGUR FRESA",
+            "quantity": "2",
+            "weight": null,
+            "unit_price": "1,10",
+            "total": "2,20"
+          },
+          {
+            "raw_text": "COPOS AVENA 800G",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": null,
+            "total": "1,30"
+          },
+          {
+            "raw_text": "BROCOLI",
+            "quantity": "1",
+            "weight": null,
+            "unit_price": "1,80",
+            "total": null
+          }
+        ]
+      },
+      "score": {
+        "any_error": true,
+        "silent_error": false,
+        "total_ok": true,
+        "missed": [
+          "BROCOLI"
+        ],
+        "spurious": [],
+        "wrong_amounts": [],
+        "confident_wrong": []
+      }
+    }
+  ]
+}

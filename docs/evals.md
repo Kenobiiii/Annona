@@ -154,3 +154,61 @@ for `balanced`: better per-serving guidance or a larger portion range.
 Human ratings (iteration 3, before preferences): 3/5 for all four menus ("fine, but too much
 carrot and no meat"). The LLM judge (`deepseek-flash`) gave 2/5 to all four with the same
 complaints: always within one point of the human, never exact (n = 4, too small to calibrate).
+
+
+## Receipt reading
+
+```bash
+uv run python -m annona_server.evals receipt-match            # matcher with a perfect reading (free)
+uv run python -m annona_server.evals receipt-run --n 30       # shows the estimated cost
+uv run python -m annona_server.evals receipt-run --n 30 --yes # spends (budgeted)
+uv run python -m annona_server.evals receipt-compare
+```
+
+**Dataset**: synthetic receipts (`evals/receipt_synth.py`), invented names and prices, no real
+receipt and no private data. Each is generated from a seed, rendered as a photo and degraded by
+difficulty: `clean` (flat scan), `noisy` (slight rotation, blur, JPEG, paper speckle) and `hard`
+(faded print, strong blur, skew, shadow). Same seed = same photos, so models are comparable.
+Limits: printed names are my imitation of receipt abbreviations, so the matching numbers measure
+regressions, not real-world accuracy; a real photo set would be the real test.
+
+**Metrics**: `line_recall` / `line_precision` (lines found / invented), `amount_exact`,
+`total_exact`, `errors_caught_by_sum_check` and **`silent_errors`** (receipts that are wrong yet
+pass the sum check: the dangerous ones), `product_accuracy`, **`confident_wrong`** (a wrong product
+pre-selected: the receipt equivalent of the diet-safety metric), `lines_text_changed` (the model
+rewrote the printed text; harmless for amounts), cost and latency per receipt.
+
+### First experiment (2026-11-22, `deepseek/deepseek-flash`, 30 receipts, 5 runs)
+
+| Run | Receipts with errors | Caught by sum check | **Silent** | Confident wrong | Cost / receipt | p50 |
+|---|---|---|---|---|---|---|
+| 1-3: first prompt, as measured then | 8 / 7 / 8 | 7 / 5 / 2 | 1 / 2 / **6** | 0 / 0 / **1** | $0.00026-0.00032 | ~2.0 s |
+| 4-5: after the fixes below | 2 / 1 | 0 / 0 | 2 / 1 (*) | 0 / 0 | $0.00026-0.00032 | ~2.0 s |
+
+(*) Those remaining ones were all the model rewriting "AOVE 1L" as "ACEITE 1L" (right amount,
+changed text); the scorer now counts it as a text change, not an error.
+
+What the eval found, in the order it was found:
+
+1. **The model copies pack sizes into the weight field** ("COPOS AVENA 800G" -> weight 800 g). The
+   code would have taken that as the weight bought and put 800 g in the pantry for a 2-pack line.
+   The sum check cannot see it (amounts are right): a *silent* error. Fix: a weight is accepted
+   only if it is not in the product name and agrees with the price per kg; the prompt says so too.
+2. **Single-price lines**: the model sometimes puts the only price in `unit_price` and leaves
+   `total` empty, so the line was dropped. Fix: a line with one price takes it as its amount, and
+   the sum check still has the last word.
+3. **A confident wrong match**: on a hard photo the model read "AOVE 1L" as "AVE 1L" and the matcher
+   treated it as an abbreviation of "AVENA" with confidence 0.95. Fix: three-letter prefixes only
+   count when another, longer word of the line also matches that product ("YOGUR NAT.").
+4. **A scoring mistake of mine**: a rewritten name counted as "line lost + line invented". Now
+   a same-amount line is matched and reported as a text change.
+
+Lessons: the number that matters is `silent_errors` (and `confident_wrong`), not accuracy;
+**the sum check is worth it** (it caught most reading errors by itself) but is blind to quantities
+and weights, which need their own checks; and a regression test per finding
+(`server/tests/test_receipt_evals.py`) keeps each fix.
+
+Cost is negligible (about $0.0003 per receipt, ~2 s): quality, not price, decides here. Matching
+with a perfect reading: 95.9 % product accuracy, 87 % pre-selected, 0 confident wrong; the rest are
+acronyms and synonyms ("AOVE", "SPAGHETTI") that no text similarity can solve: that is what the
+learned aliases are for.

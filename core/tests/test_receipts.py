@@ -120,6 +120,63 @@ def test_line_math_is_checked_when_the_numbers_allow_it():
     assert weighed.lines[0].issues == ()
 
 
+@pytest.mark.parametrize(
+    ("raw", "weight", "reason"),
+    [
+        ("COPOS AVENA 800G", "800G", "weight_is_pack_size"),
+        ("LECHE SEMI 6X1L", "6X1L", "weight_is_pack_size"),
+        ("ARROZ REDONDO 1KG", "1 kg", "weight_is_pack_size"),
+        ("HUEVOS GRANDES 30", "30", None),  # no unit: not a weight at all
+    ],
+)
+def test_a_pack_size_copied_from_the_name_is_never_taken_as_the_weight_bought(raw, weight, reason):
+    parsed = parse_receipt(ReceiptDraft(lines=[line(raw, "2,60", quantity="2", weight=weight)]))
+    assert parsed.lines[0].weight is None
+    assert (reason in parsed.lines[0].issues) is (reason is not None)
+
+
+def test_a_real_weight_the_model_also_left_in_the_name_is_kept_when_the_price_confirms_it():
+    merged = parse_receipt(
+        ReceiptDraft(
+            lines=[
+                line(
+                    "1 FILETE PECHUGA POLLO 0,550 kg 7,70 EUR/kg",
+                    "4,24",
+                    weight="0,550 kg",
+                    unit_price="7,70",
+                )
+            ]
+        )
+    )
+    assert merged.lines[0].weight.amount == D(550) and merged.lines[0].issues == ()
+
+
+def test_a_weight_must_agree_with_the_price_per_kilo():
+    ok = parse_receipt(
+        ReceiptDraft(lines=[line("PECHUGA", "4,24", weight="0,550 kg", unit_price="7,70")])
+    )
+    assert ok.lines[0].weight.amount == D(550) and ok.lines[0].issues == ()
+    off = parse_receipt(
+        ReceiptDraft(lines=[line("PECHUGA", "9,99", weight="0,550 kg", unit_price="7,70")])
+    )
+    assert off.lines[0].weight is None and "weight_math" in off.lines[0].issues
+
+
+def test_a_line_with_one_price_labelled_unit_price_still_counts():
+    parsed = parse_receipt(
+        ReceiptDraft(
+            total="4,50",
+            lines=[
+                line("1 CEBOLLAS", None, quantity="1", unit_price="1,50"),
+                line("2 PAN", None, quantity="2", unit_price="1,50"),
+            ],
+        )
+    )
+    assert [ln.total_cents for ln in parsed.lines] == [150, 300]
+    assert all("total_from_unit_price" in ln.issues for ln in parsed.lines)
+    assert parsed.total_matches is True  # and the sum check still has the last word
+
+
 def test_lines_without_an_amount_are_set_aside_not_invented():
     parsed = parse_receipt(
         ReceiptDraft(lines=[line("ARROZ", "1,15"), line("PAN", None), line("", "2,00")])
@@ -172,6 +229,14 @@ def test_an_unclear_match_is_never_preselected():
     assert m.product_id in (2, 3) and not m.preselected
     assert m.confidence < AUTO_SELECT_CONFIDENCE and m.runner_up_id in (2, 3)
     assert {pid for pid, _ in m.alternatives} <= {2, 3}
+
+
+def test_a_three_letter_prefix_is_not_enough_to_preselect():
+    # Found by the eval: a hard photo made "AOVE 1L" read "AVE 1L", a prefix of AVENA.
+    oats = [Candidate(1, "Copos de avena", "shop"), Candidate(2, "Arroz", "shop")]
+    m = match_line("AVE 1L", oats)
+    assert not m.preselected and m.confidence < AUTO_SELECT_CONFIDENCE
+    assert match_line("AVENA 1L", oats).preselected  # the real word still is
 
 
 def test_something_unrelated_has_no_suggestion():

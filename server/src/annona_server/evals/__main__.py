@@ -98,6 +98,16 @@ def main() -> None:
     pj.add_argument("file")
     pj.add_argument("--yes", action="store_true")
     sub.add_parser("plan-compare", help="compare planner runs")
+    rm = sub.add_parser("receipt-match", help="catalogue matching with a perfect reading (free)")
+    rm.add_argument("--n", type=int, default=60)
+    rm.add_argument("--seed", type=int, default=7)
+    rr = sub.add_parser("receipt-run", help="run the receipt-reading eval on synthetic photos")
+    rr.add_argument("--n", type=int, default=12, help="number of receipts (a third per difficulty)")
+    rr.add_argument("--seed", type=int, default=7)
+    rr.add_argument("--model", help="override the small-tier model (must support images)")
+    rr.add_argument("--save-images", help="also write the generated photos to this folder")
+    rr.add_argument("--yes", action="store_true", help="actually spend money on the run")
+    sub.add_parser("receipt-compare", help="compare receipt-reading runs")
     args = parser.parse_args()
 
     if args.command == "compare":
@@ -105,6 +115,9 @@ def main() -> None:
         return
     if args.command.startswith("plan-"):
         plan_commands(args)
+        return
+    if args.command.startswith("receipt-"):
+        receipt_commands(args)
         return
     if args.command == "rescore":
         rows = load_dataset()
@@ -162,6 +175,85 @@ def main() -> None:
         engine.dispose()
     print(f"saved {save_report(report)}")
     compare()
+
+
+def _receipt_reports() -> list[dict]:
+    reports = []
+    for path in sorted(RESULTS.glob("*__receipts__*.json")):
+        report = json.loads(path.read_text())
+        report["_file"] = path.name
+        reports.append(report)
+    return reports
+
+
+def receipt_commands(args) -> None:
+    from . import receipts
+
+    if args.command == "receipt-match":
+        m = receipts.run_matching_only(args.n, args.seed)
+        print(
+            f"perfect reading, {m['lines_expected']} lines: product accuracy "
+            f"{m['product_accuracy']:.1%}, pre-selected {m['preselected_rate']:.1%}, "
+            f"CONFIDENT WRONG: {m['confident_wrong']}"
+        )
+        return
+    if args.command == "receipt-compare":
+        cols = ["run", "model", "n", "recall", "prec", "amount", "total", "errors", "caught"]
+        cols += ["SILENT", "prod", "WRONG", "cost/rcpt", "p50 ms"]
+        print(" ".join(f"{c:>{max(7, len(c))}}" for c in cols))
+        for r in _receipt_reports():
+            m, meta = r["metrics"], r["meta"]
+            print(
+                f"{r['_file'][:15]:16} {meta['model'][:26]:26} {meta['n']:>3} "
+                f"{_fmt(m['line_recall'], True):>7} {_fmt(m['line_precision'], True):>6} "
+                f"{_fmt(m['amount_exact'], True):>7} {_fmt(m['total_exact'], True):>6} "
+                f"{m['receipts_with_errors']:>6} {m['errors_caught_by_sum_check']:>6} "
+                f"{m['silent_errors']:>6} {_fmt(m['product_accuracy'], True):>6} "
+                f"{m['confident_wrong']:>5} {_fmt(m['cost_per_receipt_usd'], money=True):>10} "
+                f"{_fmt(m['latency_ms_p50']):>7}"
+            )
+        return
+
+    from ..llm import make_llm_client
+    from ..llm.config import llm_settings
+
+    settings = llm_settings()
+    if args.model:
+        settings.models[Tier.SMALL] = args.model
+    model = settings.models[Tier.SMALL]
+    prices = _prices(model)
+    if prices is None:
+        sys.exit(f"no known price for {model}: refusing to run without a cost estimate")
+    estimate = receipts.estimate_cost_usd(args.n, *prices)
+    url = database_url()
+    migrate.upgrade(url)
+    engine = make_engine(url)
+    try:
+        with session_scope(engine) as session:
+            spent = spent_usd(session, EVAL_TASK_PREFIX)
+            print(
+                f"{args.n} synthetic receipts, model {model}: estimated cost up to ${estimate} "
+                f"(eval budget ${budget_usd()}, already spent ${spent:.4f})"
+            )
+            if spent + estimate > budget_usd():
+                sys.exit("eval budget would be exceeded")
+            if not args.yes:
+                print("dry run: add --yes to spend")
+                return
+            llm = make_llm_client(session, settings=settings)
+            report = receipts.run_receipts(
+                llm, n=args.n, seed=args.seed, save_images=args.save_images
+            )
+    finally:
+        engine.dispose()
+    print(f"saved {receipts.save_report(report)}")
+    for level, m in report["by_difficulty"].items():
+        print(
+            f"{level:6} recall {_fmt(m['line_recall'], True)}  "
+            f"amount {_fmt(m['amount_exact'], True)}  total {_fmt(m['total_exact'], True)}  "
+            f"errors {m['receipts_with_errors']} (silent {m['silent_errors']})  "
+            f"confident-wrong {m['confident_wrong']}"
+        )
 
 
 def _report_path(name: str):
