@@ -71,3 +71,14 @@ robots.txt only keeps crawlers out, to be used following that documentation's ru
 | Open Food Facts | `Disallow: /api` for all user agents | [API docs](https://openfoodfacts.github.io/openfoodfacts-server/api/): identify with `AppName/Version (ContactEmail)`, max 15 product reads/min (Annona: 1 every 4 s, 30-day cache) |
 
 Every exempted request is logged with its reason.
+
+
+## Shop-internal barcodes
+
+EAN-13 codes starting with `2` or `02` are GS1 "restricted circulation" numbers: shops use them
+for their own weighed or in-store items, so the same code can mean different products in
+different shops. Open Food Facts data under such a code does not describe the item on the shelf
+(a real case: a frozen chicken breast was stored as 29 kcal and 0 g protein per 100 g). Ingestion
+never queries Open Food Facts for these codes, removes OFF values stored earlier for them and
+falls back to the flagged generic reference (`sample`). Scan the label to replace it.
+`annona_server.products.drop_untrusted_off_data(session)` repairs an existing database.

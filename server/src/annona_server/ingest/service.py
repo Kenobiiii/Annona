@@ -29,7 +29,12 @@ from annona_providers.base import (
 )
 
 from ..db.repositories import SqlPriceRepository, SqlProductRepository
-from ..products import generic_references, with_sample_reference
+from ..products import (
+    drop_off_data,
+    generic_references,
+    is_restricted_ean,
+    with_sample_reference,
+)
 from .classify import (
     Classification,
     ClassificationInput,
@@ -56,6 +61,7 @@ class IngestReport:
     nutrition_from_off: int = 0
     nutrition_from_sample: int = 0
     off_not_found: int = 0
+    off_skipped_restricted: int = 0
     without_ean: int = 0
     unclassified: list[str] = field(default_factory=list)
 
@@ -151,6 +157,9 @@ def _lookup_off(
     if item.ean is None:
         report.without_ean += 1
         return None
+    if is_restricted_ean(item.ean):
+        report.off_skipped_restricted += 1  # shop-internal code: OFF would describe another item
+        return None
     if off is None:
         return None
     result = off.lookup(item.ean)
@@ -188,6 +197,8 @@ def _upsert(
     elif category_source_may_replace(data.get("category_source"), result.source):
         data.update(category=result.category, type=result.type, category_source=result.source)
 
+    if item.ean and is_restricted_ean(item.ean):
+        drop_off_data(data)  # data stored earlier from an untrustworthy code is removed
     if off_product is not None:
         current = data["nutrition"]["source"] if data.get("nutrition") else None
         if off_product.nutrition and nutrition_source_may_replace(current, NutritionSource.OFF):

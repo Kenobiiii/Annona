@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import Any
 
 from sqlmodel import Session
 
@@ -91,6 +92,28 @@ def with_sample_reference(product: Product, refs: dict[tuple[str, str], Product]
     return product.model_copy(update=update)
 
 
+def is_restricted_ean(ean: str) -> bool:
+    """True for GS1 "restricted circulation" barcodes (EAN-13 starting with 2 or 02).
+
+    Shops number their own weighed or in-store items from these ranges, so the same code means
+    different products in different shops. Open Food Facts data under such a code does not
+    describe the item on the shelf and must not be used for nutrition or allergens.
+    """
+    return len(ean) == 13 and ean.isdigit() and (ean[0] == "2" or ean.startswith("02"))
+
+
+def drop_off_data(data: dict[str, Any]) -> None:
+    """Remove nutrition and allergens that came from Open Food Facts, in a product's dict.
+
+    Used for shop-internal barcodes (see :func:`is_restricted_ean`).
+    """
+    if data.get("nutrition") and data["nutrition"].get("source") == NutritionSource.OFF:
+        data["nutrition"] = None
+    if data.get("allergens_source") == NutritionSource.OFF:
+        data["allergens"] = None
+        data["allergens_source"] = None
+
+
 def fill_from_sample_references(session: Session) -> list[Product]:
     """Apply :func:`with_sample_reference` to every store product; returns the updated ones."""
     repo = SqlProductRepository(session)
@@ -103,3 +126,21 @@ def fill_from_sample_references(session: Session) -> list[Product]:
         if new is not None:
             updated.append(repo.update(new))
     return updated
+
+
+def drop_untrusted_off_data(session: Session) -> list[Product]:
+    """Remove Open Food Facts data stored under shop-internal barcodes, then refill from the
+    generic references (flagged ``sample``). Returns the products that changed."""
+    repo = SqlProductRepository(session)
+    refs = generic_references(session)
+    changed = []
+    for product in repo.list():
+        if product.store_id is None or not product.ean or not is_restricted_ean(product.ean):
+            continue
+        data = product.model_dump()
+        drop_off_data(data)
+        cleaned = Product.model_validate(data)
+        cleaned = with_sample_reference(cleaned, refs) or cleaned
+        if cleaned != product:
+            changed.append(repo.update(cleaned))
+    return changed
