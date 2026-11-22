@@ -108,6 +108,13 @@ def main() -> None:
     rr.add_argument("--save-images", help="also write the generated photos to this folder")
     rr.add_argument("--yes", action="store_true", help="actually spend money on the run")
     sub.add_parser("receipt-compare", help="compare receipt-reading runs")
+    ar = sub.add_parser("agent-run", help="run the chat-agent eval on a synthetic household")
+    ar.add_argument("--tier", choices=["small", "large"], default="small")
+    ar.add_argument("--repeats", type=int, default=3)
+    ar.add_argument("--model", help="override the model of that tier (must support tool calling)")
+    ar.add_argument("--only", action="append", help="only these scenario ids")
+    ar.add_argument("--yes", action="store_true", help="actually spend money on the run")
+    sub.add_parser("agent-compare", help="compare chat-agent runs")
     args = parser.parse_args()
 
     if args.command == "compare":
@@ -118,6 +125,9 @@ def main() -> None:
         return
     if args.command.startswith("receipt-"):
         receipt_commands(args)
+        return
+    if args.command.startswith("agent-"):
+        agent_commands(args)
         return
     if args.command == "rescore":
         rows = load_dataset()
@@ -254,6 +264,96 @@ def receipt_commands(args) -> None:
             f"errors {m['receipts_with_errors']} (silent {m['silent_errors']})  "
             f"confident-wrong {m['confident_wrong']}"
         )
+
+
+def agent_commands(args) -> None:
+    from . import agent
+
+    if args.command == "agent-compare":
+        cols = [
+            "run",
+            "model",
+            "tier",
+            "turns",
+            "pass",
+            "UNSAFE",
+            "inject",
+            "calls",
+            "cost/turn",
+            "p50 ms",
+        ]
+        print(" ".join(f"{c:>{max(7, len(c))}}" for c in cols))
+        for path in sorted(RESULTS.glob("*__agent__*.json")):
+            r = json.loads(path.read_text())
+            m, meta = r["metrics"], r["meta"]
+            print(
+                f"{path.name[:15]:>15} {meta['model'][:26]:>26} {meta['tier']:>5} {m['turns']:>6} "
+                f"{_fmt(m['pass_rate'], True):>7} {m['unsafe_write_executed']:>6} "
+                f"{m['injection_followed']:>6} {_fmt(m['mean_model_calls']):>6} "
+                f"{_fmt(m['cost_per_turn_usd'], money=True):>9} {_fmt(m['latency_ms_p50']):>7}"
+            )
+        return
+
+    from ..chat.litellm_chat import LiteChatModel
+    from ..llm.config import llm_settings
+
+    tier = Tier(args.tier)
+    settings = llm_settings()
+    if args.model:
+        settings.models[tier] = args.model
+    model = settings.models[tier]
+    prices = _prices(model)
+    if prices is None:
+        sys.exit(f"no known price for {model}: refusing to run without a cost estimate")
+    scenarios = [s for s in agent.SCENARIOS if not args.only or s.id in args.only]
+    turns = len(scenarios) * args.repeats
+    estimate = agent.estimate_cost_usd(turns, *prices)
+    url = database_url()
+    migrate.upgrade(url)
+    engine = make_engine(url)
+    try:
+        with session_scope(engine) as session:
+            spent = spent_usd(session, EVAL_TASK_PREFIX)
+            print(
+                f"{turns} turns ({len(scenarios)} scenarios x {args.repeats}), model {model}: "
+                f"estimated cost up to ${estimate} "
+                f"(eval budget ${budget_usd()}, already spent ${spent:.4f})"
+            )
+            if spent + estimate > budget_usd():
+                sys.exit("eval budget would be exceeded")
+            if not args.yes:
+                print("dry run: add --yes to spend")
+                return
+
+        def factory(session, t):
+            # Evals are budgeted by their own estimate, so usage is not logged to the database.
+            return LiteChatModel(
+                model,
+                tier=t,
+                usage=None,
+                timeout_s=settings.timeout_s,
+                thinking=settings.thinking,
+            )
+
+        report = agent.run_agent_eval(
+            factory, model_name=model, tier=tier, repeats=args.repeats, only=args.only
+        )
+    finally:
+        engine.dispose()
+    path = agent.save_report(report)
+    m = report["metrics"]
+    print(f"saved {path}")
+    print(
+        f"pass {_fmt(m['pass_rate'], True)}  by kind {m['by_kind']}\n"
+        f"UNSAFE WRITES {m['unsafe_write_executed']}  "
+        f"injection followed {m['injection_followed']}  "
+        f"jailbreak proposals {m['jailbreak_proposals']}  limit hit {m['limit_hit']}\n"
+        f"calls/turn {m['mean_model_calls']}  cost/turn ${m['cost_per_turn_usd']}  "
+        f"p50 {m['latency_ms_p50']} ms"
+    )
+    for run in report["runs"]:
+        if not run["passed"]:
+            print(f"  FAIL {run['scenario']}#{run['repeat']}: {run['problems']}")
 
 
 def _report_path(name: str):

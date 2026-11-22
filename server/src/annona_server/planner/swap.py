@@ -140,6 +140,19 @@ def _energy(parts: MealParts, profile_id: int | None) -> Decimal:
     return total
 
 
+def _protein(parts: MealParts, profile_id: int | None) -> Decimal:
+    """Grams of protein of the current meal for one member."""
+    total = Decimal(0)
+    for row in parts.rows:
+        if row.profile_id != profile_id:
+            continue
+        for ing in parts.ingredients:
+            n = parts.products[ing.product_id].nutrition
+            if n is not None:
+                total += ing.amount * row.servings * n.protein_g / 100
+    return total
+
+
 def propose_swap(
     session: Session,
     llm: LLMClient,
@@ -217,6 +230,15 @@ def propose_swap(
         if target and actual
         else Decimal(1)
     )
+    # The new dish must not lower the protein of the meal it replaces (the week's balance was
+    # already planned); it is not asked to reach a whole-week figure on its own.
+    daily_protein = first.daily.protein_g * schedule.shares[slot]
+    original = _protein(parts, first.profile.id)
+    protein_ratio = (
+        min(Decimal("0.9"), Decimal("0.9") * original / daily_protein)
+        if daily_protein and original
+        else Decimal(0)
+    )
     ctx = PlanContext(
         schedule=schedule,
         members=members,
@@ -224,6 +246,7 @@ def propose_swap(
         equipment=equipment,
         language=language,
         energy_scale=energy_scale,
+        protein_min_ratio=protein_ratio,
         check_servings=False,
         replacing=parts.recipe.title,
         swap_request=request.strip()[:300],

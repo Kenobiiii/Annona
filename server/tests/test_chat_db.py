@@ -251,3 +251,23 @@ def test_a_model_error_ends_the_stream_with_an_error_event(make_api):
     events = sse(chat(make_api(factory), "hola"))
     assert kinds(events) == ["error"] and "provider unavailable" in events[0][1]["message"]
     assert date.today() is not None
+
+
+def test_the_same_change_is_never_queued_twice(make_api):
+    """Found by the agent eval: after 'yes, do it' the model proposed the change a second time."""
+    args = {"changes": [{"product_id": 1, "mode": "add", "amount": 500, "unit": "g"}]}
+    factory = Factory(
+        reply("", [tool("update_pantry", args)]),
+        reply("Propuesto."),
+        reply("", [tool("update_pantry", args, id_="again")]),
+        reply("Confírmalo en la app."),
+    )
+    client = make_api(factory)
+    first = sse(chat(client, "apunta 500 g de arroz"))
+    second = sse(chat(client, "sí, hazlo"))
+    assert [n for n, _ in first].count("action") == 1
+    assert "action" not in kinds(second)  # nothing new to confirm
+    pending = client.get("/api/v1/chat/actions").json()
+    assert len(pending) == 1  # confirming "both" could not double the amount
+    told = [m for m in factory.model.calls[3][1] if m.role == "tool"][-1].text
+    assert "already pending" in told and "Do not propose it again" in told

@@ -48,6 +48,7 @@ def chat_turn(
     text: str,
     tier: Tier = Tier.SMALL,
     caps: AgentCaps | None = None,
+    today: date | None = None,
 ) -> Iterator[Event]:
     """Run one user turn in its own database session; commits when the turn ends."""
     with session_scope(engine) as session:
@@ -55,12 +56,13 @@ def chat_turn(
         if household is None:
             raise LookupError("create the household first")
         lang = language()
+        today = today or date.today()
         ctx = ToolContext(
             session=session,
             household=household,
             llm_factory=llm_factory,
             runner=runner,
-            today=date.today(),
+            today=today,
         )
         host = RegistryHost(session, household, ctx, lang)
         yield from run_turn(
@@ -68,6 +70,6 @@ def chat_turn(
             host,
             history,
             text,
-            system=system_prompt(language=lang, today=date.today().isoformat()),
+            system=system_prompt(language=lang, today=today.isoformat()),
             caps=caps or AgentCaps(),
         )

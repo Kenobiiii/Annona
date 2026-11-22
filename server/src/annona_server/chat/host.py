@@ -12,7 +12,7 @@ from annona_core.agent import ToolCall, ToolOutcome, ToolSpec
 from annona_core.domain import Household
 
 from ..tools import TOOLS, Tool, ToolContext, ToolError
-from .actions import create_pending
+from .actions import create_pending, list_pending
 from .describe import describe_write
 
 # Arguments only the person may set: the model never sees or sends them.
@@ -91,6 +91,22 @@ class RegistryHost:
         if "confirm" in tool.input.model_fields:
             payload["confirm"] = True  # set by the confirmation, never by the model
         summary = describe_write(self.session, self.household, call.name, args, self.lang)
+        same = next(
+            (
+                a
+                for a in list_pending(self.session, self.household)
+                if a.kind == "tool" and a.tool == call.name and a.payload == payload
+            ),
+            None,
+        )
+        if same is not None:  # asking twice must not queue the change twice
+            return ToolOutcome(
+                True,
+                f"already pending the person's confirmation (action {same.id}): {same.summary} "
+                "Do not propose it again; tell the person to confirm it in the app.",
+                same.summary,
+                action_id=None,
+            )
         action = create_pending(
             self.session,
             self.household,
