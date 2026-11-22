@@ -109,7 +109,7 @@ export default function TodayScreen() {
               <TodayContent day={day} memberId={member.profile.id ?? undefined} memberName={member.profile.name} />
               <View style={{ gap: 8 }}>
                 <Button label={t('today.scan')} variant="secondary" onPress={() => router.push('/receipts/new')} />
-                <Button label={t('today.chat')} variant="secondary" disabled hint={t('today.soon.hint')} />
+                <Button label={t('today.chat')} variant="secondary" onPress={() => router.push('/chat')} />
               </View>
             </View>
           );

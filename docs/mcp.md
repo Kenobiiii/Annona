@@ -17,6 +17,7 @@ each client's official documentation on 2026-11-21.
 | `get_plan` | the menu or its generation status (`detail=full`: steps, portions) | no |
 | `recipe_of_the_day` | a day's meals with portions; with `slot`, that meal's detailed recipe (steps, heat, times) | stores the recipe |
 | `cook_meal` | preview, then (`confirm=true`) mark a meal cooked and deduct the pantry | **yes** |
+| `swap_meal` | propose replacing one planned meal with another dish (only with products already bought); applying it needs the person's confirmation (REST `POST /chat/actions/{id}/confirm`) | creates a proposal |
 | `shopping_list` | the week's list with packs, prices and total | no |
 
 Writing tools are marked as such, so clients ask for your confirmation before running them.
@@ -28,7 +29,7 @@ tools for agents"; Cloudflare, "Code Mode") is to keep that small: tools that co
 workflow instead of thin database calls, one-line descriptions, compact paginated answers with a
 `concise`/`full` switch, and errors that say what to do next. Cloudflare's "search + execute"
 code mode pays off for APIs with thousands of endpoints (it gives agents the whole Cloudflare API
-in about 1,000 tokens); Annona's ten tools cost about the same (**~1,240 tokens**, measured with
+in about 1,000 tokens); Annona's eleven tools cost about the same (**~1,400 tokens**, measured with
 `uv run python scripts/mcp_tool_tokens.py`), so running model-written code on your server would
 add risk without saving tokens. The single registry (`server/annona_server/tools/`) keeps that
 option open if the tool count grows.

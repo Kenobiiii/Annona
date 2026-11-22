@@ -335,3 +335,20 @@ export function useDiscardReceipt(id: number) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.receipt(id) }),
   });
 }
+
+// ---- chat: confirming what the assistant proposed ------------------------------------------
+
+/** Confirm or cancel a proposed change. A confirmed change can touch anything: refresh it all. */
+export function useResolveAction() {
+  const api = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, confirm }: { id: number; confirm: boolean }) =>
+      unwrap(
+        confirm
+          ? api.POST('/api/v1/chat/actions/{action_id}/confirm', { params: { path: { action_id: id } } })
+          : api.POST('/api/v1/chat/actions/{action_id}/cancel', { params: { path: { action_id: id } } }),
+      ),
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+}

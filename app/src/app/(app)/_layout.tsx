@@ -47,6 +47,7 @@ export default function AppLayout() {
       <Drawer.Screen name="settings/index" options={{ title: t('nav.settings'), drawerLabel: t('nav.settings') }} />
       <Drawer.Screen name="products/[id]" options={detail(t('nav.products'), '/products')} />
       <Drawer.Screen name="recipe" options={detail(t('nav.today'), '/')} />
+      <Drawer.Screen name="chat" options={detail(t('chat.title'), '/')} />
       <Drawer.Screen name="receipts/new" options={detail(t('today.scan'), '/')} />
       <Drawer.Screen name="receipts/[id]" options={detail(t('today.scan'), '/')} />
       <Drawer.Screen name="menu/create" options={detail(t('nav.menu'), '/menu')} />
