@@ -54,6 +54,72 @@
         "title": "AllergenNote",
         "type": "object"
       },
+      "AlternativeOut": {
+        "properties": {
+          "cost_cents": {
+            "description": "for the packs needed",
+            "title": "Cost Cents",
+            "type": "integer"
+          },
+          "extra_cost_cents": {
+            "description": "versus the suggested product (negative = cheaper)",
+            "title": "Extra Cost Cents",
+            "type": "integer"
+          },
+          "kcal_diff_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "per 100 g/ml, versus what the menu used",
+            "title": "Kcal Diff Pct"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "packs": {
+            "title": "Packs",
+            "type": "integer"
+          },
+          "price_cents": {
+            "description": "per pack",
+            "title": "Price Cents",
+            "type": "integer"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "protein_diff_pct": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protein Diff Pct"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "packs",
+          "price_cents",
+          "cost_cents",
+          "extra_cost_cents",
+          "kcal_diff_pct",
+          "protein_diff_pct"
+        ],
+        "title": "AlternativeOut",
+        "type": "object"
+      },
       "AmountOut": {
         "properties": {
           "amount": {
@@ -93,6 +159,25 @@
         ],
         "title": "Appliance",
         "type": "string"
+      },
+      "BuildListIn": {
+        "properties": {
+          "refresh": {
+            "default": false,
+            "description": "rebuild it (loses the ticks)",
+            "title": "Refresh",
+            "type": "boolean"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_id"
+        ],
+        "title": "BuildListIn",
+        "type": "object"
       },
       "CatalogStore": {
         "properties": {
@@ -1342,6 +1427,40 @@
         "title": "Page[ProductOut]",
         "type": "object"
       },
+      "PantryEffectOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "direction": {
+            "description": "added | removed",
+            "title": "Direction",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "amount",
+          "unit",
+          "direction"
+        ],
+        "title": "PantryEffectOut",
+        "type": "object"
+      },
       "PantryIn": {
         "properties": {
           "amount": {
@@ -2286,6 +2405,13 @@
       },
       "ShoppingItemOut": {
         "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/AlternativeOut"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
           "checked": {
             "title": "Checked",
             "type": "boolean"
@@ -2302,9 +2428,43 @@
             "title": "Packs",
             "type": "integer"
           },
+          "pantry_effect": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PantryEffectOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what ticking or unticking did to the pantry (PATCH only)"
+          },
           "product_id": {
             "title": "Product Id",
             "type": "integer"
+          },
+          "replaces": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the product this one replaces",
+            "title": "Replaces"
+          },
+          "replaces_product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replaces Product Id"
           },
           "unit_price_cents": {
             "anyOf": [
@@ -2358,6 +2518,13 @@
           "total_cents": {
             "title": "Total Cents",
             "type": "integer"
+          },
+          "unavailable": {
+            "items": {
+              "$ref": "#/components/schemas/UnavailableOut"
+            },
+            "title": "Unavailable",
+            "type": "array"
           }
         },
         "required": [
@@ -2528,6 +2695,40 @@
           "fruit_veg_g"
         ],
         "title": "Totals",
+        "type": "object"
+      },
+      "UnavailableOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "reason": {
+            "description": "not_sold (no equivalent in this store) | no_type",
+            "title": "Reason",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "amount",
+          "unit",
+          "reason"
+        ],
+        "title": "UnavailableOut",
         "type": "object"
       },
       "Unit": {
@@ -3749,6 +3950,7 @@
     },
     "/api/v1/plans/{plan_id}/shopping-list": {
       "get": {
+        "description": "The plan's list at a store (default: the most recent one).",
         "operationId": "shopping_list_api_v1_plans__plan_id__shopping_list_get",
         "parameters": [
           {
@@ -3758,6 +3960,22 @@
             "schema": {
               "title": "Plan Id",
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "store_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Store Id"
             }
           },
           {
@@ -3801,7 +4019,74 @@
         },
         "summary": "Shopping List",
         "tags": [
-          "plans"
+          "shopping"
+        ]
+      },
+      "post": {
+        "description": "The plan's list at the chosen store: built the first time, then kept with its ticks.",
+        "operationId": "build_shopping_list_api_v1_plans__plan_id__shopping_list_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildListIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShoppingListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Build Shopping List",
+        "tags": [
+          "shopping"
         ]
       }
     },
@@ -4413,7 +4698,7 @@
     },
     "/api/v1/shopping-items/{item_id}": {
       "patch": {
-        "description": "Tick or untick an item of a shopping list.",
+        "description": "Tick (bought: the packs go to the pantry) or untick (they are taken back) an item.",
         "operationId": "check_shopping_item_api_v1_shopping_items__item_id__patch",
         "parameters": [
           {
@@ -4476,7 +4761,7 @@
         },
         "summary": "Check Shopping Item",
         "tags": [
-          "plans"
+          "shopping"
         ]
       }
     },

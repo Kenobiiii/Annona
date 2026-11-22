@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Weekly plans: generate (background job), read, today's meals and the plan's shopping list."""
+"""Weekly plans: generate (background job), read and today's meals."""
 
 from __future__ import annotations
 
@@ -17,8 +17,6 @@ from ...db.repositories import (
     PlannedMealRepository,
     RecipeIngredientRepository,
     RecipeRepository,
-    ShoppingItemRepository,
-    ShoppingListRepository,
     SqlProductRepository,
     UserProfileRepository,
 )
@@ -159,67 +157,3 @@ def today(
     if plan is None or plan.status != PlanStatus.ACTIVE:
         return []
     return _plan_out(session, plan, day=day, profile_id=profile_id).meals
-
-
-class ShoppingItemOut(BaseModel):
-    id: int
-    product_id: int
-    name: str
-    packs: int
-    unit_price_cents: int | None
-    checked: bool
-
-
-class ShoppingListOut(BaseModel):
-    store_id: str
-    total_cents: int
-    items: list[ShoppingItemOut]
-
-
-@router.get("/plans/{plan_id}/shopping-list", response_model=ShoppingListOut)
-def shopping_list(plan_id: int, session: SessionDep, household: HouseholdDep) -> ShoppingListOut:
-    _plan(session, household.id, plan_id)
-    lists = ShoppingListRepository(session).list(plan_id=plan_id)
-    if not lists:
-        raise APIError(404, "not_found", f"plan {plan_id} has no shopping list")
-    current = lists[-1]
-    products = SqlProductRepository(session)
-    items = [
-        ShoppingItemOut(
-            id=i.id,
-            product_id=i.product_id,
-            name=getattr(products.get(i.product_id), "name", "?"),
-            packs=i.packs,
-            unit_price_cents=i.unit_price_cents,
-            checked=i.checked,
-        )
-        for i in ShoppingItemRepository(session).list(list_id=current.id)
-    ]
-    total = sum(i.packs * (i.unit_price_cents or 0) for i in items)
-    return ShoppingListOut(store_id=current.store_id, total_cents=total, items=items)
-
-
-class ShoppingItemPatch(BaseModel):
-    checked: bool
-
-
-@router.patch("/shopping-items/{item_id}", response_model=ShoppingItemOut)
-def check_shopping_item(
-    item_id: int, body: ShoppingItemPatch, session: SessionDep, household: HouseholdDep
-) -> ShoppingItemOut:
-    """Tick or untick an item of a shopping list."""
-    repo = ShoppingItemRepository(session)
-    item = repo.get(item_id)
-    parent = ShoppingListRepository(session).get(item.list_id) if item else None
-    if item is None or parent is None or parent.household_id != household.id:
-        raise APIError(404, "not_found", f"shopping item {item_id} not found")
-    item = repo.update(item.model_copy(update={"checked": body.checked}))
-    product = SqlProductRepository(session).get(item.product_id)
-    return ShoppingItemOut(
-        id=item.id,
-        product_id=item.product_id,
-        name=product.name if product else "?",
-        packs=item.packs,
-        unit_price_cents=item.unit_price_cents,
-        checked=item.checked,
-    )

@@ -8,6 +8,8 @@ from .basket import (
     Need,
     StoreProduct,
     Unavailable,
+    alternatives_for,
+    equivalents,
     price_basket,
 )
 from .compare import StoreComparison, cheapest_split
@@ -20,6 +22,8 @@ __all__ = [
     "StoreComparison",
     "StoreProduct",
     "Unavailable",
+    "alternatives_for",
     "cheapest_split",
+    "equivalents",
     "price_basket",
 ]

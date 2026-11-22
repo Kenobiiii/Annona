@@ -241,10 +241,17 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Shopping List */
+        /**
+         * Shopping List
+         * @description The plan's list at a store (default: the most recent one).
+         */
         get: operations["shopping_list_api_v1_plans__plan_id__shopping_list_get"];
         put?: never;
-        post?: never;
+        /**
+         * Build Shopping List
+         * @description The plan's list at the chosen store: built the first time, then kept with its ticks.
+         */
+        post: operations["build_shopping_list_api_v1_plans__plan_id__shopping_list_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -381,7 +388,7 @@ export interface paths {
         head?: never;
         /**
          * Check Shopping Item
-         * @description Tick or untick an item of a shopping list.
+         * @description Tick (bought: the packs go to the pantry) or untick (they are taken back) an item.
          */
         patch: operations["check_shopping_item_api_v1_shopping_items__item_id__patch"];
         trace?: never;
@@ -491,6 +498,37 @@ export interface components {
             /** Reasons */
             reasons: string[];
         };
+        /** AlternativeOut */
+        AlternativeOut: {
+            /**
+             * Cost Cents
+             * @description for the packs needed
+             */
+            cost_cents: number;
+            /**
+             * Extra Cost Cents
+             * @description versus the suggested product (negative = cheaper)
+             */
+            extra_cost_cents: number;
+            /**
+             * Kcal Diff Pct
+             * @description per 100 g/ml, versus what the menu used
+             */
+            kcal_diff_pct: string | null;
+            /** Name */
+            name: string;
+            /** Packs */
+            packs: number;
+            /**
+             * Price Cents
+             * @description per pack
+             */
+            price_cents: number;
+            /** Product Id */
+            product_id: number;
+            /** Protein Diff Pct */
+            protein_diff_pct: string | null;
+        };
         /** AmountOut */
         AmountOut: {
             /** Amount */
@@ -508,6 +546,17 @@ export interface components {
          * @enum {string}
          */
         Appliance: "hob" | "oven" | "microwave" | "air_fryer" | "none";
+        /** BuildListIn */
+        BuildListIn: {
+            /**
+             * Refresh
+             * @description rebuild it (loses the ticks)
+             * @default false
+             */
+            refresh: boolean;
+            /** Store Id */
+            store_id: string;
+        };
         /** CatalogStore */
         CatalogStore: {
             /** Priced */
@@ -981,6 +1030,22 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** PantryEffectOut */
+        PantryEffectOut: {
+            /** Amount */
+            amount: string;
+            /**
+             * Direction
+             * @description added | removed
+             */
+            direction: string;
+            /** Name */
+            name: string;
+            /** Product Id */
+            product_id: number;
+            /** Unit */
+            unit: string;
+        };
         /** PantryIn */
         PantryIn: {
             /** Amount */
@@ -1296,6 +1361,8 @@ export interface components {
         Sex: "female" | "male";
         /** ShoppingItemOut */
         ShoppingItemOut: {
+            /** Alternatives */
+            alternatives?: components["schemas"]["AlternativeOut"][];
             /** Checked */
             checked: boolean;
             /** Id */
@@ -1304,8 +1371,17 @@ export interface components {
             name: string;
             /** Packs */
             packs: number;
+            /** @description what ticking or unticking did to the pantry (PATCH only) */
+            pantry_effect?: components["schemas"]["PantryEffectOut"] | null;
             /** Product Id */
             product_id: number;
+            /**
+             * Replaces
+             * @description the product this one replaces
+             */
+            replaces?: string | null;
+            /** Replaces Product Id */
+            replaces_product_id?: number | null;
             /** Unit Price Cents */
             unit_price_cents: number | null;
         };
@@ -1322,6 +1398,8 @@ export interface components {
             store_id: string;
             /** Total Cents */
             total_cents: number;
+            /** Unavailable */
+            unavailable?: components["schemas"]["UnavailableOut"][];
         };
         /**
          * Shortfall
@@ -1376,6 +1454,22 @@ export interface components {
             salt_g?: string | null;
             /** Saturated Fat G */
             saturated_fat_g?: string | null;
+        };
+        /** UnavailableOut */
+        UnavailableOut: {
+            /** Amount */
+            amount: string;
+            /** Name */
+            name: string;
+            /** Product Id */
+            product_id: number;
+            /**
+             * Reason
+             * @description not_sold (no equivalent in this store) | no_type
+             */
+            reason: string;
+            /** Unit */
+            unit: string;
         };
         /**
          * Unit
@@ -2042,7 +2136,9 @@ export interface operations {
     };
     shopping_list_api_v1_plans__plan_id__shopping_list_get: {
         parameters: {
-            query?: never;
+            query?: {
+                store_id?: string | null;
+            };
             header?: {
                 authorization?: string | null;
             };
@@ -2052,6 +2148,43 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShoppingListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    build_shopping_list_api_v1_plans__plan_id__shopping_list_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                plan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildListIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

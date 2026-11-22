@@ -107,6 +107,45 @@ def _pct(new: Decimal | None, old: Decimal | None) -> Decimal | None:
     return ((new - old) / old * 100).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
 
 
+def equivalents(need: Need, products: list[StoreProduct], amount: Decimal) -> list[StoreProduct]:
+    """Products of the store that can replace ``need``, cheapest first for ``amount``."""
+    return sorted(
+        (
+            p
+            for p in products
+            if p.category == need.category and p.type == need.type and p.basis == need.basis
+        ),
+        key=lambda p: (_packs(amount, p.pack_amount) * p.price_cents, p.price_cents, p.name),
+    )
+
+
+def alternatives_for(
+    need: Need,
+    chosen: StoreProduct,
+    products: list[StoreProduct],
+    amount: Decimal,
+    nutrition: tuple[Decimal | None, Decimal | None] = (None, None),
+) -> tuple[Alternative, ...]:
+    """The other equivalents of ``need`` (at most three), compared with ``chosen``."""
+    kcal, protein = nutrition
+    base = _packs(amount, chosen.pack_amount) * chosen.price_cents
+    return tuple(
+        Alternative(
+            product_id=p.product_id,
+            name=p.name,
+            packs=_packs(amount, p.pack_amount),
+            pack_amount=p.pack_amount,
+            price_cents=p.price_cents,
+            cost_cents=_packs(amount, p.pack_amount) * p.price_cents,
+            extra_cost_cents=_packs(amount, p.pack_amount) * p.price_cents - base,
+            kcal_diff_pct=_pct(p.kcal_per_100, kcal),
+            protein_diff_pct=_pct(p.protein_per_100, protein),
+        )
+        for p in equivalents(need, products, amount)
+        if p.product_id != chosen.product_id
+    )[:MAX_ALTERNATIVES]
+
+
 def price_basket(
     needs: list[Need],
     products: list[StoreProduct],
@@ -144,14 +183,7 @@ def price_basket(
                 )
             )
             continue
-        candidates = sorted(
-            (
-                p
-                for p in products
-                if p.category == need.category and p.type == need.type and p.basis == need.basis
-            ),
-            key=lambda p: (_packs(missing, p.pack_amount) * p.price_cents, p.price_cents, p.name),
-        )
+        candidates = equivalents(need, products, missing)
         if not candidates:
             unavailable.append(
                 Unavailable(
@@ -164,21 +196,8 @@ def price_basket(
             )
             continue
         chosen = candidates[0]
-        chosen_cost = _packs(missing, chosen.pack_amount) * chosen.price_cents
-        kcal, protein = nutrition.get(need.product_id, (None, None))
-        alternatives = tuple(
-            Alternative(
-                product_id=p.product_id,
-                name=p.name,
-                packs=_packs(missing, p.pack_amount),
-                pack_amount=p.pack_amount,
-                price_cents=p.price_cents,
-                cost_cents=_packs(missing, p.pack_amount) * p.price_cents,
-                extra_cost_cents=_packs(missing, p.pack_amount) * p.price_cents - chosen_cost,
-                kcal_diff_pct=_pct(p.kcal_per_100, kcal),
-                protein_diff_pct=_pct(p.protein_per_100, protein),
-            )
-            for p in candidates[1 : 1 + MAX_ALTERNATIVES]
+        alternatives = alternatives_for(
+            need, chosen, products, missing, nutrition.get(need.product_id, (None, None))
         )
         lines.append(
             _line(need, chosen, missing, replaces=need.product_id, alternatives=alternatives)
