@@ -1,6 +1,45 @@
 {
   "components": {
     "schemas": {
+      "ActionOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PendingActionStatus"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tool": {
+            "title": "Tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tool",
+          "summary",
+          "status"
+        ],
+        "title": "ActionOut",
+        "type": "object"
+      },
       "ActivityLevel": {
         "description": "Physical activity level categories for adults.\n\nThe four categories of the National Academies' *Dietary Reference Intakes for Energy* (2023),\nwhich EFSA (2013) also uses with almost the same values. Factors live in\n:mod:`annona_core.nutrition.settings`; :mod:`annona_core.nutrition.activity_quiz` helps a user\npick one.",
         "enum": [
@@ -301,6 +340,40 @@
         ],
         "title": "CategorySource",
         "type": "string"
+      },
+      "ChatIn": {
+        "properties": {
+          "history": {
+            "description": "earlier turns (text only); the server keeps a rolling window of them",
+            "items": {
+              "$ref": "#/components/schemas/HistoryMessage"
+            },
+            "maxItems": 40,
+            "title": "History",
+            "type": "array"
+          },
+          "message": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "tier": {
+            "default": "small",
+            "description": "large = a more careful (and costlier) model",
+            "enum": [
+              "small",
+              "large"
+            ],
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "ChatIn",
+        "type": "object"
       },
       "ConfirmIn": {
         "properties": {
@@ -812,6 +885,29 @@
         ],
         "title": "HeatLevel",
         "type": "string"
+      },
+      "HistoryMessage": {
+        "properties": {
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 2000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "text"
+        ],
+        "title": "HistoryMessage",
+        "type": "object"
       },
       "HobType": {
         "enum": [
@@ -1731,6 +1827,16 @@
         ],
         "title": "PantryOut",
         "type": "object"
+      },
+      "PendingActionStatus": {
+        "enum": [
+          "pending",
+          "confirmed",
+          "cancelled",
+          "failed"
+        ],
+        "title": "PendingActionStatus",
+        "type": "string"
       },
       "PlanIn": {
         "properties": {
@@ -3456,6 +3562,230 @@
         "summary": "Catalog Stores",
         "tags": [
           "products"
+        ]
+      }
+    },
+    "/api/v1/chat": {
+      "post": {
+        "description": "One chat turn, streamed as server-sent events.\n\nEvents: ``text`` (a piece of the answer), ``tool_start``/``tool_end`` (what is being looked up),\n``action`` (a change proposed and waiting for confirmation), ``notice`` (a limit was reached),\n``done`` (the end, with the totals) and ``error``.",
+        "operationId": "chat_api_v1_chat_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/api/v1/chat/actions": {
+      "get": {
+        "description": "Changes the agent proposed that still wait for a decision.",
+        "operationId": "pending_actions_api_v1_chat_actions_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ActionOut"
+                  },
+                  "title": "Response Pending Actions Api V1 Chat Actions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pending Actions",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/api/v1/chat/actions/{action_id}/cancel": {
+      "post": {
+        "operationId": "cancel_action_api_v1_chat_actions__action_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "action_id",
+            "required": true,
+            "schema": {
+              "title": "Action Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Action",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/api/v1/chat/actions/{action_id}/confirm": {
+      "post": {
+        "description": "Execute the proposed change, exactly as it was described. Once.",
+        "operationId": "confirm_action_api_v1_chat_actions__action_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "action_id",
+            "required": true,
+            "schema": {
+              "title": "Action Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm Action",
+        "tags": [
+          "chat"
         ]
       }
     },

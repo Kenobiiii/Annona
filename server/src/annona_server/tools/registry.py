@@ -50,6 +50,9 @@ class Tool:
     read_only: bool = True
     destructive: bool = False
     idempotent: bool = True
+    # True: the tool only creates a pending proposal (its output carries ``action_id``); the change
+    # happens when the person confirms it. The chat agent may call such a tool directly.
+    proposes: bool = False
 
     def run(self, ctx: ToolContext, arguments: dict[str, Any]) -> BaseModel:
         try:

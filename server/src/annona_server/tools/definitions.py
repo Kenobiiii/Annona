@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""The ten tools. Descriptions are deliberately one line: they are sent on every model turn."""
+"""The eleven tools. Descriptions are deliberately one line: they are sent on every model turn."""
 
 from __future__ import annotations
 
@@ -38,6 +38,7 @@ from ..planner.recipes import (
     cook_preview,
     detailed_recipe,
 )
+from ..planner.swap import SwapError, propose_swap
 from .registry import Tool, ToolContext, ToolError, register
 
 Detail = Literal["concise", "full"]
@@ -771,6 +772,86 @@ register(
         read_only=False,
         destructive=True,
         idempotent=False,
+    )
+)
+
+# ---------------------------------------------------------------------------------- swap_meal
+
+
+class SwapIn(BaseModel):
+    day: date | None = Field(default=None, description="default: today")
+    slot: MealSlot
+    request: str = Field(
+        max_length=300, description="what the person wants instead, in their words"
+    )
+    avoid_appliances: list[Literal["oven", "microwave", "air_fryer"]] = Field(
+        default_factory=list, description="appliances the new dish must NOT use"
+    )
+
+
+class SwapOut(BaseModel):
+    status: Literal["proposed"]
+    action_id: int
+    old_title: str
+    new_title: str
+    appliances: list[str]
+    ingredients: list[str]
+    message: str
+
+
+def swap_meal(ctx: ToolContext, args: SwapIn) -> SwapOut:
+    from ..chat.actions import create_pending
+    from ..chat.describe import describe_swap
+
+    day = args.day or ctx.today
+    ctx.session.commit()
+    try:
+        proposal = propose_swap(
+            ctx.session,
+            ctx.llm_factory(ctx.session),
+            ctx.household,
+            day,
+            args.slot,
+            args.request,
+            avoid_appliances=list(args.avoid_appliances),
+        )
+    except MealNotFound as error:
+        raise ToolError(f"{error}: check get_plan") from error
+    except SwapError as error:
+        raise ToolError(error.message) from error
+    action = create_pending(
+        ctx.session,
+        ctx.household,
+        kind="swap",
+        tool="swap_meal",
+        payload=proposal.model_dump(mode="json"),
+        summary=describe_swap(proposal),
+    )
+    return SwapOut(
+        status="proposed",
+        action_id=action.id,  # type: ignore[arg-type]
+        old_title=proposal.old_title,
+        new_title=proposal.title,
+        appliances=proposal.appliances,
+        ingredients=[
+            f"{i.name} {i.amount.quantize(Decimal(1))} {i.unit}" for i in proposal.ingredients
+        ],
+        message="proposed only: nothing changed until the person confirms it in the app",
+    )
+
+
+register(
+    Tool(
+        name="swap_meal",
+        title="Propose a different dish",
+        description="Propose swapping one planned meal for another dish; the person confirms.",
+        input=SwapIn,
+        output=SwapOut,
+        handler=swap_meal,
+        read_only=False,
+        destructive=False,
+        idempotent=False,
+        proposes=True,
     )
 )
 

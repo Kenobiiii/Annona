@@ -34,6 +34,7 @@ EXPECTED = {
     "get_plan",
     "recipe_of_the_day",
     "cook_meal",
+    "swap_meal",
     "shopping_list",
 }
 
@@ -81,12 +82,12 @@ def call(engine, name, args=None):
     return anyio.run(go)
 
 
-def test_registry_has_the_ten_tools_with_short_descriptions():
+def test_registry_has_the_eleven_tools_with_short_descriptions():
     assert set(TOOLS) == EXPECTED
     for tool in TOOLS.values():
         assert len(tool.description) <= 130, tool.name  # sent to the model on every turn
     writers = {n for n, t in TOOLS.items() if not t.read_only}
-    assert writers == {"update_pantry", "build_weekly_plan", "cook_meal"}
+    assert writers == {"update_pantry", "build_weekly_plan", "cook_meal", "swap_meal"}
 
 
 def test_mcp_lists_tools_with_annotations_and_lean_schemas(engine):

@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +27,7 @@ from . import errors
 from .deps import require_token
 from .mcp_guard import BearerGuard, McpPathAlias
 from .routes import (
+    chat,
     household,
     pantry,
     plans,
@@ -50,6 +52,7 @@ def create_app(
     runner: JobRunner | None = None,
     token: str | None = None,
     llm_factory: Callable[[Session], LLMClient] | None = None,
+    chat_model_factory: Callable[..., Any] | None = None,
 ) -> FastAPI:
     load_env()
     if engine is None:
@@ -85,6 +88,11 @@ def create_app(
     app.state.runner = runner
     app.state.token = token if token is not None else os.environ.get("ANNONA_API_TOKEN", "")
     app.state.llm_factory = llm_factory
+    if chat_model_factory is None:
+        from ..chat.service import default_model_factory
+
+        chat_model_factory = default_model_factory
+    app.state.chat_model_factory = chat_model_factory
     origins = [o for o in os.environ.get("ANNONA_CORS_ORIGINS", "").split(",") if o]
     if origins:
         app.add_middleware(
@@ -110,6 +118,7 @@ def create_app(
         shopping_lists,
         recipes,
         receipts,
+        chat,
     ):
         app.include_router(module.router, prefix="/api/v1", dependencies=protected)
     return app
