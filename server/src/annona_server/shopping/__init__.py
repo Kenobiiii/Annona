@@ -163,7 +163,7 @@ def compare_plan_stores(
     for store_id in dict.fromkeys(store_ids):  # no repeats, order kept
         products = store_products(session, store_id, household.currency)
         if not products:
-            raise UnknownStore(f"no priced products for store {store_id!r}")
+            raise UnknownStore(f"no products priced in {household.currency} for store {store_id!r}")
         baskets.append(price_basket(needs, products, store_id=store_id, nutrition=nutrition))
     return compare_baskets(baskets, min_saving_cents=min_saving_cents)
 
@@ -186,7 +186,7 @@ def build_list(
         return existing
     products = store_products(session, store_id, household.currency)
     if not products:
-        raise UnknownStore(f"no priced products for store {store_id!r}")
+        raise UnknownStore(f"no products priced in {household.currency} for store {store_id!r}")
     if existing is not None and existing.id is not None:
         ShoppingListRepository(session).delete(existing.id)
     needs, nutrition = plan_needs(session, household.id, plan_id)

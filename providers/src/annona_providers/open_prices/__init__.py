@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator, Sequence
+from dataclasses import replace
 from datetime import UTC, datetime, time
 from decimal import Decimal
 from typing import Any
@@ -62,6 +63,9 @@ class OpenPricesProvider:
         self.brand = brand
         self.country = country
         self.currency = currency
+        # The class-level info describes the plugin; this instance follows one brand in one
+        # country, so its currency (and the store it names) must be its own.
+        self.info = replace(self.info, currency=currency)
         self._client = httpx.Client(
             transport=transport or PoliteTransport(min_interval=1.0), timeout=20.0
         )

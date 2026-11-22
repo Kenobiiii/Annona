@@ -66,3 +66,32 @@ uv run pytest --live
 
 Dia, Alcampo and Eroski disallow everything; Consum disallows `/api/`; Carrefour allows product
 pages but blocks automated clients; Lidl allows product pages but sells little food online.
+
+
+## Worked example: a store in another country and currency (Tesco, UK)
+
+The Open Prices plugin is generic (brand + country + currency), so a store of any country with
+volunteer-recorded prices needs **no new code**:
+
+```bash
+uv run python -m annona_server.ingest open_prices --brand Tesco --country "United Kingdom" \
+    --currency GBP --catalog --limit 200
+```
+
+It is tested with recorded real data (`providers/tests/fixtures/open_prices_uk/`, the full provider
+contract) and proved something the Spanish stores could not: **one provider instance follows one
+brand in one country and currency**, so `info` is per instance (adding this store exposed that the
+class-level currency said EUR for every instance).
+
+Currency rules, so amounts are never mixed:
+
+- a household has one currency (Settings); only products priced in it are offered to the optimiser,
+  the shopping list and the store comparison. A store in another currency is simply not offered
+  (the API says "no products priced in EUR for store ...");
+- to plan with Tesco, set the household currency to GBP.
+
+Open Prices is crowdsourced: coverage is sparse and outliers exist (a recorded Tesco price is 90 GBP
+for a tin of tomatoes). Treat its prices as hints and keep your own data fresh with receipts.
+
+If you need a real-time, complete catalogue, write a provider over the store's **official** API
+(preferred) following the contract above.

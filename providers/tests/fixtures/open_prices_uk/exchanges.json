@@ -1,0 +1,51 @@
+{
+  "GET https://prices.openfoodfacts.org/api/v1/locations?osm_address_country__like=United+Kingdom&osm_name__like=Tesco&page=1&price_count__gte=1&size=100 -": {
+    "file": "2f5e0c39ca80.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/prices?currency=GBP&location_id__in=694%2C695%2C735%2C1111%2C1217%2C1381%2C1389%2C1574%2C1834%2C1889%2C1910%2C2034%2C2222%2C2359%2C2385%2C2388%2C2559%2C2731%2C2978%2C2984%2C3099%2C3264%2C3734%2C3852%2C3872%2C4118%2C4129%2C4344%2C4391%2C4730%2C4950%2C5340%2C5509%2C5697%2C6090%2C6368%2C6595%2C7034%2C7084%2C7545%2C7690%2C7703%2C7986&order_by=-date&page=1&product_code__in=5900531011016%2C5010204612287&size=100&type=PRODUCT -": {
+    "file": "2278e8f1bd85.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/prices?currency=GBP&location_id__in=694%2C695%2C735%2C1111%2C1217%2C1381%2C1389%2C1574%2C1834%2C1889%2C1910%2C2034%2C2222%2C2359%2C2385%2C2388%2C2559%2C2731%2C2978%2C2984%2C3099%2C3264%2C3734%2C3852%2C3872%2C4118%2C4129%2C4344%2C4391%2C4730%2C4950%2C5340%2C5509%2C5697%2C6090%2C6368%2C6595%2C7034%2C7084%2C7545%2C7690%2C7703%2C7986&order_by=-date&page=1&product_code__in=5900531011016&size=100&type=PRODUCT -": {
+    "file": "bb72d5dffd96.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/prices?location_id__in=694%2C695%2C735%2C1111%2C1217%2C1381%2C1389%2C1574%2C1834%2C1889%2C1910%2C2034%2C2222%2C2359%2C2385%2C2388%2C2559%2C2731%2C2978%2C2984%2C3099%2C3264%2C3734%2C3852%2C3872%2C4118%2C4129%2C4344%2C4391%2C4730%2C4950%2C5340%2C5509%2C5697%2C6090%2C6368%2C6595%2C7034%2C7084%2C7545%2C7690%2C7703%2C7986&order_by=-date&page=1&size=100&type=PRODUCT -": {
+    "file": "2f46e58bd29d.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/products?code=5900531011016&page=1&size=1 -": {
+    "file": "fa26ff6d1ef5.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/products?code=99999999999999&page=1&size=1 -": {
+    "file": "e26fd1493d30.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  },
+  "GET https://prices.openfoodfacts.org/api/v1/products?page=1&price_count__gte=1&product_name__like=rice&size=5 -": {
+    "file": "6e7a8d51a38e.json",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "status": 200
+  }
+}

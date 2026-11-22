@@ -9,3 +9,7 @@ trimmed to 5 items).
 - `mercadona/`: a handful of responses from Mercadona's online shop (postcode 28001, one search,
   one product, one not-found), recorded under the opt-in, personal-use plugin policy. Mercadona
   owns this data; it is included only as a minimal test fixture.
+- `open_prices_uk/`: Tesco (United Kingdom, GBP) from Open Prices, recorded on 2026-11-22 with
+  `scripts/record_provider_fixtures.py open_prices_uk` (same ODbL 1.0 licence). Used to prove the
+  plugin API works for another country and currency. Note: Open Prices is crowdsourced and can hold
+  outliers (one recorded price is 90 GBP for a tin of tomatoes); treat prices as hints.

@@ -4,6 +4,8 @@
 Examples::
 
     python -m annona_server.ingest open_prices --brand Mercadona --catalog --limit 200
+    python -m annona_server.ingest open_prices --brand Tesco --country "United Kingdom" \\
+        --currency GBP --catalog --limit 200
     python -m annona_server.ingest mercadona --postal-code 28001 --accept-notice \\
         --sku 4740 --query "arroz redondo"
 """
@@ -34,6 +36,7 @@ def main() -> None:
     parser.add_argument("--limit", type=int)
     parser.add_argument("--brand", help="open_prices: store brand, e.g. Mercadona")
     parser.add_argument("--country", help="open_prices: country name as in OpenStreetMap")
+    parser.add_argument("--currency", help="open_prices: ISO 4217 code of the prices, e.g. GBP")
     parser.add_argument("--postal-code", help="mercadona: Spanish postcode")
     parser.add_argument("--warehouse", help="mercadona: warehouse code")
     parser.add_argument("--accept-notice", action="store_true", help="accept an opt-in notice")
@@ -48,6 +51,7 @@ def main() -> None:
         for key, value in {
             "brand": args.brand,
             "country": args.country,
+            "currency": args.currency,
             "postal_code": args.postal_code,
             "warehouse": args.warehouse,
         }.items()

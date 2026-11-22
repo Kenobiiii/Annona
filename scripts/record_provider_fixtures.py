@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Record real HTTP exchanges for the provider contract tests (run locally, review, commit).
 
-Usage: uv run python scripts/record_provider_fixtures.py {open_prices,mercadona}
+Usage: uv run python scripts/record_provider_fixtures.py {open_prices,open_prices_uk,mercadona}
 
 Makes a handful of polite requests through PoliteTransport. The Mercadona plugin is opt-in; running
 this for it means you accept its notice (see annona_providers.mercadona.NOTICE).
@@ -23,6 +23,8 @@ FIXTURES = Path(__file__).resolve().parent.parent / "providers/tests/fixtures"
 # Must match the class attributes of the contract tests.
 SCENARIOS = {
     "open_prices": {"search": "leche", "known": "8480000229670", "unknown": "99999999999999"},
+    # A non-Spanish store in another currency: proves the plugin API is not Spain-shaped.
+    "open_prices_uk": {"search": "rice", "known": "5900531011016", "unknown": "99999999999999"},
     "mercadona": {"search": "leche", "known": None, "unknown": "99999999"},
 }
 
@@ -35,9 +37,14 @@ def main() -> None:
     shutil.rmtree(target, ignore_errors=True)
     scenario = SCENARIOS[args.provider]
 
-    if args.provider == "open_prices":
+    if args.provider.startswith("open_prices"):
         transport = RecordingTransport(target, PoliteTransport(min_interval=1.0, cache_ttl=0))
-        provider = OpenPricesProvider(brand="Mercadona", transport=transport)
+        if args.provider == "open_prices_uk":
+            provider = OpenPricesProvider(
+                brand="Tesco", country="United Kingdom", currency="GBP", transport=transport
+            )
+        else:
+            provider = OpenPricesProvider(brand="Mercadona", transport=transport)
     else:
         transport = RecordingTransport(
             target, PoliteTransport(min_interval=2.0, cache_ttl=0, robots_exception=True)
