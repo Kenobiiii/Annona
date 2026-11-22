@@ -41,6 +41,7 @@ from .enums import (
     HobType,
     MealSlot,
     NutritionSource,
+    PendingActionStatus,
     PlanStatus,
     PriceSource,
     ReceiptLineStatus,
@@ -388,6 +389,25 @@ class Receipt(DomainModel):
     image_path: str | None = None
     status: ReceiptStatus = ReceiptStatus.PENDING_REVIEW
     created_at: AwareDatetime = Field(default_factory=utc_now)
+
+
+class PendingAction(DomainModel):
+    """A change proposed by the chat agent that waits for the person's confirmation.
+
+    The model never executes a change: it only proposes one. ``summary`` is written by code (not by
+    the model) from ``payload``, and nothing happens until the person confirms it in the app.
+    """
+
+    id: int | None = None
+    household_id: int
+    kind: str = Field(min_length=1, max_length=40)  # "tool" | "swap"
+    tool: str = Field(min_length=1, max_length=60)
+    payload: dict = Field(default_factory=dict, description="exactly what will be executed")
+    summary: str = Field(min_length=1, max_length=2000)
+    status: PendingActionStatus = PendingActionStatus.PENDING
+    result: dict | None = None
+    created_at: AwareDatetime = Field(default_factory=utc_now)
+    resolved_at: AwareDatetime | None = None
 
 
 class ReceiptAlias(DomainModel):

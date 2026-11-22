@@ -244,6 +244,21 @@ class ReceiptLineRow(SQLModel, table=True):
     status: str
 
 
+class PendingActionRow(SQLModel, table=True):
+    __tablename__ = "pending_action"
+
+    id: int | None = Field(default=None, primary_key=True)
+    household_id: int = Field(foreign_key="household.id", ondelete=CASCADE, index=True)
+    kind: str
+    tool: str
+    payload: dict = Field(default_factory=dict, sa_type=JSON)
+    summary: str
+    status: str
+    result: dict | None = Field(default=None, sa_type=JSON)
+    created_at: datetime = utc()
+    resolved_at: datetime | None = utc(nullable=True)
+
+
 class ReceiptAliasRow(SQLModel, table=True):
     __tablename__ = "receipt_alias"
     __table_args__ = (UniqueConstraint("household_id", "store_id", "normalized_text"),)

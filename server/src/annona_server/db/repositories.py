@@ -19,6 +19,7 @@ from annona_core.domain import (
     MealPlan,
     NutritionFacts,
     PantryItem,
+    PendingAction,
     PlannedMeal,
     Price,
     Product,
@@ -114,6 +115,7 @@ ShoppingItemRepository = _repo(ShoppingItem, t.ShoppingItemRow)
 ReceiptRepository = _repo(Receipt, t.ReceiptRow)
 ReceiptLineRepository = _repo(ReceiptLine, t.ReceiptLineRow)
 ReceiptAliasRepository = _repo(ReceiptAlias, t.ReceiptAliasRow)
+PendingActionRepository = _repo(PendingAction, t.PendingActionRow)
 
 
 _NUTRITION_FIELDS = (

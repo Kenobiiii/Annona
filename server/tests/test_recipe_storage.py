@@ -81,3 +81,23 @@ def test_receipt_alias_round_trip_and_uniqueness(session, household):
                 product_id=product.id,
             )
         )
+
+
+def test_pending_action_round_trip(session, household):
+    from annona_core.domain import PendingAction, PendingActionStatus
+
+    repo = r.PendingActionRepository(session)
+    saved = repo.add(
+        PendingAction(
+            household_id=household.id,
+            kind="tool",
+            tool="update_pantry",
+            payload={"changes": [{"product_id": 1, "mode": "add", "amount": 500}]},
+            summary="Add 500 g of rice to the pantry",
+        )
+    )
+    assert saved.status == PendingActionStatus.PENDING and saved.result is None
+    done = repo.update(
+        saved.model_copy(update={"status": PendingActionStatus.CONFIRMED, "result": {"ok": True}})
+    )
+    assert repo.get(saved.id).payload["changes"][0]["amount"] == 500 and done.result == {"ok": True}

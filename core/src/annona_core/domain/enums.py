@@ -179,6 +179,13 @@ class RecipeSource(StrEnum):
     MANUAL = "manual"
 
 
+class PendingActionStatus(StrEnum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+    FAILED = "failed"
+
+
 class ReceiptStatus(StrEnum):
     PENDING_REVIEW = "pending_review"
     CONFIRMED = "confirmed"
