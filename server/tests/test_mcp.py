@@ -21,6 +21,7 @@ from annona_server.mcp_server import build_server
 from annona_server.tools import TOOLS
 
 from .test_planner_db import even_split
+from .test_recipes_db import recipe_answer
 
 MONDAY = date(2026, 11, 23)
 EXPECTED = {
@@ -32,6 +33,7 @@ EXPECTED = {
     "build_weekly_plan",
     "get_plan",
     "recipe_of_the_day",
+    "cook_meal",
     "shopping_list",
 }
 
@@ -59,7 +61,9 @@ def fake_factory(session):
     return make_llm_client(
         session,
         settings=LLMSettings(models={Tier.SMALL: "fake/s", Tier.LARGE: "fake/l"}),
-        backend=FakeLLM(responder=even_split),
+        backend=FakeLLM(
+            responder=lambda r: recipe_answer(r) if r.task == "recipe_of_the_day" else even_split(r)
+        ),
     )
 
 
@@ -77,12 +81,12 @@ def call(engine, name, args=None):
     return anyio.run(go)
 
 
-def test_registry_has_the_nine_tools_with_short_descriptions():
+def test_registry_has_the_ten_tools_with_short_descriptions():
     assert set(TOOLS) == EXPECTED
     for tool in TOOLS.values():
         assert len(tool.description) <= 130, tool.name  # sent to the model on every turn
     writers = {n for n, t in TOOLS.items() if not t.read_only}
-    assert writers == {"update_pantry", "build_weekly_plan"}
+    assert writers == {"update_pantry", "build_weekly_plan", "cook_meal"}
 
 
 def test_mcp_lists_tools_with_annotations_and_lean_schemas(engine):
@@ -128,13 +132,24 @@ def test_plan_workflow_through_mcp(engine, home, shop):
     ).structured_content
     assert started["status"] == "started"
     plan = call(engine, "get_plan", {"week_start": week}).structured_content
-    assert plan["status"] in ("ready", "rejected"), plan
+    assert plan["status"] == "ready", plan
     if plan["status"] == "ready":
         assert len(plan["meals"]) == 4 and plan["meals"][0].get("ingredients") is None
         today = call(engine, "recipe_of_the_day", {"day": week}).structured_content
         assert today["member"] == "Pablo" and today["meals"][0]["ingredients"]
         shopping = call(engine, "shopping_list", {"week_start": week}).structured_content
         assert shopping["items"] and shopping["total"]
+        lunch = call(engine, "recipe_of_the_day", {"day": week, "slot": "lunch"}).structured_content
+        assert (
+            lunch["recipe"]["steps"][0].startswith("1. Cocina ")
+            and lunch["recipe"]["cooked"] is False
+        )
+        cook = {"day": week, "slot": "lunch"}
+        preview = call(engine, "cook_meal", cook).structured_content
+        assert preview["status"] == "preview" and "confirm=true" in preview["message"]
+        done = call(engine, "cook_meal", {**cook, "confirm": True}).structured_content
+        assert done["status"] == "cooked"
+        assert call(engine, "cook_meal", cook).structured_content["status"] == "already_cooked"
     again = call(engine, "build_weekly_plan", {"week_start": week, "store_id": "demo"})
     if plan["status"] == "ready":
         assert again.structured_content["status"] == "exists"

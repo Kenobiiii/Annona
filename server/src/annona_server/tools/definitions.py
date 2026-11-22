@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""The nine tools. Descriptions are deliberately one line: they are sent on every model turn."""
+"""The ten tools. Descriptions are deliberately one line: they are sent on every model turn."""
 
 from __future__ import annotations
 
@@ -30,6 +30,14 @@ from ..db.tables import JobRow
 from ..planner import existing_plan
 from ..planner.jobs import KIND as PLAN_JOB
 from ..planner.jobs import plan_job
+from ..planner.recipes import (
+    AlreadyCooked,
+    MealNotFound,
+    RecipeRejected,
+    cook,
+    cook_preview,
+    detailed_recipe,
+)
 from .registry import Tool, ToolContext, ToolError, register
 
 Detail = Literal["concise", "full"]
@@ -606,12 +614,36 @@ register(
 class TodayIn(BaseModel):
     day: date | None = Field(default=None, description="default: today")
     member: str | None = None
+    slot: MealSlot | None = Field(
+        default=None, description="give it to get that meal's detailed recipe (steps, times)"
+    )
+
+
+class RecipeDetail(BaseModel):
+    title: str
+    total_minutes: int
+    boil_times_calibrated: bool
+    ingredients: list[Ingredient]  # the household's totals
+    steps: list[str]  # "text [appliance, heat, dial level, minutes]"
+    cooked: bool
 
 
 class TodayOut(BaseModel):
     day: date
     member: str
     meals: list[PlannedMealOut]
+    recipe: RecipeDetail | None = None
+
+
+def _step_line(n: int, step) -> str:
+    bits = [str(step.appliance)] if str(step.appliance) != "none" else []
+    if str(step.heat) != "none":
+        bits.append(str(step.heat))
+    if step.dial_level is not None:
+        bits.append(f"dial {step.dial_level}")
+    if step.minutes is not None:
+        bits.append(f"{'~' if step.minutes_estimated else ''}{step.minutes} min")
+    return f"{n}. {step.text}" + (f" [{', '.join(bits)}]" if bits else "")
 
 
 def recipe_of_the_day(ctx: ToolContext, args: TodayIn) -> TodayOut:
@@ -621,17 +653,124 @@ def recipe_of_the_day(ctx: ToolContext, args: TodayIn) -> TodayOut:
     if plan is None or plan.status != PlanStatus.ACTIVE:
         raise ToolError(f"no plan for the week of {_monday(day)}: call build_weekly_plan")
     meals = _meals(ctx, plan.id, day=day, member_id=member.id, detail="full")
-    return TodayOut(day=day, member=member.name, meals=meals)
+    recipe = None
+    if args.slot is not None:
+        ctx.session.commit()
+        try:
+            found = detailed_recipe(ctx.session, ctx.llm_factory, ctx.household.id, day, args.slot)
+        except MealNotFound as error:
+            raise ToolError(f"{error}: check get_plan") from error
+        except RecipeRejected as error:
+            raise ToolError(
+                "the AI recipe failed the checks (" + "; ".join(error.issues[:3]) + "): try again"
+            ) from error
+        recipe = RecipeDetail(
+            title=found.parts.recipe.title,
+            total_minutes=found.rendered.total_minutes,
+            boil_times_calibrated=found.rendered.calibrated,
+            ingredients=[
+                Ingredient(name=i.name, amount=i.amount.quantize(Decimal(1)), unit=i.unit)
+                for i in found.parts.totals()
+            ],
+            steps=[_step_line(n, s) for n, s in enumerate(found.rendered.steps, start=1)],
+            cooked=found.cooked_at is not None,
+        )
+    return TodayOut(day=day, member=member.name, meals=meals, recipe=recipe)
 
 
 register(
     Tool(
         name="recipe_of_the_day",
         title="Today's meals",
-        description="A day's planned meals with steps and one member's portions (default today).",
+        description="A day's meals and portions; with slot, that meal's detailed recipe.",
         input=TodayIn,
         output=TodayOut,
         handler=recipe_of_the_day,
+    )
+)
+
+# ---------------------------------------------------------------------------------- cook_meal
+
+
+class CookIn(BaseModel):
+    day: date | None = Field(default=None, description="default: today")
+    slot: MealSlot
+    confirm: bool = Field(
+        default=False, description="false: only show what would change; true: apply it"
+    )
+    skip_products: list[int] = Field(default_factory=list, max_length=20)
+
+
+class CookLineTool(BaseModel):
+    name: str
+    needed: str
+    deduct: str
+    missing: str | None = None  # amount not in the pantry
+    note: str | None = None
+
+
+class CookOut(BaseModel):
+    status: Literal["preview", "cooked", "already_cooked"]
+    lines: list[CookLineTool]
+    message: str
+
+
+def _cook_lines(lines) -> list[CookLineTool]:
+    return [
+        CookLineTool(
+            name=ln.name,
+            needed=f"{ln.needed.quantize(Decimal(1))} {ln.unit}",
+            deduct=f"{ln.deduct.quantize(Decimal(1))} {ln.unit}",
+            missing=f"{ln.missing.quantize(Decimal(1))} {ln.unit}" if ln.missing > 0 else None,
+            note=ln.note,
+        )
+        for ln in lines
+    ]
+
+
+def cook_meal(ctx: ToolContext, args: CookIn) -> CookOut:
+    day = args.day or ctx.today
+    try:
+        preview = cook_preview(ctx.session, ctx.household.id, day, args.slot)
+        if preview.already_cooked:
+            return CookOut(
+                status="already_cooked",
+                lines=_cook_lines(preview.lines),
+                message="this meal was already marked as cooked; nothing changed",
+            )
+        if not args.confirm:
+            return CookOut(
+                status="preview",
+                lines=_cook_lines(preview.lines),
+                message="nothing changed yet: ask the user, then call again with confirm=true",
+            )
+        done = cook(
+            ctx.session,
+            ctx.household.id,
+            day,
+            args.slot,
+            skip_products=frozenset(args.skip_products),
+        )
+    except MealNotFound as error:
+        raise ToolError(f"{error}: check get_plan") from error
+    except AlreadyCooked as error:
+        raise ToolError(str(error)) from error
+    return CookOut(
+        status="cooked", lines=_cook_lines(done.lines), message="pantry updated, meal marked cooked"
+    )
+
+
+register(
+    Tool(
+        name="cook_meal",
+        title="Mark a meal as cooked",
+        description="Preview, then (confirm=true) mark a meal cooked and deduct the pantry.",
+        input=CookIn,
+        output=CookOut,
+        handler=cook_meal,
+        read_only=False,
+        destructive=True,
+        idempotent=False,
     )
 )
 

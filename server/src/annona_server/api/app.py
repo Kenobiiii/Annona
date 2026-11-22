@@ -25,7 +25,7 @@ from ..mcp_server import build_server
 from . import errors
 from .deps import require_token
 from .mcp_guard import BearerGuard, McpPathAlias
-from .routes import household, pantry, plans, products, shopping, system
+from .routes import household, pantry, plans, products, recipes, shopping, system
 
 DESCRIPTION = """Self-hosted API of **Annona**, the open-source weekly meal planner.
 
@@ -90,6 +90,6 @@ def create_app(
     app.add_middleware(McpPathAlias)
 
     protected = [Depends(require_token)]
-    for module in (system, household, pantry, products, shopping, plans):
+    for module in (system, household, pantry, products, shopping, plans, recipes):
         app.include_router(module.router, prefix="/api/v1", dependencies=protected)
     return app

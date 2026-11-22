@@ -54,6 +54,46 @@
         "title": "AllergenNote",
         "type": "object"
       },
+      "AmountOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "amount",
+          "unit"
+        ],
+        "title": "AmountOut",
+        "type": "object"
+      },
+      "Appliance": {
+        "description": "What a cooking step uses. ``none`` = no cooking (salads, yogurt, sandwiches).",
+        "enum": [
+          "hob",
+          "oven",
+          "microwave",
+          "air_fryer",
+          "none"
+        ],
+        "title": "Appliance",
+        "type": "string"
+      },
       "CatalogStore": {
         "properties": {
           "priced": {
@@ -108,6 +148,109 @@
         ],
         "title": "CategorySource",
         "type": "string"
+      },
+      "CookIn": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "skip_products": {
+            "description": "products to leave out of the deduction",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Skip Products",
+            "type": "array"
+          },
+          "slot": {
+            "$ref": "#/components/schemas/MealSlot"
+          }
+        },
+        "required": [
+          "day",
+          "slot"
+        ],
+        "title": "CookIn",
+        "type": "object"
+      },
+      "CookLineOut": {
+        "properties": {
+          "deduct": {
+            "title": "Deduct",
+            "type": "string"
+          },
+          "in_pantry": {
+            "title": "In Pantry",
+            "type": "string"
+          },
+          "missing": {
+            "title": "Missing",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "needed": {
+            "title": "Needed",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "not_in_pantry | not_enough | unit_unknown | null",
+            "title": "Note"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "unit",
+          "needed",
+          "in_pantry",
+          "deduct",
+          "missing",
+          "note"
+        ],
+        "title": "CookLineOut",
+        "type": "object"
+      },
+      "CookOut": {
+        "properties": {
+          "already_cooked": {
+            "title": "Already Cooked",
+            "type": "boolean"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/CookLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "already_cooked",
+          "lines"
+        ],
+        "title": "CookOut",
+        "type": "object"
       },
       "DailyTargets": {
         "properties": {
@@ -212,6 +355,24 @@
         ],
         "title": "Diet",
         "type": "string"
+      },
+      "Eater": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "servings": {
+            "title": "Servings",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "servings"
+        ],
+        "title": "Eater",
+        "type": "object"
       },
       "Equipment": {
         "additionalProperties": false,
@@ -393,6 +554,17 @@
         },
         "title": "HTTPValidationError",
         "type": "object"
+      },
+      "HeatLevel": {
+        "description": "Recipes speak in low/medium/high heat, never in hob power numbers (see CLAUDE.md).",
+        "enum": [
+          "none",
+          "low",
+          "medium",
+          "high"
+        ],
+        "title": "HeatLevel",
+        "type": "string"
       },
       "HobType": {
         "enum": [
@@ -1830,6 +2002,169 @@
         "title": "ProfileOut",
         "type": "object"
       },
+      "RecipeIn": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "regenerate": {
+            "default": false,
+            "title": "Regenerate",
+            "type": "boolean"
+          },
+          "slot": {
+            "$ref": "#/components/schemas/MealSlot"
+          }
+        },
+        "required": [
+          "day",
+          "slot"
+        ],
+        "title": "RecipeIn",
+        "type": "object"
+      },
+      "RecipeOut": {
+        "properties": {
+          "calibrated": {
+            "description": "boil times come from the user's hob measurement",
+            "title": "Calibrated",
+            "type": "boolean"
+          },
+          "cooked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooked At"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "eaters": {
+            "items": {
+              "$ref": "#/components/schemas/Eater"
+            },
+            "title": "Eaters",
+            "type": "array"
+          },
+          "generated": {
+            "description": "false when a stored recipe was reused",
+            "title": "Generated",
+            "type": "boolean"
+          },
+          "ingredients": {
+            "description": "the household's total for this meal",
+            "items": {
+              "$ref": "#/components/schemas/AmountOut"
+            },
+            "title": "Ingredients",
+            "type": "array"
+          },
+          "portions": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/AmountOut"
+              },
+              "type": "array"
+            },
+            "description": "each person's own amounts",
+            "title": "Portions",
+            "type": "object"
+          },
+          "slot": {
+            "$ref": "#/components/schemas/MealSlot"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/RenderedStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "slot",
+          "title",
+          "eaters",
+          "ingredients",
+          "portions",
+          "steps",
+          "total_minutes",
+          "calibrated",
+          "cooked_at",
+          "generated"
+        ],
+        "title": "RecipeOut",
+        "type": "object"
+      },
+      "RenderedStep": {
+        "properties": {
+          "appliance": {
+            "$ref": "#/components/schemas/Appliance"
+          },
+          "dial_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dial Level"
+          },
+          "heat": {
+            "$ref": "#/components/schemas/HeatLevel"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "minutes_estimated": {
+            "title": "Minutes Estimated",
+            "type": "boolean"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "appliance",
+          "heat",
+          "dial_level",
+          "minutes",
+          "minutes_estimated"
+        ],
+        "title": "RenderedStep",
+        "type": "object"
+      },
       "Result": {
         "properties": {
           "currency": {
@@ -2791,6 +3126,194 @@
         "summary": "Llm Usage",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/meals/cook": {
+      "post": {
+        "description": "Mark the meal as cooked and deduct it from the pantry (once).",
+        "operationId": "meal_cook_api_v1_meals_cook_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CookIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CookOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Meal Cook",
+        "tags": [
+          "recipes"
+        ]
+      }
+    },
+    "/api/v1/meals/cook-preview": {
+      "get": {
+        "description": "What marking this meal as cooked would take from the pantry. Changes nothing.",
+        "operationId": "meal_cook_preview_api_v1_meals_cook_preview_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "day",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Day",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "slot",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MealSlot"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CookOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Meal Cook Preview",
+        "tags": [
+          "recipes"
+        ]
+      }
+    },
+    "/api/v1/meals/recipe": {
+      "post": {
+        "description": "The detailed recipe of a planned meal (10-30 s the first time, then stored).",
+        "operationId": "meal_recipe_api_v1_meals_recipe_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Meal Recipe",
+        "tags": [
+          "recipes"
         ]
       }
     },

@@ -97,6 +97,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/meals/cook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Meal Cook
+         * @description Mark the meal as cooked and deduct it from the pantry (once).
+         */
+        post: operations["meal_cook_api_v1_meals_cook_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/meals/cook-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Meal Cook Preview
+         * @description What marking this meal as cooked would take from the pantry. Changes nothing.
+         */
+        get: operations["meal_cook_preview_api_v1_meals_cook_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/meals/recipe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Meal Recipe
+         * @description The detailed recipe of a planned meal (10-30 s the first time, then stored).
+         */
+        post: operations["meal_recipe_api_v1_meals_recipe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pantry": {
         parameters: {
             query?: never;
@@ -431,6 +491,23 @@ export interface components {
             /** Reasons */
             reasons: string[];
         };
+        /** AmountOut */
+        AmountOut: {
+            /** Amount */
+            amount: string;
+            /** Name */
+            name: string;
+            /** Product Id */
+            product_id: number;
+            /** Unit */
+            unit: string;
+        };
+        /**
+         * Appliance
+         * @description What a cooking step uses. ``none`` = no cooking (salads, yogurt, sandwiches).
+         * @enum {string}
+         */
+        Appliance: "hob" | "oven" | "microwave" | "air_fryer" | "none";
         /** CatalogStore */
         CatalogStore: {
             /** Priced */
@@ -452,6 +529,49 @@ export interface components {
          * @enum {string}
          */
         CategorySource: "manual" | "rule" | "llm";
+        /** CookIn */
+        CookIn: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /**
+             * Skip Products
+             * @description products to leave out of the deduction
+             */
+            skip_products?: number[];
+            slot: components["schemas"]["MealSlot"];
+        };
+        /** CookLineOut */
+        CookLineOut: {
+            /** Deduct */
+            deduct: string;
+            /** In Pantry */
+            in_pantry: string;
+            /** Missing */
+            missing: string;
+            /** Name */
+            name: string;
+            /** Needed */
+            needed: string;
+            /**
+             * Note
+             * @description not_in_pantry | not_enough | unit_unknown | null
+             */
+            note: string | null;
+            /** Product Id */
+            product_id: number;
+            /** Unit */
+            unit: string;
+        };
+        /** CookOut */
+        CookOut: {
+            /** Already Cooked */
+            already_cooked: boolean;
+            /** Lines */
+            lines: components["schemas"]["CookLineOut"][];
+        };
         /** DailyTargets */
         DailyTargets: {
             /** Bmr Kcal */
@@ -496,6 +616,13 @@ export interface components {
          * @enum {string}
          */
         Diet: "omnivore" | "pescatarian" | "vegetarian" | "vegan";
+        /** Eater */
+        Eater: {
+            /** Name */
+            name: string;
+            /** Servings */
+            servings: string;
+        };
         /**
          * Equipment
          * @description The household kitchen. Cooking times are adapted with the calibration, not by hob model.
@@ -578,6 +705,12 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * HeatLevel
+         * @description Recipes speak in low/medium/high heat, never in hob power numbers (see CLAUDE.md).
+         * @enum {string}
+         */
+        HeatLevel: "none" | "low" | "medium" | "high";
         /**
          * HobType
          * @enum {string}
@@ -1044,6 +1177,74 @@ export interface components {
             profile: components["schemas"]["UserProfile"];
             targets: components["schemas"]["DailyTargets"];
         };
+        /** RecipeIn */
+        RecipeIn: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /**
+             * Regenerate
+             * @default false
+             */
+            regenerate: boolean;
+            slot: components["schemas"]["MealSlot"];
+        };
+        /** RecipeOut */
+        RecipeOut: {
+            /**
+             * Calibrated
+             * @description boil times come from the user's hob measurement
+             */
+            calibrated: boolean;
+            /** Cooked At */
+            cooked_at: string | null;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Eaters */
+            eaters: components["schemas"]["Eater"][];
+            /**
+             * Generated
+             * @description false when a stored recipe was reused
+             */
+            generated: boolean;
+            /**
+             * Ingredients
+             * @description the household's total for this meal
+             */
+            ingredients: components["schemas"]["AmountOut"][];
+            /**
+             * Portions
+             * @description each person's own amounts
+             */
+            portions: {
+                [key: string]: components["schemas"]["AmountOut"][];
+            };
+            slot: components["schemas"]["MealSlot"];
+            /** Steps */
+            steps: components["schemas"]["RenderedStep"][];
+            /** Title */
+            title: string;
+            /** Total Minutes */
+            total_minutes: number;
+        };
+        /** RenderedStep */
+        RenderedStep: {
+            appliance: components["schemas"]["Appliance"];
+            /** Dial Level */
+            dial_level: number | null;
+            heat: components["schemas"]["HeatLevel"];
+            /** Minutes */
+            minutes: number | null;
+            /** Minutes Estimated */
+            minutes_estimated: boolean;
+            /** Text */
+            text: string;
+        };
         /** Result */
         Result: {
             /**
@@ -1484,6 +1685,110 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UsageRow"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meal_cook_api_v1_meals_cook_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CookIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CookOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meal_cook_preview_api_v1_meals_cook_preview_get: {
+        parameters: {
+            query: {
+                day: string;
+                slot: components["schemas"]["MealSlot"];
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CookOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    meal_recipe_api_v1_meals_recipe_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeOut"];
                 };
             };
             /** @description Validation Error */
