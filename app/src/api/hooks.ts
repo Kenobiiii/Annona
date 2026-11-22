@@ -17,6 +17,8 @@ export const keys = {
   catalog: ['catalog-stores'] as const,
   job: (id: string) => ['job', id] as const,
   llm: ['llm-settings'] as const,
+  recipe: (day: string, slot: string) => ['recipe', day, slot] as const,
+  cookPreview: (day: string, slot: string) => ['cook-preview', day, slot] as const,
 };
 
 // ---- reads ---------------------------------------------------------------------------------
@@ -216,4 +218,55 @@ export function useCheckShoppingItem(planId: number) {
       ),
     [keys.shopping(planId)],
   );
+}
+
+// ---- recipes and cooking -------------------------------------------------------------------
+
+type Slot = Schemas['MealSlot'];
+
+/** The detailed recipe of a planned meal. The first call may take 10-30 s (the AI writes it). */
+export function useRecipe(day: string, slot: Slot) {
+  const api = useApi();
+  return useQuery({
+    queryKey: keys.recipe(day, slot),
+    staleTime: Infinity,
+    retry: false,
+    queryFn: () => unwrap(api.POST('/api/v1/meals/recipe', { body: { day, slot, regenerate: false } })),
+  });
+}
+
+export function useRegenerateRecipe(day: string, slot: Slot) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => unwrap(api.POST('/api/v1/meals/recipe', { body: { day, slot, regenerate: true } })),
+    onSuccess: (recipe) => queryClient.setQueryData(keys.recipe(day, slot), recipe),
+  });
+}
+
+/** What marking the meal as cooked would take from the pantry (changes nothing). */
+export function useCookPreview(day: string, slot: Slot, enabled: boolean) {
+  const api = useApi();
+  return useQuery({
+    queryKey: keys.cookPreview(day, slot),
+    enabled,
+    gcTime: 0,
+    queryFn: () => unwrap(api.GET('/api/v1/meals/cook-preview', { params: { query: { day, slot } } })),
+  });
+}
+
+export function useCookMeal(day: string, slot: Slot) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (skipProducts: number[]) =>
+      unwrap(api.POST('/api/v1/meals/cook', { body: { day, slot, skip_products: skipProducts } })),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: keys.pantry }),
+        queryClient.invalidateQueries({ queryKey: keys.recipe(day, slot) }),
+        queryClient.invalidateQueries({ queryKey: keys.cookPreview(day, slot) }),
+      ]);
+    },
+  });
 }

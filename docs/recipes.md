@@ -10,12 +10,16 @@ Tap a meal on the home screen and get a recipe adapted to what the menu bought a
    a placeholder `{p12}`; **the code replaces it with the name and the household's amount**, so
    the model never does arithmetic or writes a quantity.
 3. **Code validates** every recipe (`core/planner/recipe.py`):
-   - only the meal's ingredients (water, salt, pepper, dried spices are free); a heuristic also
-     flags products of the catalogue that are not in the meal;
+   - only the meal's ingredients (water, salt, pepper, dried spices are free). A best-effort
+     heuristic also flags catalogue products and common staples (oil, vinegar, butter, sugar,
+     flour, garlic, lemon, sauces...) that are not in the meal, because they are things you would
+     have to buy;
    - no quantities written by the model, no broken placeholders, every ingredient used;
    - only appliances you have: **a kitchen without oven never gets an oven step** (checked on
      the declared appliance and on oven words in the text).
-   Problems go back to the model once, with the exact list; if they remain, the recipe is rejected.
+   Loose placeholder spellings (`{{p12}}`, `[p12]`, `{ p12 }`) are rewritten to `{p12}` instead of
+   failing the recipe. Other problems go back to the model once, with the exact list (a broken
+   placeholder is quoted); if they remain, the recipe is rejected.
 4. The recipe is stored (`Recipe.method`) and reused. It is regenerated when you ask, or when the
    stored one no longer fits the kitchen (for example you removed the oven).
 
@@ -47,3 +51,9 @@ it, so most lines will say `not_in_pantry`.
 
 `POST /meals/recipe`, `GET /meals/cook-preview`, `POST /meals/cook`; MCP/chat: `recipe_of_the_day`
 (with `slot`) and `cook_meal`. See [mcp.md](mcp.md).
+
+## Weekly servings in short plans
+
+"Meat 3 times a week" is scaled to the days a plan covers (rounded up, at most the weekly figure):
+a one-day plan asks for 1, otherwise a short plan could never satisfy the weekly minimum. The
+shopping optimiser and the plan verification use the same rule (`UserProfile.servings_for_days`).

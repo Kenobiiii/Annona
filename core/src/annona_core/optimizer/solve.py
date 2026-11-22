@@ -217,7 +217,7 @@ class _Model:
             if cols:
                 self._row(cols, -INF, cap)
         for group, size in s.serving_g.items():
-            need = float(sum(m.weekly_servings.get(group, 0) for m in members) * size)
+            need = float(sum(m.servings_for_days(group, s.days) for m in members) * size)
             if need <= 0:
                 continue
             cols = {con[i]: 1.0 for i in range(n) if str(cands[i].product.category) == group}

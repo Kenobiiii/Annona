@@ -392,6 +392,16 @@ def test_less_caps_a_type_and_servings_buy_meat():
     assert used(result, "chicken") >= 375  # 3 x 125 g
 
 
+def test_weekly_servings_scale_to_a_short_plan():
+    """A one-day plan with "meat 3 times a week" asks for one serving of meat, not three."""
+    pablo = with_prefs(weekly_servings={"meat": 3})
+    offers = [Offer(product=p, price_cents=c) for p, c in CATALOGUE]
+    one_day = optimise(problem(members=[pablo], offers=offers, budget=20_000, days=1))
+    assert one_day.status == "optimal" and used(one_day, "chicken") >= 125  # 1 x 125 g
+    full = optimise(problem(members=[pablo], offers=offers, budget=20_000))
+    assert used(full, "chicken") >= 375  # the whole week: 3 x 125 g
+
+
 def test_servings_without_any_fish_are_explained():
     pablo = with_prefs(weekly_servings={"fish": 2})
     result = optimise(problem(members=[pablo], budget=20_000))

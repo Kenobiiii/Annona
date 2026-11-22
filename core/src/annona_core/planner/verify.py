@@ -234,7 +234,8 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
     # 5. weekly servings wanted by each member (a meal counts with >= 50 g of the group)
     for member in ctx.members:
         name = member.profile.name
-        for group, wanted in sorted(member.profile.weekly_servings.items()):
+        for group in sorted(member.profile.weekly_servings):
+            wanted = member.profile.servings_for_days(group, ctx.schedule.day_equivalents)
             got = 0
             present = 0  # meals that contain the group at all
             for final in result.meals:
@@ -263,8 +264,8 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
                 issues.append(
                     Issue(
                         code="servings_missing",
-                        message=f"{name} wants {group} at least {wanted} times this week but the "
-                        f"plan has it {got} times: {advice}",
+                        message=f"{name} wants {group} at least {wanted} times in this plan but "
+                        f"the plan has it {got} times: {advice}",
                     )
                 )
     result.kcal_by_member_day = {k: _q(v) for k, v in result.kcal_by_member_day.items()}

@@ -49,3 +49,30 @@ export function product(extra: Partial<Schemas['Product']> = {}, price: Partial<
 export function pantryItem(id: number, productId: number, name: string, category: string, amount: string, unit = 'g', expires: string | null = null): Schemas['PantryOut'] {
   return { id, household_id: 1, product_id: productId, amount, unit, name, category, expires_at: expires, added_at: '2026-11-20T10:00:00Z' } as Schemas['PantryOut'];
 }
+
+export function recipeOut(extra: Partial<Schemas['RecipeOut']> = {}): Schemas['RecipeOut'] {
+  return {
+    day: '2026-11-26', slot: 'lunch', title: 'Arroz con pollo',
+    eaters: [{ name: 'Pablo', servings: '1' }],
+    ingredients: [
+      { product_id: 1, name: 'Arroz', amount: '200', unit: 'g' },
+      { product_id: 2, name: 'Pechuga de pollo', amount: '300', unit: 'g' },
+    ],
+    portions: { Pablo: [{ product_id: 1, name: 'Arroz', amount: '200', unit: 'g' }] },
+    steps: [
+      { text: 'Corta pechuga de pollo (300 g) en dados.', appliance: 'none', heat: 'none', dial_level: null, minutes: 5, minutes_estimated: true },
+      { text: 'Hierve agua para arroz (200 g).', appliance: 'hob', heat: 'high', dial_level: 7, minutes: 11, minutes_estimated: false },
+      { text: 'Dora el pollo.', appliance: 'hob', heat: 'medium', dial_level: 5, minutes: 10, minutes_estimated: true },
+    ],
+    total_minutes: 26, calibrated: false, cooked_at: null, generated: true, ...extra,
+  } as Schemas['RecipeOut'];
+}
+
+export function cookOut(lines: Partial<Schemas['CookLineOut']>[], already = false): Schemas['CookOut'] {
+  return {
+    already_cooked: already,
+    lines: lines.map((l, i) => ({
+      product_id: i + 1, name: 'Arroz', unit: 'g', needed: '200', in_pantry: '500', deduct: '200', missing: '0', note: null, ...l,
+    })),
+  } as Schemas['CookOut'];
+}

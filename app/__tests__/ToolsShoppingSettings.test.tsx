@@ -46,6 +46,61 @@ describe('tools', () => {
   });
 });
 
+describe('hob calibration', () => {
+  const NO_TIMERS = ['nextTick', 'setImmediate', 'clearImmediate', 'setInterval', 'clearInterval', 'setTimeout', 'clearTimeout', 'queueMicrotask', 'requestAnimationFrame', 'cancelAnimationFrame', 'requestIdleCallback', 'cancelIdleCallback', 'hrtime', 'performance'] as const;
+  afterEach(() => jest.useRealTimers());
+
+  it('saves how many levels the dial has, the level used and the minutes to boil 1 L', async () => {
+    const api = fakeApi({ 'GET /api/v1/equipment': equipment, 'PUT /api/v1/equipment': equipment });
+    await renderConnected(<ToolsScreen />, api.fetchImpl);
+    expect(await screen.findByText('Sin calibrar: los tiempos de hervir serán aproximados.')).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText('Niveles de tu mando (el máximo)'), '9');
+    await fireEvent.changeText(screen.getByLabelText('Nivel que has usado'), '6');
+    await fireEvent.changeText(screen.getByLabelText('Minutos hasta hervir 1 litro'), '7,5');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(api.called('PUT /api/v1/equipment')).toHaveLength(1));
+    expect(api.called('PUT /api/v1/equipment')[0].body).toMatchObject({
+      power_levels: 9, calibration_level: 6, calibration_boil_1l_minutes: 7.5,
+    });
+  });
+
+  it('rejects a level above the dial and half-filled data, without calling the server', async () => {
+    const api = fakeApi({ 'GET /api/v1/equipment': equipment, 'PUT /api/v1/equipment': equipment });
+    await renderConnected(<ToolsScreen />, api.fetchImpl);
+    await fireEvent.changeText(await screen.findByLabelText('Niveles de tu mando (el máximo)'), '9');
+    await fireEvent.changeText(screen.getByLabelText('Nivel que has usado'), '12');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    expect(await screen.findByText('El nivel debe estar entre 1 y 9.')).toBeTruthy();
+    expect(screen.getByText('Para calibrar hacen falta el nivel y los minutos.')).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText('Nivel que has usado'), '6');
+    await fireEvent.changeText(screen.getByLabelText('Minutos hasta hervir 1 litro'), '700');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    expect(await screen.findByText(/Escribe los minutos/)).toBeTruthy();
+    expect(api.called('PUT /api/v1/equipment')).toHaveLength(0);
+  });
+
+  it('fills the minutes from the stopwatch', async () => {
+    jest.useFakeTimers({ now: new Date(2026, 10, 26, 13, 0, 0), doNotFake: [...NO_TIMERS] });
+    const api = fakeApi({ 'GET /api/v1/equipment': equipment });
+    await renderConnected(<ToolsScreen />, api.fetchImpl);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Iniciar cronómetro' }));
+    jest.setSystemTime(new Date(2026, 10, 26, 13, 7, 30)); // 7 min 30 s later
+    await fireEvent.press(screen.getByRole('button', { name: 'Parar y usar este tiempo' }));
+    expect(screen.getByDisplayValue('7,5')).toBeTruthy();
+  });
+
+  it('shows the saved calibration and can clear it', async () => {
+    const calibrated = { ...equipment, power_levels: 9, calibration_level: 6, calibration_boil_1l_minutes: '7.0' };
+    const api = fakeApi({ 'GET /api/v1/equipment': calibrated, 'PUT /api/v1/equipment': calibrated });
+    await renderConnected(<ToolsScreen />, api.fetchImpl);
+    expect(await screen.findByText('Calibrada: 1 litro hierve en 7 min al nivel 6.')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Borrar calibración' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(api.called('PUT /api/v1/equipment')).toHaveLength(1));
+    expect(api.called('PUT /api/v1/equipment')[0].body).toMatchObject({ calibration_level: null, calibration_boil_1l_minutes: null });
+  });
+});
+
 describe('shopping list', () => {
   const list = (checked = false) => ({
     store_id: 'mercadona', total_cents: 1250,

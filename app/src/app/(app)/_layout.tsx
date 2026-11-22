@@ -22,7 +22,7 @@ export default function AppLayout() {
   }
   if (status === 'unconfigured') return <Redirect href="/connect" />;
 
-  const detail = (title: string, fallback: '/products' | '/menu' | '/settings') => ({
+  const detail = (title: string, fallback: '/' | '/products' | '/menu' | '/settings') => ({
     title,
     drawerItemStyle: { display: 'none' as const },
     headerLeft: () => <BackButton fallback={fallback} />,
@@ -46,6 +46,7 @@ export default function AppLayout() {
       <Drawer.Screen name="shopping" options={{ title: t('nav.shopping'), drawerLabel: t('nav.shopping') }} />
       <Drawer.Screen name="settings/index" options={{ title: t('nav.settings'), drawerLabel: t('nav.settings') }} />
       <Drawer.Screen name="products/[id]" options={detail(t('nav.products'), '/products')} />
+      <Drawer.Screen name="recipe" options={detail(t('nav.today'), '/')} />
       <Drawer.Screen name="menu/create" options={detail(t('nav.menu'), '/menu')} />
       <Drawer.Screen name="settings/profile/[id]" options={detail(t('nav.settings'), '/settings')} />
     </Drawer>

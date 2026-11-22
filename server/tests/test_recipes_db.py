@@ -91,6 +91,18 @@ def test_recipe_is_generated_once_and_reused(session, planned):
     assert forced.generated and llm.calls == {"recipe_of_the_day": 2}
 
 
+def test_the_store_brand_is_left_out_of_the_names_shown(session, planned):
+    products = r.SqlProductRepository(session)
+    first = load_meal(session, planned.id, MONDAY, LUNCH).ingredients[0].product_id
+    product = products.get(first)
+    products.update(
+        product.model_copy(update={"name": f"{product.name} Hacendado", "brand": "Hacendado"})
+    )
+    shown = detailed_recipe(session, Llm().factory, planned.id, MONDAY, LUNCH)
+    assert all("Hacendado" not in i.name for i in shown.parts.totals())
+    assert all("hacendado" not in s.text for s in shown.rendered.steps)
+
+
 def test_a_kitchen_without_oven_never_gets_an_oven_recipe(session, planned):
     llm = Llm(oven=True)  # the 'model' insists on baking, also after the repair
     with pytest.raises(RecipeRejected) as error:

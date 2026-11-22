@@ -32,6 +32,9 @@ from .verify import _OVEN_WORDS, Issue, available_appliances
 TASK = "recipe_of_the_day"
 LANGUAGES = {"es": "Spanish (Spain)", "en": "English"}
 _PLACEHOLDER = re.compile(r"\{p(\d+)\}")
+# Models sometimes write the placeholder as {{p12}}, { p12 }, [p12], <p12> or {P12}: the meaning
+# is unambiguous, so the code rewrites it to {p12} instead of failing the whole recipe.
+_LOOSE_PLACEHOLDER = re.compile(r"[\{\[<]{1,2}\s*[pP]\s*[_-]?\s*(\d+)\s*[\}\]>]{1,2}")
 _QUANTITY = re.compile(r"\b\d+([.,]\d+)?\s?(g|gr|kg|ml|cl|l|litros?|gramos?)\b", re.IGNORECASE)
 # Words that are never a "foreign ingredient": free items, packaging and descriptors.
 _FREE_WORDS = frozenset(
@@ -42,7 +45,6 @@ _FREE_WORDS = frozenset(
         "especias",
         "especia",
         "hierbas",
-        "aceite",
         "natural",
         "entera",
         "entero",
@@ -81,6 +83,18 @@ _FREE_WORDS = frozenset(
         "until",
     ]
 )
+
+
+# Staples that a model tends to add "to taste" although they are not in the meal. They are real
+# products the user would have to buy, so they count as foreign unless listed. Best effort (Spanish
+# and English): the model is also told not to use them.
+_STAPLES = frozenset(
+    [
+        "aceite", "vinagre", "mantequilla", "azucar", "harina", "limon", "ajos", "perejil",
+        "salsa", "nata", "miel", "oil", "vinegar", "butter", "sugar", "flour", "lemon", "garlic",
+        "parsley", "sauce", "cream", "honey",
+    ]
+)  # fmt: skip
 
 
 class RecipeSettings(BaseModel):
@@ -151,7 +165,9 @@ class RecipeContext(BaseModel):
 SYSTEM = """You write the cooking steps of one home meal.
 
 Rules:
-- Use ONLY the listed ingredients. Water, salt, pepper and dried spices are free; nothing else.
+- Use ONLY the listed ingredients. Water, salt, pepper and dried spices are free; nothing else
+  (no oil, vinegar, butter, sugar, flour, garlic, lemon, sauces...). Use a non-stick pan if you
+  would otherwise need oil.
 - Refer to every ingredient as {pID} (for example {p12}) exactly where it is used. The app replaces
   the placeholder with the name and the amount. NEVER write quantities (grams, ml, ...) yourself.
 - Every listed ingredient must appear in at least one step.
@@ -206,9 +222,8 @@ def validate_recipe(draft: RecipeDraft, ctx: RecipeContext) -> list[Issue]:
     mine = set().union(*(_tokens(i.name) for i in ctx.ingredients)) | {
         _stem(w) for w in _FREE_WORDS
     }
-    foreign = (
-        set().union(*(_tokens(n) for n in ctx.other_foods)) - mine if ctx.other_foods else set()
-    )
+    catalogue = set().union(*(_tokens(n) for n in ctx.other_foods)) if ctx.other_foods else set()
+    foreign = (catalogue | {_stem(w) for w in _STAPLES}) - mine
 
     for n, step in enumerate(draft.steps, start=1):
         where = f"step {n}"
@@ -219,7 +234,14 @@ def validate_recipe(draft: RecipeDraft, ctx: RecipeContext) -> list[Issue]:
                 Issue(code="unknown_ingredient", message=f"{where} uses {{p{pid}}}, not listed")
             )
         if "{" in _PLACEHOLDER.sub("", step.text) or "}" in _PLACEHOLDER.sub("", step.text):
-            issues.append(Issue(code="bad_placeholder", message=f"{where} has a broken {{pID}}"))
+            snippet = re.search(r".{0,14}[{}].{0,14}", _PLACEHOLDER.sub("", step.text))
+            issues.append(
+                Issue(
+                    code="bad_placeholder",
+                    message=f"{where} has a broken placeholder near '{snippet.group(0)}': write "
+                    "exactly {pNN} with single braces, no spaces, e.g. {p12}",
+                )
+            )
         if _QUANTITY.search(step.text):
             issues.append(
                 Issue(
@@ -280,6 +302,17 @@ class RecipeOutcome:
     calls: list[CallStats] = field(default_factory=list)
 
 
+def normalise_placeholders(draft: RecipeDraft) -> RecipeDraft:
+    """Rewrite loose placeholder spellings to the exact ``{p12}`` form."""
+    steps = [
+        s.model_copy(
+            update={"text": _LOOSE_PLACEHOLDER.sub(lambda m: f"{{p{m.group(1)}}}", s.text)}
+        )
+        for s in draft.steps
+    ]
+    return RecipeDraft.model_construct(steps=steps)
+
+
 def generate_recipe(
     llm: LLMClient, ctx: RecipeContext, *, task: str = TASK, use_cache: bool = True
 ) -> RecipeOutcome:
@@ -292,7 +325,9 @@ def generate_recipe(
         max_tokens=1500,
     )
     first_stats = CallStats()
-    draft = llm.complete_json(request, RecipeDraft, use_cache=use_cache, stats=first_stats)
+    draft = normalise_placeholders(
+        llm.complete_json(request, RecipeDraft, use_cache=use_cache, stats=first_stats)
+    )
     issues = validate_recipe(draft, ctx)
     if not issues:
         return RecipeOutcome(True, draft, [], False, [first_stats])
@@ -308,7 +343,9 @@ def generate_recipe(
         max_tokens=1500,
     )
     second_stats = CallStats()
-    fixed = llm.complete_json(repair, RecipeDraft, use_cache=use_cache, stats=second_stats)
+    fixed = normalise_placeholders(
+        llm.complete_json(repair, RecipeDraft, use_cache=use_cache, stats=second_stats)
+    )
     remaining = validate_recipe(fixed, ctx)
     return RecipeOutcome(not remaining, fixed, remaining, True, [first_stats, second_stats])
 
@@ -388,7 +425,7 @@ def render_recipe(
 
     steps: list[RenderedStep] = []
     for s in method:
-        minutes, estimated = s.minutes, True
+        minutes, estimated = s.minutes or None, True
         level: int | None = None
         if s.appliance == Appliance.HOB and equipment is not None:
             if s.boil_ml is not None and calibration is not None:

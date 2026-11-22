@@ -333,15 +333,25 @@ def test_weekly_servings_are_checked_in_the_menu():
         else a
         for a in AVAILABLE
     )
-    wants_three = person().model_copy(update={"weekly_servings": {"meat": 3}})
-    ctx = context(members=[wants_three], available=meat)  # 2 days: chicken at 2 dinners
+    # The plan covers 2 days, so a weekly 14 means 4 here; the draft has chicken at 2 dinners.
+    wants_many = person().model_copy(update={"weekly_servings": {"meat": 14}})
+    ctx = context(members=[wants_many], available=meat)
     issues = verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx).issues
     assert [i.code for i in issues] == ["servings_missing"]
-    assert "meat at least 3 times" in issues[0].message and "2 times" in issues[0].message
+    assert "meat at least 4 times" in issues[0].message and "2 times" in issues[0].message
 
-    wants_two = person().model_copy(update={"weekly_servings": {"meat": 2}})
-    ctx = context(members=[wants_two], available=meat)
+    wants_seven = person().model_copy(update={"weekly_servings": {"meat": 7}})  # 2 in 2 days
+    ctx = context(members=[wants_seven], available=meat)
     assert verify(PlanDraft.model_validate_json(draft_json(ctx)), ctx).ok
+
+
+def test_weekly_servings_are_scaled_to_the_days_planned():
+    wants = person().model_copy(update={"weekly_servings": {"meat": 3, "fish": 2, "eggs": 0}})
+    assert wants.servings_for_days("meat", 7) == 3 and wants.servings_for_days("fish", 7) == 2
+    assert wants.servings_for_days("meat", 1) == 1  # rounded up: never 0 for a wanted group
+    assert wants.servings_for_days("meat", Decimal("0.9")) == 1
+    assert wants.servings_for_days("fish", 3) == 1 and wants.servings_for_days("meat", 5) == 3
+    assert wants.servings_for_days("eggs", 7) == 0 and wants.servings_for_days("meat", 14) == 3
 
 
 def test_preferences_reach_the_prompt():
@@ -362,7 +372,7 @@ def test_servings_message_says_when_the_group_is_spread_too_thin():
         else a
         for a in AVAILABLE
     )
-    wants = person().model_copy(update={"weekly_servings": {"meat": 3}})
+    wants = person().model_copy(update={"weekly_servings": {"meat": 14}})  # 4 in these 2 days
     ctx = context(members=[wants], available=meat)
 
     def a_little_chicken_everywhere(meal):

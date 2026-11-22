@@ -13,6 +13,7 @@ from annona_core.planner import (
     RecipeContext,
     RecipeDraft,
     generate_recipe,
+    normalise_placeholders,
     render_recipe,
     to_method,
     validate_recipe,
@@ -187,3 +188,43 @@ def test_amount_formatting(ml, text):
     item = MealIngredient(product_id=1, name="Leche", amount=Decimal(ml), unit="ml")
     method = to_method(RecipeDraft.model_validate_json(answer([step("Calienta {p1}.")])))
     assert text in render_recipe(method, (item,), kitchen()).steps[0].text
+
+
+def test_staples_are_foreign_unless_they_are_ingredients():
+    steps = [*GOOD, step("Aliña con aceite y un poco de vinagre.")]
+    assert codes(steps, context()) == {"foreign_food"}  # even without a catalogue
+    with_oil = RecipeContext(
+        title="x",
+        summary="x",
+        ingredients=(
+            *ingredients(),
+            MealIngredient(product_id=4, name="Aceite de oliva", amount=Decimal(20), unit="ml"),
+        ),
+        eaters=("Pablo",),
+        equipment=kitchen(),
+    )
+    ok = [*GOOD, step("Aliña con {p4}.", appliance="none", heat="none")]
+    assert codes(ok, with_oil) == set()
+
+
+def test_a_zero_minute_step_shows_no_time():
+    method = to_method(RecipeDraft.model_validate_json(answer([step("Sirve {p1}.", minutes=0)])))
+    shown = render_recipe(method, ingredients(), kitchen())
+    assert shown.steps[0].minutes is None and shown.total_minutes == 0
+
+
+@pytest.mark.parametrize("spelling", ["{{p3}}", "{ p3 }", "[p3]", "<p3>", "{P3}", "{p 3}", "{p_3}"])
+def test_loose_placeholder_spellings_are_rewritten_not_rejected(spelling):
+    messy = [GOOD[0] | {"text": f"Corta {spelling} en dados pequeños."}, *GOOD[1:]]
+    clean = normalise_placeholders(RecipeDraft.model_validate_json(answer(messy)))
+    assert clean.steps[0].text == "Corta {p3} en dados pequeños."
+    outcome, fake = run(context(), answer(messy))
+    assert outcome.accepted and not outcome.repaired and len(fake.requests) == 1
+
+
+def test_a_really_broken_placeholder_is_quoted_in_the_repair_request():
+    broken = [GOOD[0] | {"text": "Corta {cebolla} en dados."}, *GOOD[1:]]
+    outcome, fake = run(context(), answer(broken), answer(GOOD))
+    assert outcome.accepted and outcome.repaired
+    assert "near" in fake.requests[1][1].messages[-1].text
+    assert "{cebolla}" in fake.requests[1][1].messages[-1].text

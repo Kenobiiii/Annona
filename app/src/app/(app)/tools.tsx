@@ -9,6 +9,9 @@ import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
+import { TextField } from '@/components/TextField';
+import { parseNumber } from '@/features/forms/numbers';
+import { Stopwatch } from '@/features/tools/Stopwatch';
 import { Segmented } from '@/components/Segmented';
 import { Async, describeError } from '@/components/StateViews';
 import { SwitchRow } from '@/components/SwitchRow';
@@ -26,9 +29,34 @@ function EquipmentForm({ current }: { current: Equipment }) {
   const [microwave, setMicrowave] = useState(current?.microwave ?? false);
   const [airFryer, setAirFryer] = useState(current?.air_fryer ?? false);
   const [saved, setSaved] = useState(false);
+  const [levels, setLevels] = useState(current?.power_levels ? String(current.power_levels) : '');
+  const [calLevel, setCalLevel] = useState(current?.calibration_level ? String(current.calibration_level) : '');
+  const [calMinutes, setCalMinutes] = useState(
+    current?.calibration_boil_1l_minutes ? String(Number(current.calibration_boil_1l_minutes)).replace('.', ',') : '',
+  );
+  const [errors, setErrors] = useState<{ levels?: string; level?: string; minutes?: string }>({});
 
   function submit() {
     setSaved(false);
+    const next: typeof errors = {};
+    const maxLevels = levels.trim() === '' ? null : parseNumber(levels);
+    if (levels.trim() !== '' && (maxLevels === null || !Number.isInteger(maxLevels) || maxLevels < 1 || maxLevels > 20)) {
+      next.levels = t('calib.invalid.levels');
+    }
+    const wantsCalibration = calLevel.trim() !== '' || calMinutes.trim() !== '';
+    const level = calLevel.trim() === '' ? null : parseNumber(calLevel);
+    const minutes = calMinutes.trim() === '' ? null : parseNumber(calMinutes);
+    if (wantsCalibration) {
+      const top = maxLevels ?? 20;
+      if (level === null || !Number.isInteger(level) || level < 1 || level > top) {
+        next.level = level === null && calLevel.trim() === '' ? t('calib.invalid.both') : t('calib.invalid.level', { max: top });
+      }
+      if (minutes === null || minutes < 1 || minutes > 60) {
+        next.minutes = minutes === null && calMinutes.trim() === '' ? t('calib.invalid.both') : t('calib.invalid.minutes');
+      }
+    }
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
     save.mutate(
       {
         hob_type: hob,
@@ -36,10 +64,9 @@ function EquipmentForm({ current }: { current: Equipment }) {
         oven,
         microwave,
         air_fryer: airFryer,
-        // Kept as they are: the calibration itself arrives in a later phase.
-        power_levels: current?.power_levels ?? null,
-        calibration_level: current?.calibration_level ?? null,
-        calibration_boil_1l_minutes: current?.calibration_boil_1l_minutes ?? null,
+        power_levels: maxLevels,
+        calibration_level: wantsCalibration ? level : null,
+        calibration_boil_1l_minutes: wantsCalibration ? minutes : null,
       },
       { onSuccess: () => setSaved(true) },
     );
@@ -90,7 +117,36 @@ function EquipmentForm({ current }: { current: Equipment }) {
           </AppText>
         ) : null}
       </Card>
-      <Banner title={t('tools.calibration.title')}>{t('tools.calibration.message')}</Banner>
+      {hob !== 'none' ? (
+        <Card style={{ gap: 12 }}>
+          <AppText variant="heading" accessibilityRole="header">
+            {t('tools.calibration.title')}
+          </AppText>
+          <AppText muted>{t('calib.intro')}</AppText>
+          <TextField label={t('calib.levels')} value={levels} onChangeText={setLevels} error={errors.levels} keyboardType="number-pad" />
+          <TextField label={t('calib.level')} value={calLevel} onChangeText={setCalLevel} error={errors.level} keyboardType="number-pad" />
+          <Stopwatch onStop={setCalMinutes} />
+          <TextField label={t('calib.minutes')} value={calMinutes} onChangeText={setCalMinutes} error={errors.minutes} keyboardType="decimal-pad" />
+          <AppText variant="caption" muted>
+            {current?.calibration_level && current.calibration_boil_1l_minutes
+              ? t('calib.status.done', {
+                  minutes: String(Number(current.calibration_boil_1l_minutes)).replace('.', ','),
+                  level: current.calibration_level,
+                })
+              : t('calib.status.none')}
+          </AppText>
+          {calLevel || calMinutes ? (
+            <Button
+              variant="ghost"
+              label={t('calib.clear')}
+              onPress={() => {
+                setCalLevel('');
+                setCalMinutes('');
+              }}
+            />
+          ) : null}
+        </Card>
+      ) : null}
       {save.isError ? <Banner kind="warning">{describeError(save.error).message}</Banner> : null}
       {saved ? <Banner>{t('common.saved')}</Banner> : null}
       <Button label={t('common.save')} onPress={submit} loading={save.isPending} />

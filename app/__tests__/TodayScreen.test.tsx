@@ -91,3 +91,10 @@ it('shows a network error with retry', async () => {
   await fireEvent.press(screen.getByRole('button', { name: 'Reintentar' }));
   expect(await screen.findByText('Falta crear el hogar.')).toBeTruthy(); // empty profiles
 });
+
+it('opens the detailed recipe of a meal', async () => {
+  const server = fakeApi({ 'GET /api/v1/profiles': [profile()], 'GET /api/v1/today': meals, 'GET /api/v1/plans': plan(mondayOf(today()), meals) });
+  await renderConnected(<TodayScreen />, server.fetchImpl);
+  await fireEvent.press(await screen.findByRole('button', { name: 'Ver la receta' }));
+  expect(router.push).toHaveBeenCalledWith({ pathname: '/recipe', params: { day: today(), slot: 'lunch' } });
+});

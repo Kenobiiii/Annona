@@ -14,6 +14,7 @@ Conventions:
 
 from __future__ import annotations
 
+import math
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Annotated, Literal
@@ -122,6 +123,15 @@ class UserProfile(DomainModel):
             if not 0 <= count <= 21:
                 raise ValueError(f"{group}: servings per week must be between 0 and 21")
         return value
+
+    def servings_for_days(self, group: str, days: Decimal | int) -> int:
+        """The weekly minimum of a group, scaled to a plan that covers ``days`` days (rounded up).
+
+        "Meat 3 times a week" for a plan of one day asks for 1, not 3: a short plan could never
+        satisfy the weekly figure.
+        """
+        wanted = self.weekly_servings.get(group, 0)  # type: ignore[call-overload]
+        return min(wanted, math.ceil(Decimal(wanted) * Decimal(days) / 7))
 
     def age_on(self, day: date) -> int:
         """Age in whole years on ``day``."""

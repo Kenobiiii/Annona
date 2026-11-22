@@ -21,6 +21,7 @@ function TodayContent({ day, memberId, memberName }: { day: string; memberId?: n
   const meals = useToday(day, memberId);
   const plan = usePlan(mondayOf(day));
   const [open, setOpen] = useState<string | null>(null);
+  const openRecipe = (slot: string) => router.push({ pathname: '/recipe', params: { day, slot } });
 
   return (
     <Async
@@ -53,6 +54,7 @@ function TodayContent({ day, memberId, memberName }: { day: string; memberId?: n
                   </AppText>
                   <AppText variant="heading">{next.title}</AppText>
                   <MealDetails meal={next} memberName={memberName} />
+                  <Button label={t('today.openRecipe')} onPress={() => openRecipe(next.slot)} />
                 </Card>
               </View>
             ) : null}
@@ -76,6 +78,7 @@ function TodayContent({ day, memberId, memberName }: { day: string; memberId?: n
                         <AppText variant="label">{meal.title}</AppText>
                       </Pressable>
                       {expanded ? <MealDetails meal={meal} memberName={memberName} /> : null}
+                      {expanded ? <Button label={t('today.openRecipe')} variant="secondary" onPress={() => openRecipe(meal.slot)} /> : null}
                     </Card>
                   );
                 })}

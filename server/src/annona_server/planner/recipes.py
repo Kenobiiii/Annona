@@ -69,6 +69,14 @@ class RecipeRejected(Exception):
         self.issues = issues
 
 
+def display_name(product: Product) -> str:
+    """The name without a trailing store brand ("Yogur natural Hacendado" -> "Yogur natural")."""
+    name, brand = product.name, product.brand
+    if brand and name.lower().endswith(brand.lower()):
+        name = name[: -len(brand)].rstrip(" ,-")
+    return name or product.name
+
+
 @dataclass
 class MealParts:
     recipe: Recipe
@@ -88,7 +96,7 @@ class MealParts:
         return tuple(
             MealIngredient(
                 product_id=i.product_id,
-                name=self.products[i.product_id].name,
+                name=display_name(self.products[i.product_id]),
                 amount=(i.amount * servings).quantize(_THOUSANDTH, rounding=ROUND_HALF_UP),
                 unit=str(i.unit),
             )
@@ -100,7 +108,7 @@ class MealParts:
             self.names.get(r.profile_id, "household"): [
                 MealIngredient(
                     product_id=i.product_id,
-                    name=self.products[i.product_id].name,
+                    name=display_name(self.products[i.product_id]),
                     amount=(i.amount * r.servings).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP),
                     unit=str(i.unit),
                 )
