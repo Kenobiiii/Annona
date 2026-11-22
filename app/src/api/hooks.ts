@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { buildReceiptForm } from '@/features/receipts/upload';
 import { unwrap, type Schemas } from './client';
 import { useApi } from './providers';
 
@@ -20,6 +21,7 @@ export const keys = {
   llm: ['llm-settings'] as const,
   recipe: (day: string, slot: string) => ['recipe', day, slot] as const,
   cookPreview: (day: string, slot: string) => ['cook-preview', day, slot] as const,
+  receipt: (id: number) => ['receipt', id] as const,
 };
 
 // ---- reads ---------------------------------------------------------------------------------
@@ -280,5 +282,56 @@ export function useCookMeal(day: string, slot: Slot) {
         queryClient.invalidateQueries({ queryKey: keys.cookPreview(day, slot) }),
       ]);
     },
+  });
+}
+
+// ---- receipts ------------------------------------------------------------------------------
+
+/** Send a receipt photo (by uri) to be read. Takes 5-20 s; nothing is applied until confirmed. */
+export function useUploadReceipt() {
+  const api = useApi();
+  return useMutation({
+    mutationFn: async (uri: string) => {
+      const form = await buildReceiptForm(uri);
+      return unwrap(
+        api.POST('/api/v1/receipts', {
+          body: { file: '' }, // typed as a string; the real file travels in the form below
+          bodySerializer: () => form,
+        }),
+      );
+    },
+  });
+}
+
+export function useReceipt(id: number) {
+  const api = useApi();
+  return useQuery({
+    queryKey: keys.receipt(id),
+    queryFn: () => unwrap(api.GET('/api/v1/receipts/{receipt_id}', { params: { path: { receipt_id: id } } })),
+  });
+}
+
+export function useConfirmReceipt(id: number) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (lines: Schemas['DecisionIn'][]) =>
+      unwrap(api.POST('/api/v1/receipts/{receipt_id}/confirm', { params: { path: { receipt_id: id } }, body: { lines } })),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: keys.pantry }),
+        queryClient.invalidateQueries({ queryKey: keys.receipt(id) }),
+        queryClient.invalidateQueries({ queryKey: ['products'] }),
+      ]);
+    },
+  });
+}
+
+export function useDiscardReceipt(id: number) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => unwrap(api.POST('/api/v1/receipts/{receipt_id}/discard', { params: { path: { receipt_id: id } } })),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.receipt(id) }),
   });
 }

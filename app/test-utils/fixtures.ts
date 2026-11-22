@@ -76,3 +76,36 @@ export function cookOut(lines: Partial<Schemas['CookLineOut']>[], already = fals
     })),
   } as Schemas['CookOut'];
 }
+
+type ReceiptLine = Schemas['ReceiptLineOut'];
+
+export function receiptLine(id: number, raw: string, total: number, extra: Partial<ReceiptLine> = {}): ReceiptLine {
+  return {
+    id, raw_text: raw, total_cents: total, quantity: null, unit: null, product: null, confidence: null,
+    preselected: false, alternatives: [], proposed_amount: null, proposed_unit: null, proposed_price_cents: null,
+    notes: [], issues: [], status: 'suggested', ...extra,
+  } as ReceiptLine;
+}
+
+export function receiptOut(extra: Partial<Schemas['ReceiptOut']> = {}): Schemas['ReceiptOut'] {
+  const rice = receiptLine(1, 'ARROZ REDONDO 1KG', 115, {
+    product: { product_id: 10, name: 'Arroz redondo Hacendado', confidence: '0.97' }, confidence: '0.97',
+    preselected: true, proposed_amount: '1000', proposed_unit: 'g', proposed_price_cents: 115,
+  });
+  const milk = receiptLine(2, 'LECHE', 498, {
+    product: { product_id: 11, name: 'Leche entera Hacendado', confidence: '0.70' }, confidence: '0.70',
+    preselected: false, proposed_amount: '6000', proposed_unit: 'ml', proposed_price_cents: 498,
+    alternatives: [{ product_id: 12, name: 'Leche semidesnatada Hacendado', confidence: '0.70' }],
+    notes: ['assumed_one_pack'],
+  });
+  const bag = receiptLine(3, 'BOLSA PLASTICO', 5, { status: 'unmatched' });
+  const yogurt = receiptLine(4, 'YOGUR NAT.', 105, {
+    product: { product_id: 13, name: 'Yogur natural Hacendado', confidence: '0.91' }, confidence: '0.91',
+    preselected: true, notes: ['unknown_pack_size'], proposed_price_cents: 105,
+  });
+  return {
+    id: 5, status: 'pending_review', store_id: 'mercadona', store_text: 'MERCADONA S.A.', purchased_on: '2026-11-12',
+    total_cents: 723, lines_total_cents: 723, total_matches: true, issues: [], skipped: [], has_image: true,
+    lines: [rice, milk, bag, yogurt], ...extra,
+  } as Schemas['ReceiptOut'];
+}

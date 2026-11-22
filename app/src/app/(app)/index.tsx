@@ -92,6 +92,7 @@ function TodayContent({ day, memberId, memberName }: { day: string; memberId?: n
 }
 
 export default function TodayScreen() {
+  const router = useRouter();
   const day = localISODate();
   const profiles = useProfiles();
   const [memberId, setMemberId] = useState<number | undefined>();
@@ -107,7 +108,7 @@ export default function TodayScreen() {
               <MemberPicker members={members} value={member.profile.id ?? undefined} onChange={setMemberId} />
               <TodayContent day={day} memberId={member.profile.id ?? undefined} memberName={member.profile.name} />
               <View style={{ gap: 8 }}>
-                <Button label={t('today.scan')} variant="secondary" disabled hint={t('today.soon.hint')} />
+                <Button label={t('today.scan')} variant="secondary" onPress={() => router.push('/receipts/new')} />
                 <Button label={t('today.chat')} variant="secondary" disabled hint={t('today.soon.hint')} />
               </View>
             </View>

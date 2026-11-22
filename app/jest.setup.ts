@@ -27,3 +27,21 @@ jest.mock('expo-router', () => ({
   Redirect: () => null,
   Link: ({ children }: { children: unknown }) => children,
 }));
+
+// Camera/gallery and image processing: the tests decide what the person "photographs".
+jest.mock('expo-image-picker', () => {
+  const photo = { canceled: false, assets: [{ uri: 'file:///photo.jpg', width: 3000, height: 4000 }] };
+  return {
+    requestCameraPermissionsAsync: jest.fn(async () => ({ granted: true })),
+    launchCameraAsync: jest.fn(async () => photo),
+    launchImageLibraryAsync: jest.fn(async () => photo),
+  };
+});
+
+jest.mock('expo-image-manipulator', () => {
+  const context: { resize: jest.Mock; renderAsync: jest.Mock } = {
+    resize: jest.fn(() => context),
+    renderAsync: jest.fn(async () => ({ saveAsync: jest.fn(async () => ({ uri: 'file:///small.jpg' })) })),
+  };
+  return { ImageManipulator: { manipulate: jest.fn(() => context) }, SaveFormat: { JPEG: 'jpeg' }, __context: context };
+});

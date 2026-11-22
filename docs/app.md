@@ -38,6 +38,13 @@ WSL2 uses a private network by default, so a phone cannot reach it. Verified wor
 Tip: use a token without look-alike characters (`python -c "import secrets; print(secrets.token_hex(8))"`);
 typing a random token on a phone keyboard is error-prone.
 
+## Scanning receipts
+
+Today -> "Escanear ticket": camera or gallery (`expo-image-picker`), the photo is shrunk to 1600 px
+and re-encoded as JPEG on the phone (`expo-image-manipulator`), uploaded to your server and read by
+the AI; you review every line before anything changes. See [receipts.md](receipts.md). The camera
+permission strings are in `app.json`. On the web preview the browser asks for the camera or file.
+
 ## Plain HTTP
 
 Until HTTPS arrives (Phase 15), a release APK must allow cleartext traffic to reach a LAN server.

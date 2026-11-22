@@ -34,6 +34,13 @@
             "usesCleartextTraffic": true
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Annona usa la cámara solo para fotografiar tus tickets de la compra.",
+          "photosPermission": "Annona accede a tus fotos solo para que elijas un ticket de la compra."
+        }
       ]
     ],
     "scheme": "annona"

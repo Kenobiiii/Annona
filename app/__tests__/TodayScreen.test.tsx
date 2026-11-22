@@ -40,12 +40,13 @@ it("shows today's recipe with the member's portions, and the other meals collaps
   expect(server.called('GET /api/v1/today')[0].query).toMatchObject({ day: today(), profile_id: '1' });
 });
 
-it('scan and chat are visible but disabled until their phases', async () => {
+it('opens receipt scanning from the scan button, while chat stays disabled until its phase', async () => {
   const server = fakeApi({ 'GET /api/v1/profiles': [profile()], 'GET /api/v1/today': meals, 'GET /api/v1/plans': null });
   await renderConnected(<TodayScreen />, server.fetchImpl);
   await screen.findByText('Receta del día');
-  expect(screen.getByRole('button', { name: 'Escanear ticket' }).props.accessibilityState.disabled).toBe(true);
   expect(screen.getByRole('button', { name: 'Chat' }).props.accessibilityState.disabled).toBe(true);
+  await fireEvent.press(screen.getByRole('button', { name: 'Escanear ticket' }));
+  expect(router.push).toHaveBeenCalledWith('/receipts/new');
 });
 
 it('offers to create the menu when the week has none', async () => {
