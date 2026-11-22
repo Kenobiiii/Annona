@@ -30,9 +30,15 @@ def require_token(request: Request, authorization: Annotated[str | None, Header(
     expected = request.app.state.token
     if not expected:
         raise APIError(503, "not_configured", "set ANNONA_API_TOKEN on the server first")
+    throttle = request.app.state.auth_throttle
+    who = request.client.host if request.client else "unknown"
+    if throttle.blocked(who):
+        raise APIError(429, "too_many_attempts", "too many wrong tokens: wait a minute and retry")
     scheme, _, given = (authorization or "").partition(" ")
     if scheme.lower() != "bearer" or not secrets.compare_digest(given.strip(), expected):
+        throttle.record(who)
         raise APIError(401, "unauthorized", "missing or wrong bearer token")
+    throttle.reset(who)
 
 
 SessionDep = Annotated[Session, Depends(get_session)]

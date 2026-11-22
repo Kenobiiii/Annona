@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from collections.abc import Callable
 from contextlib import asynccontextmanager
@@ -38,6 +39,9 @@ from .routes import (
     shopping_lists,
     system,
 )
+from .throttle import FailureThrottle, SecurityHeaders
+
+MIN_TOKEN_LENGTH = 24
 
 DESCRIPTION = """Self-hosted API of **Annona**, the open-source weekly meal planner.
 
@@ -88,6 +92,13 @@ def create_app(
     app.state.runner = runner
     app.state.token = token if token is not None else os.environ.get("ANNONA_API_TOKEN", "")
     app.state.llm_factory = llm_factory
+    app.state.auth_throttle = FailureThrottle()
+    app.add_middleware(SecurityHeaders)
+    if 0 < len(app.state.token) < MIN_TOKEN_LENGTH:
+        logging.getLogger("annona").warning(
+            "ANNONA_API_TOKEN is shorter than %d characters: use a long random secret",
+            MIN_TOKEN_LENGTH,
+        )
     if chat_model_factory is None:
         from ..chat.service import default_model_factory
 
@@ -104,7 +115,7 @@ def create_app(
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__}
 
-    app.mount("/mcp", BearerGuard(mcp_app, lambda: app.state.token))
+    app.mount("/mcp", BearerGuard(mcp_app, lambda: app.state.token, app.state.auth_throttle))
     app.add_middleware(McpPathAlias)
 
     protected = [Depends(require_token)]
