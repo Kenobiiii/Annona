@@ -31,10 +31,12 @@ from pydantic import (
 from .enums import (
     ActivityLevel,
     Allergen,
+    Appliance,
     Category,
     CategorySource,
     Diet,
     Goal,
+    HeatLevel,
     HobType,
     MealSlot,
     NutritionSource,
@@ -271,12 +273,32 @@ class PantryItem(DomainModel):
 # --------------------------------------------------------------------------------------------
 
 
+class RecipeStep(DomainModel):
+    """One step of a detailed recipe, as the model wrote it; times are adapted when shown.
+
+    ``text`` may contain ``{p12}`` placeholders (12 = a product id) that are replaced by the
+    household's amounts of that product, so the model never writes quantities itself.
+    ``boil_ml`` marks a "bring this much water/liquid to the boil" step: its time comes from the
+    hob calibration (proportional to the volume) instead of ``minutes``.
+    """
+
+    text: str = Field(min_length=1, max_length=500)
+    heat: HeatLevel = HeatLevel.NONE
+    minutes: int | None = Field(default=None, ge=0, le=300)
+    boil_ml: int | None = Field(default=None, ge=50, le=10000)
+    appliance: Appliance = Appliance.NONE
+
+
 class Recipe(DomainModel):
     id: int | None = None
     household_id: int
     title: str = Field(min_length=1, max_length=200)
     servings: int = Field(default=1, ge=1)
     steps: list[str] = Field(default_factory=list)
+    method: list[RecipeStep] = Field(
+        default_factory=list,
+        description="detailed steps (empty until the recipe of the day is generated)",
+    )
     needs_oven: bool = False
     needs_microwave: bool = False
     needs_air_fryer: bool = False
@@ -315,6 +337,9 @@ class PlannedMeal(DomainModel):
     slot: MealSlot
     recipe_id: int | None = None
     servings: Decimal = Field(default=Decimal(1), gt=0)
+    cooked_at: AwareDatetime | None = Field(
+        default=None, description="set when the meal was marked as cooked (pantry deducted once)"
+    )
 
 
 # --------------------------------------------------------------------------------------------

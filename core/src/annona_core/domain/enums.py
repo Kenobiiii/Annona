@@ -155,6 +155,25 @@ class PlanStatus(StrEnum):
     ARCHIVED = "archived"
 
 
+class Appliance(StrEnum):
+    """What a cooking step uses. ``none`` = no cooking (salads, yogurt, sandwiches)."""
+
+    HOB = "hob"
+    OVEN = "oven"
+    MICROWAVE = "microwave"
+    AIR_FRYER = "air_fryer"
+    NONE = "none"
+
+
+class HeatLevel(StrEnum):
+    """Recipes speak in low/medium/high heat, never in hob power numbers (see CLAUDE.md)."""
+
+    NONE = "none"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
 class RecipeSource(StrEnum):
     LLM = "llm"
     MANUAL = "manual"

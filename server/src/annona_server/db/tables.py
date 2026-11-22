@@ -151,6 +151,7 @@ class RecipeRow(SQLModel, table=True):
     title: str
     servings: int
     steps: list[str] = Field(default_factory=list, sa_type=JSON)
+    method: list[dict] = Field(default_factory=list, sa_type=JSON)
     needs_oven: bool
     needs_microwave: bool
     needs_air_fryer: bool
@@ -188,6 +189,7 @@ class PlannedMealRow(SQLModel, table=True):
     slot: str
     recipe_id: int | None = Field(default=None, foreign_key="recipe.id", ondelete=SET_NULL)
     servings: Decimal = dec()
+    cooked_at: datetime | None = utc(nullable=True)
 
 
 class ShoppingListRow(SQLModel, table=True):

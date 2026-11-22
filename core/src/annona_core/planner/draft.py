@@ -8,19 +8,10 @@ code rescales them per person and day afterwards, so the model never has to do a
 from __future__ import annotations
 
 from decimal import Decimal
-from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
-from annona_core.domain import MealSlot
-
-
-class Appliance(StrEnum):
-    HOB = "hob"
-    OVEN = "oven"
-    MICROWAVE = "microwave"
-    AIR_FRYER = "air_fryer"
-    NONE = "none"  # no cooking (salads, yogurt, sandwiches)
+from annona_core.domain import Appliance, MealSlot
 
 
 class DraftIngredient(BaseModel):
