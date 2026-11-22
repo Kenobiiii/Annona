@@ -139,7 +139,9 @@ def match_line(
     # A tie goes to the receipt's own store, then to the lowest id (deterministic).
     scored.sort(key=lambda x: (-round(x[0], 6), x[2], x[1]))
     if not scored or scored[0][0] < float(SUGGEST_CONFIDENCE):
-        return LineMatch(product_id=None, confidence=_q(scored[0][0]) if scored else Decimal(0), source="none")
+        return LineMatch(
+            product_id=None, confidence=_q(scored[0][0]) if scored else Decimal(0), source="none"
+        )
     best = scored[0]
     others = tuple((pid, _q(s)) for s, pid, _ in scored[1:4] if s >= float(SUGGEST_CONFIDENCE))
     confidence = _q(best[0])

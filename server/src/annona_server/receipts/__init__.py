@@ -166,7 +166,13 @@ def scan_receipt(
     store_id = _store_from_text(parsed.store, stores)
     aliases = _aliases(session, household.id, store_id)
     when = (
-        datetime(parsed.purchased_on.year, parsed.purchased_on.month, parsed.purchased_on.day, 12, tzinfo=UTC)
+        datetime(
+            parsed.purchased_on.year,
+            parsed.purchased_on.month,
+            parsed.purchased_on.day,
+            12,
+            tzinfo=UTC,
+        )
         if parsed.purchased_on
         else None
     )
@@ -411,10 +417,7 @@ def confirm_receipt(
 
     pantry, prices = SqlPantryRepository(session), SqlPriceRepository(session)
     aliases = ReceiptAliasRepository(session)
-    known = {
-        (a.store_id, a.normalized_text): a
-        for a in aliases.list(household_id=household.id)
-    }
+    known = {(a.store_id, a.normalized_text): a for a in aliases.list(household_id=household.id)}
     observed = receipt.purchased_at or datetime.now(UTC)
     applied: list[Applied] = []
     applied_ids: set[int] = set()
@@ -465,14 +468,24 @@ def confirm_receipt(
         )
         applied_ids.add(line.id)
         applied.append(
-            Applied(line.id, product.id, product.name, amount, str(unit), effect.price_cents, effect.notes)
+            Applied(
+                line.id,
+                product.id,
+                product.name,
+                amount,
+                str(unit),
+                effect.price_cents,
+                effect.notes,
+            )
         )
     for line in lines.values():
         if line.id not in applied_ids:
             ReceiptLineRepository(session).update(
                 line.model_copy(update={"status": ReceiptLineStatus.IGNORED})
             )
-    ReceiptRepository(session).update(receipt.model_copy(update={"status": ReceiptStatus.CONFIRMED}))
+    ReceiptRepository(session).update(
+        receipt.model_copy(update={"status": ReceiptStatus.CONFIRMED})
+    )
     return applied
 
 

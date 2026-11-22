@@ -29,7 +29,9 @@ class LineEffect:
 
 def _convert(q: Quantity, unit: Unit, product: Product) -> Quantity | None:
     try:
-        return q.to(unit, density_g_per_ml=product.density_g_per_ml, unit_weight_g=product.unit_weight_g)
+        return q.to(
+            unit, density_g_per_ml=product.density_g_per_ml, unit_weight_g=product.unit_weight_g
+        )
     except UnitConversionError:
         return None
 
@@ -55,7 +57,10 @@ def line_effect(line: ParsedLine, product: Product) -> LineEffect:
             else:
                 notes.append("no_price")
             return LineEffect(
-                bought.amount.quantize(_THOUSANDTH, rounding=ROUND_HALF_UP), target, price, tuple(notes)
+                bought.amount.quantize(_THOUSANDTH, rounding=ROUND_HALF_UP),
+                target,
+                price,
+                tuple(notes),
             )
 
     # 2. Packs: the printed quantity, or one pack when nothing is printed (said out loud).

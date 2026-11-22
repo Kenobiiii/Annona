@@ -26,7 +26,7 @@ _CENT = Decimal("0.01")
 
 
 def parse_decimal(text: str | None) -> Decimal | None:
-    """"1,15" -> 1.15; "1.234,56" -> 1234.56; "1,234.56" -> 1234.56; "3" -> 3; junk -> None."""
+    """ "1,15" -> 1.15; "1.234,56" -> 1234.56; "1,234.56" -> 1234.56; "3" -> 3; junk -> None."""
     if not text:
         return None
     match = _NUMBER.search(text.replace(" ", " ").replace("−", "-"))
@@ -54,11 +54,13 @@ def parse_decimal(text: str | None) -> Decimal | None:
 
 def parse_cents(text: str | None) -> int | None:
     value = parse_decimal(text)
-    return None if value is None else int((value * 100).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+    return (
+        None if value is None else int((value * 100).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+    )
 
 
 def parse_weight(text: str | None) -> Quantity | None:
-    """"0,550 kg" -> 550 g; "250 g" -> 250 g; "1,5 l" -> 1500 ml; no unit -> None."""
+    """ "0,550 kg" -> 550 g; "250 g" -> 250 g; "1,5 l" -> 1500 ml; no unit -> None."""
     if not text or re.search(r"eur|€|/", text.lower()):
         return None  # "7,70 EUR/kg" is a price per kilo, not a weight
     value = parse_decimal(text)
@@ -75,7 +77,7 @@ _DATE = re.compile(r"(\d{1,4})[/\-.](\d{1,2})[/\-.](\d{2,4})")
 
 
 def parse_date(text: str | None) -> date | None:
-    """"12/11/2026", "12-11-26", "2026-11-12" (day first, as in Spain). Invalid -> None."""
+    """ "12/11/2026", "12-11-26", "2026-11-12" (day first, as in Spain). Invalid -> None."""
     if not text:
         return None
     match = _DATE.search(text)
@@ -177,9 +179,14 @@ def parse_receipt(draft: ReceiptDraft) -> ParsedReceipt:
         weight, refused = _purchased_weight(item.weight, raw, unit_price, total)
         if refused:
             issues.append(refused)
-        if quantity is not None and unit_price is not None and weight is None:
-            if abs(quantity * unit_price - total) > 1:
-                issues.append("line_math")  # quantity x unit price does not give the total
+        line_math_fails = (
+            quantity is not None
+            and unit_price is not None
+            and weight is None
+            and abs(quantity * unit_price - total) > 1
+        )
+        if line_math_fails:
+            issues.append("line_math")  # quantity x unit price does not give the total
         result.lines.append(
             ParsedLine(
                 raw_text=raw,
