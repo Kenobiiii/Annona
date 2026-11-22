@@ -16,11 +16,27 @@ server `.env`, and Settings only shows which models are configured and whether t
 
 ### Server inside WSL2 on Windows
 
-WSL2 uses a private network by default, so a phone cannot reach it. Options (not yet verified on
-the project author's machine; check Microsoft's WSL networking documentation first):
-mirrored networking (`networkingMode=mirrored` in `%UserProfile%\.wslconfig`, then `wsl --shutdown`)
-plus a Windows firewall rule for the server port, or run the server on the Windows side/another host.
-This changes Windows settings, so do it deliberately.
+WSL2 uses a private network by default, so a phone cannot reach it. Verified working on Windows 11
+(22H2 or newer is required) with mirrored networking, following Microsoft's
+[WSL networking documentation](https://learn.microsoft.com/en-us/windows/wsl/networking):
+
+1. Create `%UserProfile%\.wslconfig` (PowerShell: `Set-Content -Path "$env:USERPROFILE\.wslconfig"
+   -Value "[wsl2]","networkingMode=mirrored" -Encoding ASCII`; if the file exists, add the line
+   under `[wsl2]` instead).
+2. In an administrator PowerShell, open the Hyper-V firewall for the server (8000) and for Expo's
+   Metro bundler (8081), using the VM creator id from the documentation:
+   `New-NetFirewallHyperVRule -Name "Annona" -DisplayName "Annona server" -Direction Inbound
+   -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol TCP -LocalPorts 8000`
+   (repeat with another name and `-LocalPorts 8081`).
+3. `wsl --shutdown`, then open WSL again. WSL now shows your LAN address (`ip -4 addr`).
+4. Start the server listening on all interfaces (`--host 0.0.0.0`, the Docker image already does)
+   and Metro with `REACT_NATIVE_PACKAGER_HOSTNAME=<LAN address> npx expo start --lan`.
+5. On the phone (same Wi-Fi): check `http://<LAN address>:8000/health`, open
+   `exp://<LAN address>:8081` in Expo Go, then enter `http://<LAN address>:8000` and the token in
+   the connection form.
+
+Tip: use a token without look-alike characters (`python -c "import secrets; print(secrets.token_hex(8))"`);
+typing a random token on a phone keyboard is error-prone.
 
 ## Plain HTTP
 
