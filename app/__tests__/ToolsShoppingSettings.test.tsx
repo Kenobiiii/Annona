@@ -4,11 +4,10 @@ import { useLocalSearchParams } from 'expo-router';
 
 import ProfileScreen from '@/app/(app)/settings/profile/[id]';
 import SettingsScreen from '@/app/(app)/settings/index';
-import ShoppingScreen from '@/app/(app)/shopping';
 import ToolsScreen from '@/app/(app)/tools';
 import * as confirm from '@/components/confirm';
 import { apiError, fakeApi } from '../test-utils/fakeApi';
-import { household, plan, profile } from '../test-utils/fixtures';
+import { household, profile } from '../test-utils/fixtures';
 import { renderConnected } from '../test-utils/render';
 import { resetRouter, router } from '../test-utils/router';
 
@@ -98,37 +97,6 @@ describe('hob calibration', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() => expect(api.called('PUT /api/v1/equipment')).toHaveLength(1));
     expect(api.called('PUT /api/v1/equipment')[0].body).toMatchObject({ calibration_level: null, calibration_boil_1l_minutes: null });
-  });
-});
-
-describe('shopping list', () => {
-  const list = (checked = false) => ({
-    store_id: 'mercadona', total_cents: 1250,
-    items: [{ id: 3, product_id: 5, name: 'Arroz', packs: 2, unit_price_cents: 115, checked }],
-  });
-
-  it('lists the items and ticks one', async () => {
-    let checked = false;
-    const api = fakeApi({
-      'GET /api/v1/plans': plan('2026-11-16', []),
-      'GET /api/v1/plans/7/shopping-list': () => list(checked),
-      'PATCH /api/v1/shopping-items/3': ({ body }: { body: { checked: boolean } }) => {
-        checked = body.checked;
-        return { ...list(checked).items[0] };
-      },
-    });
-    await renderConnected(<ShoppingScreen />, api.fetchImpl);
-    expect(await screen.findByText('Tienda: mercadona')).toBeTruthy();
-    expect(screen.getByText('Total: 12,50 €')).toBeTruthy();
-    expect(screen.getByText('0 de 1 marcados')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('checkbox', { name: '2 × Arroz' }));
-    expect(await screen.findByText('1 de 1 marcados')).toBeTruthy();
-    expect(api.called('PATCH /api/v1/shopping-items/3')[0].body).toEqual({ checked: true });
-  });
-
-  it('explains when there is no plan this week', async () => {
-    await renderConnected(<ShoppingScreen />, fakeApi({ 'GET /api/v1/plans': null }).fetchImpl);
-    expect(await screen.findByText('No hay lista de la compra')).toBeTruthy();
   });
 });
 

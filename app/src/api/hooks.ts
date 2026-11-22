@@ -13,7 +13,8 @@ export const keys = {
   product: (id: number) => ['product', id] as const,
   plan: (week: string) => ['plan', week] as const,
   today: (day: string, profileId?: number) => ['today', day, profileId ?? 0] as const,
-  shopping: (planId: number) => ['shopping', planId] as const,
+  shopping: (planId: number, store?: string) => ['shopping', planId, store ?? ''] as const,
+  shoppingAll: (planId: number) => ['shopping', planId] as const,
   catalog: ['catalog-stores'] as const,
   job: (id: string) => ['job', id] as const,
   llm: ['llm-settings'] as const,
@@ -80,13 +81,24 @@ export function useToday(day: string, profileId?: number) {
   });
 }
 
-export function useShoppingList(planId: number | undefined) {
+/**
+ * The plan's list. Without a store: the latest list. With a store: that store's list, built the
+ * first time (the POST is idempotent: it returns the existing list with its ticks).
+ */
+export function useShoppingList(planId: number | undefined, storeId?: string) {
   const api = useApi();
   return useQuery({
-    queryKey: keys.shopping(planId ?? 0),
+    queryKey: keys.shopping(planId ?? 0, storeId),
     enabled: planId !== undefined,
     queryFn: () =>
-      unwrap(api.GET('/api/v1/plans/{plan_id}/shopping-list', { params: { path: { plan_id: planId! } } })),
+      storeId
+        ? unwrap(
+            api.POST('/api/v1/plans/{plan_id}/shopping-list', {
+              params: { path: { plan_id: planId! } },
+              body: { store_id: storeId, refresh: false },
+            }),
+          )
+        : unwrap(api.GET('/api/v1/plans/{plan_id}/shopping-list', { params: { path: { plan_id: planId! } } })),
   });
 }
 
@@ -216,7 +228,7 @@ export function useCheckShoppingItem(planId: number) {
           body: { checked },
         }),
       ),
-    [keys.shopping(planId)],
+    [keys.shoppingAll(planId), keys.pantry],
   );
 }
 

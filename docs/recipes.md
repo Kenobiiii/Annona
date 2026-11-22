@@ -44,8 +44,8 @@ negative: what is missing is reported (`not_in_pantry`, `not_enough`, `unit_unkn
 item's unit cannot be converted without a weight or density). The item that expires first is used
 first. Products can be left out of the deduction.
 
-Until the shopping list adds purchases to the pantry (Phase 12) the pantry is empty unless you fill
-it, so most lines will say `not_in_pantry`.
+Ticking an item of the shopping list adds it to the pantry ([shopping.md](shopping.md)); until you
+do that (or fill the pantry by hand) most lines will say `not_in_pantry`.
 
 ## API and tools
 
