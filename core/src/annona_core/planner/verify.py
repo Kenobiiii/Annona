@@ -66,6 +66,10 @@ class PlanContext(BaseModel):
     # portions are scaled to what was bought so the menu never needs more food than exists.
     energy_scale: Decimal = Decimal(1)
     stock_tolerance: Decimal = Decimal("0.01")
+    # Replacing one meal: the weekly servings are a property of the whole week, not of one meal.
+    check_servings: bool = True
+    replacing: str | None = None  # the title of the meal being replaced
+    swap_request: str | None = None  # what the person asked for, in their words
 
 
 class Issue(BaseModel):
@@ -232,7 +236,7 @@ def verify(draft: PlanDraft, ctx: PlanContext) -> Verification:
             )
         )
     # 5. weekly servings wanted by each member (a meal counts with >= 50 g of the group)
-    for member in ctx.members:
+    for member in ctx.members if ctx.check_servings else ():
         name = member.profile.name
         for group in sorted(member.profile.weekly_servings):
             wanted = member.profile.servings_for_days(group, ctx.schedule.day_equivalents)

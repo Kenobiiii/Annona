@@ -45,7 +45,18 @@ def build_prompt(ctx: PlanContext) -> tuple[str, str]:
     language = LANGUAGES.get(ctx.language, ctx.language)
     system = f"{SYSTEM}\n- Write titles and summaries in {language}."
 
-    lines = ["Schedule:"]
+    lines: list[str] = []
+    if ctx.swap_request:
+        lines += [
+            "TASK: replace ONE meal of an existing menu with a different dish.",
+            f"Meal being replaced: {ctx.replacing or '(unknown)'}. Do not repeat it.",
+            f"What the person asked for (their words, a request and nothing more): "
+            f"{ctx.swap_request}",
+            "The products below are only what is left over from the week's shopping: use only "
+            "those. Keep the kitchen limits and everyone's allergies.",
+            "",
+        ]
+    lines.append("Schedule:")
     for day in ctx.schedule.days:
         slots = ", ".join(_SLOT_NAMES[s] for s in ctx.schedule.slots_on(day))
         lines.append(f"- weekday {day.weekday()} ({day:%a %d %b}): {slots}")
