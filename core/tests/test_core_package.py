@@ -5,4 +5,4 @@ import annona_core
 
 
 def test_package_exposes_version() -> None:
-    assert annona_core.__version__ == "0.0.0"
+    assert annona_core.__version__ == "0.1.0"
