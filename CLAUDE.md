@@ -14,8 +14,57 @@ Android app (APK) + self-hosted backend. Any AI provider can power it, and any A
 can drive it through an MCP server. Anyone can add a supermarket (e.g. Walmart) as a plugin.
 </mission>
 
+<state>
+v0.1.0 (alpha) tagged; ROADMAP phases 0-15 done, CI green (python, app, docker e2e, audit).
+ROADMAP.md is private (never publish it). Next work = new features/fixes the owner asks for:
+same rules apply (plan first for product-level changes, tests, small commits, report in Spanish).
+Details live in `docs/` (architecture, data-model, planner, optimizer, shopping, receipts, recipes,
+chat, mcp, evals, self-hosting, security): read only the one you need, do not load them all.
+</state>
+
+<map>
+Where things live (paths under `<pkg>/src/annona_<pkg>/`):
+- `core/` pure logic, NO I/O: `domain` (models, enums), `nutrition` (BMR/targets), `optimizer` (MILP),
+  `planner` (scale, recipe, verify: LLM-output checks), `shopping` (basket pricing, cross-store
+  compare), `receipts` (parse/match/apply), `agent` (loop, prompt, fake LLM), `llm` (LLMClient iface).
+- `providers/` store plugins: `base` (interface), `registry`, `http` (polite client, robots, UA),
+  `open_prices/` (crowdsourced, any country), `mercadona/` (opt-in, needs accepted notice),
+  `testing` (contract tests; `--live` hits the network).
+- `server/`: `api/` (FastAPI app, `routes/*`, `deps` bearer auth, `throttle`, `mcp_guard`),
+  `db/` (SQLModel, Alembic migrations 0001-0012, repositories), `planner/` `shopping/` `receipts/`
+  `chat/` `optimize/` (DB-backed services), `tools/definitions.py` (THE tool registry: serves chat
+  agent AND `mcp_server/`; writes are only proposals the user confirms via REST), `jobs.py` (slow
+  ops return a job), `refresh.py`+`scheduler.py` (daily prices), `ingest/` `seed/` `demo.py` (invented
+  `demo` store + scripted AI), `evals/` (LLM eval harness + cost guard), `llm/` (LiteLLM wiring).
+- `app/` Expo: `src/app/` routes (expo-router drawer, `connect.tsx`), `src/features/<x>/` per screen
+  area, `src/api/` (openapi-fetch client; `schema.d.ts` GENERATED), `src/i18n/es.ts` (Spanish UI first).
+- `scripts/` e2e_smoke, audit_python.sh, export_openapi.py, record_provider_fixtures.py, mcp_tool_tokens.py.
+</map>
+
+<commands>
+Python: `uv sync --locked`; `uv run ruff check . && uv run ruff format --check . && uv run pytest`
+(full suite ~3 min; run one file while iterating; warnings are errors).
+App (in `app/`): `npm ci`, `npm run lint && npm run typecheck && npx jest --ci`.
+API changed -> `uv run python scripts/export_openapi.py` then `npm run gen:api` (CI diffs both).
+Run server: `uv run python -m annona_server.api --host 0.0.0.0 --port 8000` (needs ANNONA_API_TOKEN, 24+ chars).
+Demo, no AI key: `ANNONA_FAKE_LLM=1` + `python -m annona_server.seed --demo-store`.
+Version lives in 4 pyproject.toml, 3 `__version__`, app.json, package.json(+lock); tests assert it.
+</commands>
+
+<gotchas>
+- ruff and git both honour .gitignore: anchor ignore rules (`/data/receipts/`), and after pushing
+  verify from a fresh `git clone` (uv sync --locked, ruff, pytest, app jest) before saying CI-green.
+- Workflow YAML: quote `name:` values containing ": "; validate with PyYAML before pushing.
+- Check CI via the public GitHub API (no `gh`/Docker in the WSL dev box); Docker is only exercised in CI.
+- Changing the data model (migrations, domain models) needs the owner's OK first.
+- Eval/LLM changes: prefer evals + regression tests over eyeballing; quality and diet/allergy safety
+  are never traded for token savings.
+- Dev env is WSL2 (mirrored networking); never touch Windows config; the owner restarts WSL.
+- Never put the owner's email/personal data in requests; contact email only via local `.env`.
+</gotchas>
+
 <how_we_work>
-1. Work on ONE phase at a time, taken from ROADMAP.md. Never start the next phase unprompted.
+1. Work on ONE task/phase at a time. Never start the next unprompted.
 2. At the start of a phase: read this file and the phase prompt, then reply with a short plan
    (files to create, key decisions, open questions). WAIT for my "go" before writing code.
 3. Ask me instead of guessing whenever a decision is product-level or irreversible
