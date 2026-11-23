@@ -3,7 +3,8 @@
 **An open-source, self-hosted weekly meal planner that starts from your budget, real supermarket
 prices and what you actually have at home — not from a recipe database.**
 
-> **Status: pre-alpha (Phase 14 — chat agent).** Nothing usable yet. Follow the project to see it grow.
+> **Status: alpha (v0.1.0).** It works end to end (plan, shopping list, recipes, receipts, chat) and
+> is tested, but expect rough edges and changes. See the [CHANGELOG](CHANGELOG.md).
 
 ## Vision
 
@@ -58,14 +59,36 @@ npm run lint && npm run typecheck && npm test
 
 Copy `.env.example` to `.env` for local configuration. Never commit `.env`.
 
-## Run your own server
+## Try it in 5 minutes (no AI key, no real store)
+
+Requires [Docker](https://docs.docker.com/get-docker/) with Compose v2.
 
 ```bash
-cp .env.example .env    # set ANNONA_API_TOKEN and your AI key
-docker compose up -d    # API + docs at http://localhost:8000/docs
+git clone https://github.com/Kenobiiii/Annona.git && cd Annona
+cp .env.example .env
 ```
 
-See [docs/self-hosting.md](docs/self-hosting.md).
+Edit `.env`: set `ANNONA_API_TOKEN` to a long random secret
+(`python3 -c "import secrets; print(secrets.token_urlsafe(32))"`) and uncomment `ANNONA_FAKE_LLM=1`
+(demo mode: a built-in scripted "AI" and an invented store, so nothing is sent anywhere).
+
+```bash
+docker compose up -d
+docker compose exec api /app/.venv/bin/python -m annona_server.seed --demo-store
+```
+
+Open <http://localhost:8000/docs>, press **Authorize** and paste your token. Then, in order:
+`PUT /api/v1/household` (budget), `POST /api/v1/profiles`, `POST /api/v1/plans` (poll the job),
+`GET /api/v1/plans/{id}`. Or use the Android app (below).
+
+For real use, remove `ANNONA_FAKE_LLM`, set your AI key and load real prices:
+see [docs/self-hosting.md](docs/self-hosting.md).
+
+## The Android app
+
+Build an installable APK following [docs/releasing.md](docs/releasing.md), or run it from source
+with Expo Go ([docs/app.md](docs/app.md)). On first launch enter your server address and token.
+To reach your server away from home, see [docs/remote-access.md](docs/remote-access.md).
 
 ## Use it from Claude, Gemini and other AI assistants
 
@@ -93,6 +116,8 @@ See [docs/mcp.md](docs/mcp.md).
 ## Contributing
 
 Want to add a supermarket? Start with [docs/adding-a-supermarket.md](docs/adding-a-supermarket.md).
+Looking for a first task? See [docs/good-first-issues.md](docs/good-first-issues.md). Security
+reports: [docs/security.md](docs/security.md).
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) (commits need a DCO sign-off)
 and our [Code of Conduct](CODE_OF_CONDUCT.md).

@@ -1,45 +1,79 @@
 # Self-hosting
 
 Annona runs on your own machine or server; your pantry, profile and plans never leave it (except
-what is sent to the AI provider you configure).
+what is sent to the AI provider you configure). This guide takes you from a fresh clone to a
+generated weekly plan.
 
-## With Docker (recommended)
+## 1. Start the server (Docker, recommended)
 
-Requirements: Docker with Compose v2 (Docker Desktop on Windows/macOS, Docker Engine on Linux).
+Requirements: Docker with Compose v2.
 
 ```bash
 git clone https://github.com/Kenobiiii/Annona.git && cd Annona
 cp .env.example .env
-# edit .env: set ANNONA_API_TOKEN (a long random secret) and your AI key (e.g. DEEPSEEK_API_KEY)
-docker compose up -d
 ```
 
-- API and interactive documentation: <http://localhost:8000/docs> (click **Authorize** and paste
-  your token).
-- Data lives in the `annona-data` Docker volume (`/data/annona.db` in the container).
-- Two services: `api` (the REST API) and `scheduler` (daily price refresh at
-  `ANNONA_REFRESH_AT`, default 04:30 UTC; configure `ANNONA_REFRESH_PROVIDERS`).
-- Update: `git pull && docker compose up -d --build`.
-- Logs: `docker compose logs -f`.
+Edit `.env`:
 
-## Without Docker
+- `ANNONA_API_TOKEN`: a long random secret (at least 24 characters; the server warns otherwise):
+  `python3 -c "import secrets; print(secrets.token_urlsafe(32))"`.
+- **Either** demo mode: uncomment `ANNONA_FAKE_LLM=1` (no key needed), **or** real AI: set the key of
+  your provider (e.g. `DEEPSEEK_API_KEY`) and, optionally, `ANNONA_LLM_MODEL_SMALL/LARGE`.
 
 ```bash
-uv sync
-uv run python -m annona_server.api --host 0.0.0.0 --port 8000
-uv run python -m annona_server.scheduler        # in another terminal (or --once)
+docker compose up -d
+curl http://localhost:8000/health        # {"status":"ok","version":"0.1.0"}
 ```
 
-## Phone access on your home network
+- API and interactive documentation: <http://localhost:8000/docs> (**Authorize** with your token).
+- Data lives in the `annona-data` Docker volume (`/data/annona.db`).
+- Services: `api` and `scheduler` (daily price refresh at `ANNONA_REFRESH_AT`, default 04:30 UTC).
+- Update: `git pull && docker compose up -d --build` (migrations run on start).
+- Logs: `docker compose logs -f`.
 
-The Android app (Phase 10) talks to `http://<your-computer-IP>:8000` with the token. Keep the
-server on your local network for now; exposing it to the Internet needs HTTPS and is covered
-later (Phase 15).
+Without Docker: `uv sync`, then `uv run python -m annona_server.api --host 0.0.0.0 --port 8000` and,
+in another terminal, `uv run python -m annona_server.scheduler`.
 
-## First steps through the API
+## 2. Load products and prices
 
-1. `PUT /api/v1/household` - name, weekly budget, currency.
-2. `POST /api/v1/profiles` - each member (confirm allergies!).
-3. `PUT /api/v1/equipment` - your kitchen.
-4. Load products and prices (`python -m annona_server.ingest ...` or `POST /api/v1/prices/refresh`).
-5. `POST /api/v1/plans` - generate the week; poll the returned job.
+- **Just trying it:** `docker compose exec api /app/.venv/bin/python -m annona_server.seed --demo-store` loads the
+  sample foods and an **invented** store called `demo` (made-up prices, for trying the app only).
+- **Real data:** `docker compose exec api /app/.venv/bin/python -m annona_server.seed` loads the sample foods, then
+  ingest a store with `python -m annona_server.ingest ...` (see [ingestion.md](ingestion.md)) and
+  set `ANNONA_REFRESH_PROVIDERS` so prices stay fresh. Opt-in providers (e.g. Mercadona) need you to
+  accept their notice; read [adding-a-supermarket.md](adding-a-supermarket.md).
+
+## 3. Connect the app and plan
+
+1. In the app enter `http://<server-address>:8000` and the token (Settings).
+2. Set household (budget, currency), each member (confirm allergies!) and your equipment.
+3. Generate the week. Over the API: `PUT /api/v1/household`, `POST /api/v1/profiles`,
+   `POST /api/v1/plans`, then poll the returned job at `GET /api/v1/jobs/{id}`.
+
+## Phone access
+
+- Same network: `http://<computer-LAN-IP>:8000` (the app allows plain HTTP for this).
+- Away from home: [remote-access.md](remote-access.md). Do not expose port 8000 directly to the
+  Internet without HTTPS.
+
+## Backups
+
+Everything is in one SQLite file (these commands are untested by the maintainers; check the backup opens before relying on it). With the container running:
+
+```bash
+docker compose exec api /app/.venv/bin/python -c "import sqlite3; s=sqlite3.connect('/data/annona.db'); d=sqlite3.connect('/data/backup.db'); s.backup(d)"
+docker compose cp api:/data/backup.db ./annona-backup.db
+```
+
+Restore by copying a backup over `/data/annona.db` with the stack stopped. Receipt photos, if kept,
+are under `/data/receipts/`.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| App says the server does not accept the token | wrong token, or a typo in the address; after 10 wrong tokens in a minute the server answers 429: wait a minute |
+| `503 not_configured` | `ANNONA_API_TOKEN` is empty |
+| Plan says "not within budget" | the budget is too low for the prices loaded; check prices were ingested |
+| Phone cannot reach the server | firewall, or a different network; try `curl http://<ip>:8000/health` from another device |
+| AI errors | key missing or wrong for the chosen model; `GET /api/v1/settings/llm` shows what is configured |

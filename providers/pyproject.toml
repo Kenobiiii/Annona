@@ -1,6 +1,6 @@
 [project]
 name = "annona-providers"
-version = "0.0.0"
+version = "0.1.0"
 description = "Supermarket provider interface, registry and plugins."
 readme = "README.md"
 license = "AGPL-3.0-or-later"

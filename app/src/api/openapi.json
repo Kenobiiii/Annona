@@ -3707,7 +3707,7 @@
   "info": {
     "description": "Self-hosted API of **Annona**, the open-source weekly meal planner.\n\nAuthenticate with **Authorize** using the server's `ANNONA_API_TOKEN`. Slow operations (plan\ngeneration, price refresh) return a job: poll `GET /api/v1/jobs/{id}`.\nNutrition is informational, not medical advice.",
     "title": "Annona API",
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "openapi": "3.1.0",
   "paths": {

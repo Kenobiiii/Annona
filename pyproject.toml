@@ -2,7 +2,7 @@
 # and holds the shared tooling configuration.
 [project]
 name = "annona"
-version = "0.0.0"
+version = "0.1.0"
 description = "Open-source, self-hosted weekly meal planner driven by budget, real prices and your pantry."
 readme = "README.md"
 license = "AGPL-3.0-or-later"
