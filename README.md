@@ -84,6 +84,19 @@ Open <http://localhost:8000/docs>, press **Authorize** and paste your token. The
 For real use, remove `ANNONA_FAKE_LLM`, set your AI key and load real prices:
 see [docs/self-hosting.md](docs/self-hosting.md).
 
+## Screenshots
+
+Taken from the web build in demo mode: the AI is a built-in script and the store and its prices are
+**invented**, so the dishes are generic. With a real AI and real prices you get real menus.
+
+| Today | Weekly menu | Recipe |
+|---|---|---|
+| <img src="docs/screenshots/today.png" width="200"> | <img src="docs/screenshots/menu.png" width="200"> | <img src="docs/screenshots/recipe.png" width="200"> |
+
+| Shopping list | Pantry | Equipment |
+|---|---|---|
+| <img src="docs/screenshots/shopping.png" width="200"> | <img src="docs/screenshots/pantry.png" width="200"> | <img src="docs/screenshots/tools.png" width="200"> |
+
 ## The Android app
 
 Build an installable APK following [docs/releasing.md](docs/releasing.md), or run it from source
