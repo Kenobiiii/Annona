@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3 (no floating major tag published)
-      - name: Python dependencies (accepted exceptions: security/pip-audit-ignore.txt)
+      - name: "Python dependencies (accepted exceptions in security/pip-audit-ignore.txt)"
         run: ./scripts/audit_python.sh
       - uses: actions/setup-node@v7
         with:
