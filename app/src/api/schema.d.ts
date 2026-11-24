@@ -635,6 +635,73 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stores/{store_id}/connection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Store Connection */
+        get: operations["get_store_connection_api_v1_stores__store_id__connection_get"];
+        /**
+         * Put Store Connection
+         * @description Accept the notice (opt-in plugins) and say where you shop. One request to the store
+         *     resolves the postal code.
+         */
+        put: operations["put_store_connection_api_v1_stores__store_id__connection_put"];
+        post?: never;
+        /**
+         * Delete Store Connection
+         * @description Withdraw the accepted notice and forget the postal code.
+         */
+        delete: operations["delete_store_connection_api_v1_stores__store_id__connection_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stores/{store_id}/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Store Product
+         * @description Add one product of the store to your catalogue, with its price and, by barcode, Open
+         *     Food Facts nutrition and allergens.
+         */
+        post: operations["add_store_product_api_v1_stores__store_id__products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stores/{store_id}/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Store
+         * @description Search the store for ONE thing you bought (a few results, cached for a day).
+         */
+        get: operations["search_store_api_v1_stores__store_id__search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/today": {
         parameters: {
             query?: never;
@@ -701,6 +768,11 @@ export interface components {
          * @enum {string}
          */
         ActivityLevel: "inactive" | "low_active" | "active" | "very_active";
+        /** AddIn */
+        AddIn: {
+            /** Store Sku */
+            store_sku: string;
+        };
         /**
          * Allergen
          * @description The 14 allergens that must be declared in the EU (Regulation (EU) No 1169/2011, Annex II).
@@ -882,6 +954,35 @@ export interface components {
             applied: components["schemas"]["AppliedOut"][];
             /** Ignored */
             ignored: number;
+        };
+        /** ConnectionIn */
+        ConnectionIn: {
+            /**
+             * Accept Notice
+             * @default false
+             */
+            accept_notice: boolean;
+            /** Postal Code */
+            postal_code?: string | null;
+        };
+        /** ConnectionOut */
+        ConnectionOut: {
+            /** Name */
+            name: string;
+            /** Notice */
+            notice: string | null;
+            /** Notice Accepted At */
+            notice_accepted_at: string | null;
+            /** Opt In */
+            opt_in: boolean;
+            /** Postal Code */
+            postal_code: string | null;
+            /** Ready */
+            ready: boolean;
+            /** Store Id */
+            store_id: string;
+            /** Supports Postcode */
+            supports_postcode: boolean;
         };
         /** CookIn */
         CookIn: {
@@ -1069,6 +1170,23 @@ export interface components {
             oven: boolean;
             /** Power Levels */
             power_levels?: number | null;
+        };
+        /** FoundOut */
+        FoundOut: {
+            /** Brand */
+            brand: string | null;
+            /** Image Url */
+            image_url: string | null;
+            /** Name */
+            name: string;
+            /** Package Amount */
+            package_amount: string | null;
+            /** Package Unit */
+            package_unit: string | null;
+            /** Product Id */
+            product_id: number | null;
+            /** Store Sku */
+            store_sku: string;
         };
         /**
          * Goal
@@ -3504,6 +3622,179 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StoreOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_store_connection_api_v1_stores__store_id__connection_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                store_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_store_connection_api_v1_stores__store_id__connection_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                store_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_store_connection_api_v1_stores__store_id__connection_delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                store_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_store_product_api_v1_stores__store_id__products_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                store_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_store_api_v1_stores__store_id__search_get: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                store_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoundOut"][];
                 };
             };
             /** @description Validation Error */

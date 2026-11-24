@@ -24,6 +24,7 @@ from ..db import migrate
 from ..db.engine import database_url, make_engine
 from ..jobs import JobRunner
 from ..mcp_server import build_server
+from ..stores import StoreAccess
 from . import errors
 from .deps import require_token
 from .mcp_guard import BearerGuard, McpPathAlias
@@ -37,6 +38,7 @@ from .routes import (
     recipes,
     shopping,
     shopping_lists,
+    stores,
     system,
 )
 from .throttle import FailureThrottle, SecurityHeaders
@@ -57,6 +59,8 @@ def create_app(
     token: str | None = None,
     llm_factory: Callable[[Session], LLMClient] | None = None,
     chat_model_factory: Callable[..., Any] | None = None,
+    store_access: StoreAccess | None = None,
+    off_factory: Callable[[Session], Any] | None = None,
 ) -> FastAPI:
     load_env()
     if engine is None:
@@ -104,6 +108,12 @@ def create_app(
 
         chat_model_factory = default_model_factory
     app.state.chat_model_factory = chat_model_factory
+    app.state.store_access = store_access or StoreAccess()
+    if off_factory is None:
+        from ..ingest.off import OpenFoodFactsClient
+
+        off_factory = OpenFoodFactsClient
+    app.state.off_factory = off_factory
     origins = [o for o in os.environ.get("ANNONA_CORS_ORIGINS", "").split(",") if o]
     if origins:
         app.add_middleware(
@@ -129,6 +139,7 @@ def create_app(
         shopping_lists,
         recipes,
         receipts,
+        stores,
         chat,
     ):
         app.include_router(module.router, prefix="/api/v1", dependencies=protected)

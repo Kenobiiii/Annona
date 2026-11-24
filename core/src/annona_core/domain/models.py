@@ -425,6 +425,21 @@ class ReceiptAlias(DomainModel):
     created_at: AwareDatetime = Field(default_factory=utc_now)
 
 
+class StoreConnection(DomainModel):
+    """How a household uses one store plugin from the app: where it shops (prices depend on it) and,
+    for opt-in plugins, when the person accepted the plugin's notice. ``None`` = not accepted."""
+
+    id: int | None = None
+    household_id: int
+    store_id: str = Field(min_length=1, max_length=50)
+    postal_code: str | None = Field(default=None, pattern=r"^[0-9A-Za-z -]{3,10}$")
+    location: str | None = Field(
+        default=None, max_length=50, description="store-side code resolved from the postal code"
+    )
+    notice_accepted_at: AwareDatetime | None = None
+    updated_at: AwareDatetime = Field(default_factory=utc_now)
+
+
 class ReceiptLine(DomainModel):
     id: int | None = None
     receipt_id: int

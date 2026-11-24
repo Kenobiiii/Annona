@@ -51,6 +51,21 @@
         "title": "ActivityLevel",
         "type": "string"
       },
+      "AddIn": {
+        "properties": {
+          "store_sku": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Store Sku",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_sku"
+        ],
+        "title": "AddIn",
+        "type": "object"
+      },
       "Allergen": {
         "description": "The 14 allergens that must be declared in the EU (Regulation (EU) No 1169/2011, Annex II).",
         "enum": [
@@ -497,6 +512,99 @@
         "title": "ConfirmOut",
         "type": "object"
       },
+      "ConnectionIn": {
+        "properties": {
+          "accept_notice": {
+            "default": false,
+            "title": "Accept Notice",
+            "type": "boolean"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          }
+        },
+        "title": "ConnectionIn",
+        "type": "object"
+      },
+      "ConnectionOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
+          },
+          "notice_accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Accepted At"
+          },
+          "opt_in": {
+            "title": "Opt In",
+            "type": "boolean"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "boolean"
+          },
+          "store_id": {
+            "title": "Store Id",
+            "type": "string"
+          },
+          "supports_postcode": {
+            "title": "Supports Postcode",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "store_id",
+          "name",
+          "opt_in",
+          "notice",
+          "notice_accepted_at",
+          "supports_postcode",
+          "postal_code",
+          "ready"
+        ],
+        "title": "ConnectionOut",
+        "type": "object"
+      },
       "CookIn": {
         "properties": {
           "day": {
@@ -935,6 +1043,84 @@
           }
         },
         "title": "EquipmentIn",
+        "type": "object"
+      },
+      "FoundOut": {
+        "properties": {
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "package_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Amount"
+          },
+          "package_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Unit"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "store_sku": {
+            "title": "Store Sku",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store_sku",
+          "name",
+          "brand",
+          "package_amount",
+          "package_unit",
+          "image_url",
+          "product_id"
+        ],
+        "title": "FoundOut",
         "type": "object"
       },
       "Goal": {
@@ -6335,6 +6521,322 @@
         "summary": "Stores",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/stores/{store_id}/connection": {
+      "delete": {
+        "description": "Withdraw the accepted notice and forget the postal code.",
+        "operationId": "delete_store_connection_api_v1_stores__store_id__connection_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "title": "Store Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Store Connection",
+        "tags": [
+          "stores"
+        ]
+      },
+      "get": {
+        "operationId": "get_store_connection_api_v1_stores__store_id__connection_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "title": "Store Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Store Connection",
+        "tags": [
+          "stores"
+        ]
+      },
+      "put": {
+        "description": "Accept the notice (opt-in plugins) and say where you shop. One request to the store\nresolves the postal code.",
+        "operationId": "put_store_connection_api_v1_stores__store_id__connection_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "title": "Store Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Store Connection",
+        "tags": [
+          "stores"
+        ]
+      }
+    },
+    "/api/v1/stores/{store_id}/products": {
+      "post": {
+        "description": "Add one product of the store to your catalogue, with its price and, by barcode, Open\nFood Facts nutrition and allergens.",
+        "operationId": "add_store_product_api_v1_stores__store_id__products_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "title": "Store Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Store Product",
+        "tags": [
+          "stores"
+        ]
+      }
+    },
+    "/api/v1/stores/{store_id}/search": {
+      "get": {
+        "description": "Search the store for ONE thing you bought (a few results, cached for a day).",
+        "operationId": "search_store_api_v1_stores__store_id__search_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "title": "Store Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FoundOut"
+                  },
+                  "title": "Response Search Store Api V1 Stores  Store Id  Search Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Store",
+        "tags": [
+          "stores"
         ]
       }
     },

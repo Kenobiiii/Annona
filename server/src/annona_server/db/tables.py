@@ -271,6 +271,19 @@ class ReceiptAliasRow(SQLModel, table=True):
     created_at: datetime = utc()
 
 
+class StoreConnectionRow(SQLModel, table=True):
+    __tablename__ = "store_connection"
+    __table_args__ = (UniqueConstraint("household_id", "store_id"),)
+
+    id: int | None = Field(default=None, primary_key=True)
+    household_id: int = Field(foreign_key="household.id", ondelete=CASCADE, index=True)
+    store_id: str
+    postal_code: str | None = None
+    location: str | None = None
+    notice_accepted_at: datetime | None = utc(nullable=True)
+    updated_at: datetime = utc()
+
+
 class OffCacheRow(SQLModel, table=True):
     """Cached Open Food Facts lookups by barcode, including "not found" answers."""
 

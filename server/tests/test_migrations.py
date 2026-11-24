@@ -27,6 +27,7 @@ EXPECTED_TABLES = {
     "llm_usage",
     "job",
     "receipt_alias",
+    "store_connection",
     "pending_action",
 }
 

@@ -43,6 +43,7 @@ from .models import (
     RecipeStep,
     ShoppingItem,
     ShoppingList,
+    StoreConnection,
     UserProfile,
 )
 from .money import Money, UnitPrice, unit_price
@@ -78,6 +79,7 @@ __all__ = [
     "Quantity",
     "Receipt",
     "ReceiptAlias",
+    "StoreConnection",
     "ReceiptLine",
     "ReceiptLineStatus",
     "ReceiptStatus",
