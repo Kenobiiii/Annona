@@ -129,6 +129,18 @@ def match_line(
     if aliases and key in aliases:
         return LineMatch(product_id=aliases[key], confidence=Decimal(1), source="alias")
     printed = _tokens(raw_text)
+    # Store products first: a receipt names what a shop sells. Generic foods (no store, e.g.
+    # "Banana") are only a fallback, so "QUESO FRESCO" keeps its shop product over a generic one.
+    in_store = [c for c in candidates if c.store_id is not None]
+    match = _fuzzy(printed, in_store, store_id)
+    if match.product_id is None:
+        generic = _fuzzy(printed, [c for c in candidates if c.store_id is None], store_id)
+        if generic.product_id is not None:
+            return generic
+    return match
+
+
+def _fuzzy(printed: list[str], candidates: list[Candidate], store_id: str | None) -> LineMatch:
     scored = []
     for c in candidates:
         name = c.name

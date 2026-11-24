@@ -251,6 +251,21 @@ def test_a_confirmed_alias_wins_with_full_confidence():
     assert (m.product_id, m.confidence, m.source) == (3, D(1), "alias")
 
 
+def test_a_generic_food_is_matched_when_no_shop_product_fits():
+    generic = [*CATALOGUE, Candidate(55, "Banana"), Candidate(56, "Fresh cheese (queso fresco)")]
+    m = match_line("1 BANANA", generic, store_id="shop")
+    assert m.product_id == 55 and m.preselected
+
+
+def test_a_shop_product_beats_a_generic_food_that_also_fits():
+    catalogue = [
+        Candidate(1, "Queso fresco batido Hacendado", "shop", "Hacendado"),
+        Candidate(2, "Fresh cheese (queso fresco)"),
+    ]
+    assert match_line("QUESO FRESCO BATIDO", catalogue, store_id="shop").product_id == 1
+    assert match_line("QUESO FRESCO", catalogue, store_id="shop").product_id == 1
+
+
 def test_a_tie_goes_to_the_receipts_own_store():
     twins = [Candidate(10, "Arroz largo", "other"), Candidate(11, "Arroz largo", "mine")]
     assert match_line("ARROZ LARGO", twins, store_id="mine").product_id == 11

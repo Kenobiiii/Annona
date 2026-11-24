@@ -130,7 +130,7 @@ def _candidates(session: Session) -> list[Candidate]:
     return [
         Candidate(p.id, p.name, p.store_id, p.brand)
         for p in SqlProductRepository(session).list()
-        if p.id is not None and p.store_id is not None
+        if p.id is not None
     ]
 
 

@@ -18,7 +18,8 @@ Photo of a receipt -> pantry and prices updated, **only after you confirm**.
      it agrees with the price per kg. A line that prints a single price is taken at that price.
 5. **Match** (code, rapidfuzz, `core/receipts/match.py`): each line is compared word by word with
    the catalogue; abbreviations count ("SEMI" -> "semidesnatada"). The result is a suggestion with
-   a confidence. Confirmed choices are remembered per store (`receipt_alias`) and used with full
+   a confidence. Shop products are tried first; generic foods (no store, e.g. "Banana") are only
+   a fallback when no shop product fits. Confirmed choices are remembered per store (`receipt_alias`) and used with full
    confidence next time. A tie is never trusted: unclear winners stay below the pre-selection level.
 6. **Review** (app): you confirm, change the product (search) or ignore each line. Lines at or above
    0.85 confidence are pre-selected; lower ones and unmatched ones are never applied unless you act.
