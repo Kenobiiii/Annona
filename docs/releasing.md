@@ -1,7 +1,8 @@
 # Building the Android app (APK)
 
-> **Not verified by the maintainers.** These steps follow the official
-> [EAS Build documentation](https://docs.expo.dev/build/introduction/); check it if anything differs.
+> Verified once by the maintainer with the EAS `preview` profile (installed on an Android phone and
+> connected to a home server). Follow the official
+> [EAS Build documentation](https://docs.expo.dev/build/introduction/) if anything differs.
 
 The signing key (keystore) belongs to **you**. It is never committed to the repository: EAS stores it
 for you, or you keep your own. If you lose it you cannot update an installed app.
@@ -26,6 +27,23 @@ developer account).
 
 Plain HTTP (home network) is allowed by the app config (`usesCleartextTraffic`); prefer
 [remote-access.md](remote-access.md) when away from home.
+
+### Before the first build
+
+Run `npx eas-cli init` once. It links the app to **your** Expo account and writes `owner` and
+`extra.eas.projectId` into `app/app.json`. **Do not commit those two fields** (they belong to your
+account and would break other people's builds); keep them local.
+
+### Permissions
+
+The app only needs the camera and photo library (to scan receipts). The `expo-image-picker` plugin
+would also add the microphone permission for video; `app.json` sets `microphonePermission: false`,
+so the APK does not ask for it. Check the merged permissions in the build log if you add plugins.
+
+### First launch
+
+The app asks for the server address and token: use `http://<computer-IP>:8000` on your home
+network (the IP can change; update it in Settings) or your Tailscale address.
 
 ## Option 2: local build
 
