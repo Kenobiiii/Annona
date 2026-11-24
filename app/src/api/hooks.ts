@@ -213,6 +213,15 @@ export function usePatchProduct(id: number) {
   );
 }
 
+/** Add a product by hand (e.g. a receipt line the catalogue does not have). Same name: same product. */
+export function useCreateProduct() {
+  const api = useApi();
+  return useWrite(
+    (body: Schemas['ProductCreate']) => unwrap(api.POST('/api/v1/products', { body })),
+    [['products'], keys.catalog],
+  );
+}
+
 export function useGeneratePlan() {
   const api = useApi();
   return useMutation({

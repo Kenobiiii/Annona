@@ -389,7 +389,11 @@ export interface paths {
         /** Search Products */
         get: operations["search_products_api_v1_products_get"];
         put?: never;
-        post?: never;
+        /**
+         * Create Product
+         * @description Add a product. If a product you added has the same name, that one is returned (200).
+         */
+        post: operations["create_product_api_v1_products_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1512,6 +1516,22 @@ export interface components {
             type?: string | null;
             /** Unit Weight G */
             unit_weight_g?: string | null;
+        };
+        /**
+         * ProductCreate
+         * @description A product you add yourself, e.g. a receipt line that is not in the catalogue yet.
+         *
+         *     It is a generic product (no store): there is no store SKU to give it. Its prices still carry
+         *     the store they were paid at. Nutrition and allergens start unknown; set them later.
+         */
+        ProductCreate: {
+            /** @default other */
+            category: components["schemas"]["Category"];
+            /** Name */
+            name: string;
+            /** Package Amount */
+            package_amount?: number | string | null;
+            package_unit?: components["schemas"]["Unit"] | null;
         };
         /** ProductOut */
         ProductOut: {
@@ -2909,6 +2929,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_ProductOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_product_api_v1_products_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
                 };
             };
             /** @description Validation Error */

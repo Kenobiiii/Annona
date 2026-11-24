@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Product search, details and manual edits (manual data always wins)."""
+"""Product search, details, manual edits (manual data always wins) and products you add."""
 
 from __future__ import annotations
 
 from decimal import Decimal
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 from pydantic import BaseModel, Field
 
 from annona_core.domain import (
@@ -74,6 +74,48 @@ def get_product(product_id: int, session: SessionDep) -> ProductOut:
     product = SqlProductRepository(session).get(product_id)
     if product is None:
         raise APIError(404, "not_found", f"product {product_id} not found")
+    return _out(session, product)
+
+
+class ProductCreate(BaseModel):
+    """A product you add yourself, e.g. a receipt line that is not in the catalogue yet.
+
+    It is a generic product (no store): there is no store SKU to give it. Its prices still carry
+    the store they were paid at. Nutrition and allergens start unknown; set them later.
+    """
+
+    name: str = Field(min_length=1, max_length=200)
+    category: Category = Category.OTHER
+    package_amount: Decimal | None = Field(default=None, gt=0)
+    package_unit: Unit | None = None
+
+
+def _same_name(a: str, b: str) -> bool:
+    return " ".join(a.casefold().split()) == " ".join(b.casefold().split())
+
+
+@router.post("/products", response_model=ProductOut, status_code=201)
+def create_product(body: ProductCreate, session: SessionDep, response: Response) -> ProductOut:
+    """Add a product. If a product you added has the same name, that one is returned (200)."""
+    name = " ".join(body.name.split())
+    if not name:
+        raise APIError(422, "invalid", "the name is empty")
+    if (body.package_amount is None) != (body.package_unit is None):
+        raise APIError(422, "invalid", "package_amount and package_unit go together")
+    repo = SqlProductRepository(session)
+    for existing in repo.list():
+        if existing.store_id is None and _same_name(existing.name, name):
+            response.status_code = 200
+            return _out(session, existing)
+    product = repo.add(
+        Product(
+            name=name,
+            category=body.category,
+            category_source=CategorySource.MANUAL,
+            package_amount=body.package_amount,
+            package_unit=body.package_unit,
+        )
+    )
     return _out(session, product)
 
 

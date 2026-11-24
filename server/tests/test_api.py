@@ -236,6 +236,38 @@ def test_llm_settings_never_expose_keys(client, monkeypatch):
     assert "spent_usd" in data
 
 
+def test_a_product_can_be_added_by_hand_once(client):
+    setup_home(client)
+    body = {"name": "  Tomate   triturado ", "category": "vegetables"}
+    r = client.post("/api/v1/products", json=body, headers=AUTH)
+    assert r.status_code == 201
+    product = r.json()["product"]
+    assert product["name"] == "Tomate triturado" and product["store_id"] is None
+    assert product["category_source"] == "manual" and product["nutrition"] is None
+    assert product["allergens"] is None  # unknown, never assumed
+
+    again = client.post("/api/v1/products", json={"name": "tomate TRITURADO"}, headers=AUTH)
+    assert again.status_code == 200 and again.json()["product"]["id"] == product["id"]
+
+    pack = {"name": "Spaghetti", "package_amount": 500, "package_unit": "g"}
+    r = client.post("/api/v1/products", json=pack, headers=AUTH).json()["product"]
+    assert Decimal(r["package_amount"]) == 500 and r["package_unit"] == "g"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"name": "   "},
+        {"name": ""},
+        {"name": "X", "package_amount": 5},
+        {"name": "X", "category": "?"},
+    ],
+)
+def test_a_product_added_by_hand_is_validated(client, body):
+    setup_home(client)
+    assert client.post("/api/v1/products", json=body, headers=AUTH).status_code == 422
+
+
 def test_catalog_stores_lists_stores_with_products(client, shop):
     stores = client.get("/api/v1/catalog/stores", headers=AUTH).json()
     assert stores == [{"store_id": "demo", "products": 9, "priced": 9}]

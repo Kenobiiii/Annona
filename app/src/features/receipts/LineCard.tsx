@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import type { Schemas } from '@/api/client';
-import { useSearchProducts } from '@/api/hooks';
+import { useCreateProduct, useSearchProducts } from '@/api/hooks';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -12,6 +12,7 @@ import { Segmented } from '@/components/Segmented';
 import { SwitchRow } from '@/components/SwitchRow';
 import { TextField } from '@/components/TextField';
 import { useDebounced } from '@/hooks/useDebounced';
+import { parseNumber } from '@/features/forms/numbers';
 import { formatMoney, t, type MessageKey } from '@/i18n';
 
 type Line = Schemas['ReceiptLineOut'];
@@ -40,8 +41,75 @@ function label(line: Line, choice: LineChoice): string {
   return line.preselected ? t('receipt.line.sure') : t('receipt.line.unsure');
 }
 
+type Category = Schemas['Category'];
+const CATEGORIES: Category[] = [
+  'fruit', 'vegetables', 'grains', 'legumes', 'dairy', 'eggs', 'meat', 'fish', 'oils_fats',
+  'nuts_seeds', 'bakery', 'beverages', 'condiments', 'prepared', 'other',
+];
+
+/** A readable product name from a printed line: "1 TOMATE TRITURADO" -> "Tomate triturado". */
+export function nameFromReceipt(raw: string): string {
+  const words = raw.replace(/^\s*\d+\s+/, '').trim().toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/** Create the product a line refers to when the catalogue does not have it. Nothing is invented:
+ * nutrition and allergens stay unknown until the person adds them. */
+function NewProduct({ line, onCreated }: { line: Line; onCreated: (id: number, name: string) => void }) {
+  const [name, setName] = useState(nameFromReceipt(line.raw_text));
+  const [category, setCategory] = useState<Category>('other');
+  const [pack, setPack] = useState('');
+  const [packUnit, setPackUnit] = useState<Unit>('g');
+  const create = useCreateProduct();
+  const packAmount = parseNumber(pack);
+  const valid = name.trim().length > 0 && (pack.trim() === '' || (packAmount !== null && packAmount > 0));
+  const submit = async () => {
+    if (!valid) return;
+    const out = await create.mutateAsync({
+      name: name.trim(),
+      category,
+      ...(packAmount !== null && packAmount > 0 ? { package_amount: packAmount, package_unit: packUnit } : {}),
+    });
+    onCreated(out.product.id as number, out.product.name);
+  };
+  return (
+    <View style={{ gap: 8 }}>
+      <AppText variant="caption" muted>
+        {t('receipt.line.create.hint')}
+      </AppText>
+      <TextField label={t('receipt.line.create.name')} value={name} onChangeText={setName} />
+      <AppText variant="caption" muted>
+        {t('receipt.line.create.category')}
+      </AppText>
+      <Segmented
+        value={category}
+        onChange={setCategory}
+        options={CATEGORIES.map((c) => ({ value: c, label: t(`category.${c}` as MessageKey) }))}
+      />
+      <TextField
+        label={t('receipt.line.create.pack')}
+        value={pack}
+        onChangeText={setPack}
+        keyboardType="decimal-pad"
+      />
+      <Segmented
+        value={packUnit}
+        onChange={setPackUnit}
+        options={(['g', 'ml', 'unit'] as const).map((u) => ({ value: u, label: t(`receipt.line.unit.${u}` as MessageKey) }))}
+      />
+      {create.isError ? <AppText variant="caption">{t('receipt.line.create.failed')}</AppText> : null}
+      <Button
+        label={t('receipt.line.create.submit')}
+        disabled={!valid || create.isPending}
+        onPress={() => void submit().catch(() => undefined)}
+      />
+    </View>
+  );
+}
+
 function ProductSearch({ line, onPick }: { line: Line; onPick: (id: number, name: string) => void }) {
   const [text, setText] = useState('');
+  const [creating, setCreating] = useState(false);
   const results = useSearchProducts(useDebounced(text, 300));
   return (
     <View style={{ gap: 8 }}>
@@ -66,6 +134,12 @@ function ProductSearch({ line, onPick }: { line: Line; onPick: (id: number, name
           onPress={() => onPick(item.product.id as number, item.product.name)}
         />
       ))}
+      <Button
+        variant="ghost"
+        label={creating ? t('receipt.line.create.hide') : t('receipt.line.create')}
+        onPress={() => setCreating((c) => !c)}
+      />
+      {creating ? <NewProduct line={line} onCreated={onPick} /> : null}
     </View>
   );
 }

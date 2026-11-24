@@ -26,7 +26,7 @@ function WhenReady({ children }: { children: ReactNode }) {
 /** Render with a connected app and a fake server (no retries, no cache between tests). */
 export async function renderConnected(ui: ReactElement, fetchImpl: (r: Request) => Promise<Response>) {
   seedConnection();
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { gcTime: 0 } } });
   const result = await render(
     <ConnectionProvider>
       <QueryProvider client={client} fetchImpl={fetchImpl}>
@@ -48,7 +48,7 @@ async function settle() {
 /** Render without a saved connection (first run). */
 export async function renderFirstRun(ui: ReactElement, fetchImpl?: (r: Request) => Promise<Response>) {
   seedConnection(null);
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { gcTime: 0 } } });
   const result = await render(
     <ConnectionProvider>
       <QueryProvider client={client} fetchImpl={fetchImpl}>

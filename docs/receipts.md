@@ -21,11 +21,19 @@ Photo of a receipt -> pantry and prices updated, **only after you confirm**.
    a confidence. Shop products are tried first; generic foods (no store, e.g. "Banana") are only
    a fallback when no shop product fits. Confirmed choices are remembered per store (`receipt_alias`) and used with full
    confidence next time. A tie is never trusted: unclear winners stay below the pre-selection level.
-6. **Review** (app): you confirm, change the product (search) or ignore each line. Lines at or above
+6. **Review** (app): you confirm, change the product (search), create it, or ignore each line. Lines at or above
    0.85 confidence are pre-selected; lower ones and unmatched ones are never applied unless you act.
 7. **Confirm** (`POST /receipts/{id}/confirm`): exactly the lines you name, with the product you
    saw, are added to the pantry and their price saved with `source=receipt`. All lines not named
    are ignored. Everything is validated first, so a refused request changes nothing.
+
+## A product the catalogue does not have
+
+From a line's search you can **create the product** (`POST /products`): a name (taken from the
+line), a category and, optionally, a pack size. It is a generic product (no store SKU to give it);
+the price you paid is still saved for the receipt's store when you confirm. Nutrition and allergens
+stay **unknown** until you add them in Products: nothing is guessed. A product you added with the
+same name is reused, not duplicated. Next time, the remembered alias matches the line directly.
 
 ## Unknowns are explicit
 
@@ -42,7 +50,7 @@ photo and its sidecar file. Pantry, prices and names stay on your server.
 
 ## API
 
-`POST /receipts`, `GET /receipts/{id}`, `GET /receipts/{id}/image`, `POST /receipts/{id}/confirm`,
+`POST /products` (add a product by hand), `POST /receipts`, `GET /receipts/{id}`, `GET /receipts/{id}/image`, `POST /receipts/{id}/confirm`,
 `POST /receipts/{id}/discard`. Errors: `bad_image` (422), `amount_required` (422, with the line
 ids), `receipt_closed` (409), `not_found` (404).
 

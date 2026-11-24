@@ -7,6 +7,7 @@ import { useLocalSearchParams } from 'expo-router';
 import NewReceiptScreen from '@/app/(app)/receipts/new';
 import ReceiptScreen from '@/app/(app)/receipts/[id]';
 import * as confirm from '@/components/confirm';
+import { nameFromReceipt } from '@/features/receipts/LineCard';
 import { apiError, fakeApi } from '../test-utils/fakeApi';
 import { product, receiptLine, receiptOut } from '../test-utils/fixtures';
 import { renderConnected } from '../test-utils/render';
@@ -185,6 +186,49 @@ describe('reviewing a receipt', () => {
     expect(lines.find((l) => l.line_id === 2)?.product_id).toBe(77);
   });
 
+  it('creates a product the catalogue does not have and uses it for the line', async () => {
+    const created = product({ id: 90, name: 'Bolsa plastico', store_id: null, store_sku: null, nutrition: null });
+    const api = fakeApi({
+      [GET]: receiptOut(),
+      'POST /api/v1/products': created,
+      [CONFIRM]: { applied: [], ignored: 0 },
+    });
+    await renderConnected(<ReceiptScreen />, api.fetchImpl);
+    await screen.findByText('BOLSA PLASTICO');
+    await fireEvent.press(screen.getAllByRole('button', { name: 'Cambiar producto' })[2]);
+    await fireEvent.press(screen.getByRole('button', { name: 'No está: crear producto nuevo' }));
+    expect(screen.getByLabelText('Nombre del producto').props.value).toBe('Bolsa plastico');
+    expect(screen.getByText(/quedan sin datos hasta que los completes/)).toBeTruthy(); // nothing invented
+    await fireEvent.press(screen.getByRole('radio', { name: 'Otros' }));
+    await fireEvent.changeText(screen.getByLabelText('Tamaño del envase (opcional)'), '1');
+    const units = screen.getAllByRole('radio', { name: 'ud.' });
+    await fireEvent.press(units[units.length - 2]); // the last one is the yogurt line's amount unit
+    await fireEvent.press(screen.getByRole('button', { name: 'Crear y usar en esta línea' }));
+
+    await waitFor(() => expect(api.called('POST /api/v1/products')).toHaveLength(1));
+    expect(api.called('POST /api/v1/products')[0].body).toEqual({
+      name: 'Bolsa plastico', category: 'other', package_amount: 1, package_unit: 'unit',
+    });
+    expect(await screen.findByText('Seguro · Bolsa plastico')).toBeTruthy();
+    expect(switchFor(2).props.value).toBe(true);
+  });
+
+  it('does not create a product without a name or with a wrong pack size', async () => {
+    const api = fakeApi({ [GET]: receiptOut() });
+    await renderConnected(<ReceiptScreen />, api.fetchImpl);
+    await screen.findByText('BOLSA PLASTICO');
+    await fireEvent.press(screen.getAllByRole('button', { name: 'Cambiar producto' })[2]);
+    await fireEvent.press(screen.getByRole('button', { name: 'No está: crear producto nuevo' }));
+    const submit = () => screen.getByRole('button', { name: 'Crear y usar en esta línea' });
+    await fireEvent.changeText(screen.getByLabelText('Tamaño del envase (opcional)'), 'abc');
+    expect(submit().props.accessibilityState?.disabled).toBe(true);
+    await fireEvent.changeText(screen.getByLabelText('Tamaño del envase (opcional)'), '');
+    await fireEvent.changeText(screen.getByLabelText('Nombre del producto'), '  ');
+    expect(submit().props.accessibilityState?.disabled).toBe(true);
+    await fireEvent.press(submit());
+    expect(api.called('POST /api/v1/products')).toHaveLength(0);
+  });
+
   it('asks for the amount the server could not know and keeps the review open', async () => {
     const api = fakeApi({
       [GET]: receiptOut({ lines: receiptOut().lines.filter((l) => l.id === 1 || l.id === 2) }),
@@ -236,5 +280,13 @@ describe('reviewing a receipt', () => {
     await renderConnected(<ReceiptScreen />, fakeApi({ [GET]: receiptOut() }).fetchImpl);
     expect(await screen.findByText(/no la añadas también aquí/)).toBeTruthy();
     expect(receiptLine).toBeDefined();
+  });
+});
+
+describe('nameFromReceipt', () => {
+  it('turns a printed line into a readable name', () => {
+    expect(nameFromReceipt('1 TOMATE TRITURADO')).toBe('Tomate triturado');
+    expect(nameFromReceipt('12 HUEVOS GRANDES-L')).toBe('Huevos grandes-l');
+    expect(nameFromReceipt('MAC-CHEESE')).toBe('Mac-cheese');
   });
 });

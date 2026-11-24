@@ -2217,6 +2217,51 @@
         "title": "Product",
         "type": "object"
       },
+      "ProductCreate": {
+        "description": "A product you add yourself, e.g. a receipt line that is not in the catalogue yet.\n\nIt is a generic product (no store): there is no store SKU to give it. Its prices still carry\nthe store they were paid at. Nutrition and allergens start unknown; set them later.",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category",
+            "default": "other"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "package_amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Amount"
+          },
+          "package_unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Unit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ProductCreate",
+        "type": "object"
+      },
       "ProductOut": {
         "properties": {
           "currency": {
@@ -5293,6 +5338,64 @@
           }
         },
         "summary": "Search Products",
+        "tags": [
+          "products"
+        ]
+      },
+      "post": {
+        "description": "Add a product. If a product you added has the same name, that one is returned (200).",
+        "operationId": "create_product_api_v1_products_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Product",
         "tags": [
           "products"
         ]
