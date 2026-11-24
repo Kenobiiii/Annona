@@ -63,7 +63,7 @@ def main() -> None:
         sys.exit(f"{error}\n\nRe-run with --accept-notice to accept it.")
 
     url = database_url()
-    migrate.upgrade(url)
+    migrate.exit_if_outdated(url)
     engine = make_engine(url)
     try:
         with session_scope(engine) as session:

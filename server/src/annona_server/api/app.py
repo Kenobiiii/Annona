@@ -65,7 +65,7 @@ def create_app(
     load_env()
     if engine is None:
         url = database_url()
-        migrate.upgrade(url)
+        migrate.upgrade_with_backup(url)
         engine = make_engine(url)
     if llm_factory is None:
         from ..llm import make_llm_client

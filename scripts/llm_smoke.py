@@ -45,7 +45,7 @@ def main() -> None:
         max_tokens=200,
     )
     url = database_url()
-    migrate.upgrade(url)
+    migrate.exit_if_outdated(url)
     engine = make_engine(url)
     stats = CallStats()
     with session_scope(engine) as session:

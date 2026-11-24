@@ -61,14 +61,10 @@ def open_budget_db(url: str | None = None) -> Engine:
     Evals never migrate it: that is the server's job, done when the owner chooses to.
     """
     url = url or database_url()
-    current, head = migrate.current_revision(url), migrate.head_revision()
-    if current != head:
-        sys.exit(
-            f"the database {url} is at migration {current or 'none'}, this code needs {head}.\n"
-            "Evals never change your database. Back it up, then start the server (it migrates) "
-            "or run `python -m annona_server.db upgrade`; or point ANNONA_DATABASE_URL "
-            "at a separate eval database."
-        )
+    try:
+        migrate.require_head(url)
+    except migrate.OutdatedDatabaseError as error:
+        sys.exit(f"{error}\nOr point ANNONA_DATABASE_URL at a separate eval database.")
     return make_engine(url)
 
 

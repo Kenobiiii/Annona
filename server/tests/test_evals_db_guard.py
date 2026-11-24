@@ -41,7 +41,7 @@ def test_a_dry_run_refuses_an_outdated_database_and_leaves_it_alone(
     with pytest.raises(SystemExit) as stop:
         _run_cli(monkeypatch, command, *(["--limit", "1"] if command == "run" else []))
 
-    assert "never change your database" in str(stop.value.code)
+    assert "never changes your database" in str(stop.value.code)
     assert migrate.current_revision(url) == "0001"
     assert "estimated cost" not in capsys.readouterr().out
 

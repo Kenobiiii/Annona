@@ -28,7 +28,12 @@ curl http://localhost:8000/health        # {"status":"ok","version":"0.1.0"}
 - API and interactive documentation: <http://localhost:8000/docs> (**Authorize** with your token).
 - Data lives in the `annona-data` Docker volume (`/data/annona.db`).
 - Services: `api` and `scheduler` (daily price refresh at `ANNONA_REFRESH_AT`, default 04:30 UTC).
-- Update: `git pull && docker compose up -d --build` (migrations run on start).
+- Update: `git pull && docker compose up -d --build`. Only the server changes the database's
+  structure (migrations), on start, and first saves a copy of the old file in
+  `/data/backups/annona-<old migration>-<UTC time>.db`. Every other command (`ingest`, `products`,
+  `optimize`, `planner`, the MCP server, the scheduler, evals) only checks the database is up to
+  date and stops if not; `seed` also creates a brand-new database. To migrate without starting the
+  server: `python -m annona_server.db upgrade` (same backup).
 - Logs: `docker compose logs -f`.
 
 Without Docker: `uv sync`, then `uv run python -m annona_server.api --host 0.0.0.0 --port 8000` and,
@@ -64,6 +69,9 @@ Everything is in one SQLite file (these commands are untested by the maintainers
 docker compose exec api /app/.venv/bin/python -c "import sqlite3; s=sqlite3.connect('/data/annona.db'); d=sqlite3.connect('/data/backup.db'); s.backup(d)"
 docker compose cp api:/data/backup.db ./annona-backup.db
 ```
+
+The server also keeps an automatic copy in `/data/backups/` each time an update migrates the
+database; they are never deleted automatically, so remove old ones when you no longer need them.
 
 Restore by copying a backup over `/data/annona.db` with the stack stopped. Receipt photos, if kept,
 are under `/data/receipts/`.

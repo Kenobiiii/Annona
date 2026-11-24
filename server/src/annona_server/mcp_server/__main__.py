@@ -14,7 +14,7 @@ from . import build_server
 def main() -> None:
     load_env()
     url = database_url()
-    migrate.upgrade(url)
+    migrate.exit_if_outdated(url)  # an AI client starts this: never migrate here
     build_server(make_engine(url)).run("stdio")
 
 

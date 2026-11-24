@@ -32,7 +32,11 @@ def next_run(now: datetime, at: str) -> datetime:
 
 def run_once() -> None:
     url = database_url()
-    migrate.upgrade(url)
+    try:
+        migrate.require_head(url)  # the server migrates; this job only waits for it
+    except migrate.OutdatedDatabaseError as error:
+        log.error("price refresh skipped: %s", error)
+        return
     engine = make_engine(url)
     try:
         with session_scope(engine) as session:

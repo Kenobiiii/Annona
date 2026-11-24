@@ -65,7 +65,7 @@ def main() -> None:
         skip=_skips(args.skip),
     )
     url = database_url()
-    migrate.upgrade(url)
+    migrate.exit_if_outdated(url)
     engine = make_engine(url)
     try:
         with session_scope(engine) as session:
