@@ -14,6 +14,8 @@ import json
 import sys
 from decimal import Decimal
 
+from sqlalchemy import Engine
+
 from annona_core.llm import Tier
 
 from ..config import load_env
@@ -51,6 +53,23 @@ def _fmt(value, pct: bool = False, money: bool = False) -> str:
     if money:
         return f"{Decimal(value):.6f}"
     return f"{value * 100:.1f}%" if pct else str(value)
+
+
+def open_budget_db(url: str | None = None) -> Engine:
+    """The database holding the eval budget and LLM usage, which must already be up to date.
+
+    Evals never migrate it: that is the server's job, done when the owner chooses to.
+    """
+    url = url or database_url()
+    current, head = migrate.current_revision(url), migrate.head_revision()
+    if current != head:
+        sys.exit(
+            f"the database {url} is at migration {current or 'none'}, this code needs {head}.\n"
+            "Evals never change your database. Back it up, then start the server (it migrates) "
+            "or run `python -m annona_server.db upgrade`; or point ANNONA_DATABASE_URL "
+            "at a separate eval database."
+        )
+    return make_engine(url)
 
 
 def compare() -> None:
@@ -156,9 +175,7 @@ def main() -> None:
         sys.exit(f"no known price for {model}: refusing to run without a cost estimate")
     estimate = estimate_cost_usd(rows, args.prompt, args.batch_size, *prices)
 
-    url = database_url()
-    migrate.upgrade(url)
-    engine = make_engine(url)
+    engine = open_budget_db()
     try:
         with session_scope(engine) as session:
             spent = spent_usd(session, EVAL_TASK_PREFIX)
@@ -235,9 +252,7 @@ def receipt_commands(args) -> None:
     if prices is None:
         sys.exit(f"no known price for {model}: refusing to run without a cost estimate")
     estimate = receipts.estimate_cost_usd(args.n, *prices)
-    url = database_url()
-    migrate.upgrade(url)
-    engine = make_engine(url)
+    engine = open_budget_db()
     try:
         with session_scope(engine) as session:
             spent = spent_usd(session, EVAL_TASK_PREFIX)
@@ -308,9 +323,7 @@ def agent_commands(args) -> None:
     scenarios = [s for s in agent.SCENARIOS if not args.only or s.id in args.only]
     turns = len(scenarios) * args.repeats
     estimate = agent.estimate_cost_usd(turns, *prices)
-    url = database_url()
-    migrate.upgrade(url)
-    engine = make_engine(url)
+    engine = open_budget_db()
     try:
         with session_scope(engine) as session:
             spent = spent_usd(session, EVAL_TASK_PREFIX)
@@ -410,9 +423,7 @@ def plan_commands(args) -> None:
     settings = llm_settings()
     if args.command == "plan-run" and args.model:
         settings.models[Tier.LARGE] = args.model
-    url = database_url()
-    migrate.upgrade(url)
-    engine = make_engine(url)
+    engine = open_budget_db()
     try:
         with session_scope(engine) as session:
             spent = spent_usd(session, EVAL_TASK_PREFIX)

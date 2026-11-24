@@ -24,7 +24,10 @@ uv run python -m annona_server.evals rescore    # re-apply fixed labels to old r
    `eval:product_classification`.
 3. **Cost guard**: the estimated cost (upper bound, peak prices) is printed first; nothing is
    spent without `--yes`; runs stop when `ANNONA_EVAL_BUDGET_USD` (default 1.00) would be
-   exceeded by everything already spent on evals.
+   exceeded by everything already spent on evals. The budget is read from the configured
+   database (`ANNONA_DATABASE_URL`), which evals **never migrate**: if it is not at the latest
+   migration they stop and ask you to back it up and start the server (or `python -m
+   annona_server.db upgrade`), or to point `ANNONA_DATABASE_URL` at a separate eval database.
 4. **Report**: one JSON per run with metadata (model, prompt, dataset hash, git commit), metrics
    and every item's prediction, so any number can be traced back to examples.
 

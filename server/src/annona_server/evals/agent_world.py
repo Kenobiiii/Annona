@@ -110,7 +110,7 @@ def scripted_swap_llm() -> LLMClient:
 def build_world(folder: Path | None = None) -> World:
     folder = folder or Path(tempfile.mkdtemp(prefix="annona-agent-eval-"))
     url = f"sqlite:///{folder / 'world.db'}"
-    migrate.upgrade(url)
+    migrate.upgrade(url)  # its own throwaway database, never the configured one
     engine = make_engine(url)
     foods = {f["key"]: f for f in sample_foods()}
     ids: dict[str, int] = {}
