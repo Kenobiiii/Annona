@@ -60,7 +60,7 @@ uv run pytest --live
 | id | Source | Policy | Notes |
 |---|---|---|---|
 | `open_prices` | [Open Prices](https://prices.openfoodfacts.org) (Open Food Facts) | normal | Crowdsourced, ODbL 1.0 (credit the source). Follows one brand's locations in one country. Coverage can be sparse or old (Nov 2026: 56 Mercadona stores in Spain with prices, few items each). |
-| `mercadona` | Mercadona online shop, via [mercapy](https://github.com/jtayped/mercapy) (MIT) | **opt-in** | Its `robots.txt` disallows `/api`. Needs a postcode (prices vary by warehouse), max 50 products per call, 2 s between requests, no catalogue downloads. |
+| `mercadona` | Mercadona online shop, via [mercapy](https://github.com/jtayped/mercapy) (MIT) | **opt-in** | Its `robots.txt` disallows `/api`. Needs a postcode (prices vary by warehouse), max 50 products per call, 2 s between requests, no catalogue downloads. From the app: notice accepted and postal code saved per household (Settings > Stores), one search per press, cached a day ([receipts.md](receipts.md)). |
 
 ## Spanish stores reviewed (robots.txt, 2026-11-19)
 

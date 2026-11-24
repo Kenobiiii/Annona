@@ -28,6 +28,7 @@ Product 1─N Price ─(optional)─ ReceiptLine
 | `MealPlan`, `PlannedMeal` | A week (starting Monday); meals per day/slot, optionally per member. |
 | `ShoppingList`, `ShoppingItem` | For one store; packs and a price snapshot. |
 | `Receipt`, `ReceiptLine` | Scanned receipts; lines are matched to products with a confidence and need confirmation. |
+| `StoreConnection` | Per household and store plugin: the shop's postal code (and the store's own location code resolved from it) and when the person accepted an opt-in plugin's notice (`None` = not accepted). |
 
 ## Rules
 

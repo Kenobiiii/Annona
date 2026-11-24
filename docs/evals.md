@@ -172,7 +172,9 @@ difficulty: `clean` (flat scan), `noisy` (slight rotation, blur, JPEG, paper spe
 Limits: printed names are my imitation of receipt abbreviations, so the matching numbers measure
 regressions, not real-world accuracy; a real photo set would be the real test.
 
-**Metrics**: `line_recall` / `line_precision` (lines found / invented), `amount_exact`,
+**Metrics**: `postal_code_exact`, `search_name_given` and `search_name_product_accuracy` (would
+searching by the AI's plain-words name find the right product, compared with `product_accuracy`
+on the printed text), `line_recall` / `line_precision` (lines found / invented), `amount_exact`,
 `total_exact`, `errors_caught_by_sum_check` and **`silent_errors`** (receipts that are wrong yet
 pass the sum check: the dangerous ones), `product_accuracy`, **`confident_wrong`** (a wrong product
 pre-selected: the receipt equivalent of the diet-safety metric), `lines_text_changed` (the model

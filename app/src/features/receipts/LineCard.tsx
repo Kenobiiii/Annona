@@ -11,6 +11,8 @@ import { Chip } from '@/components/Chip';
 import { Segmented } from '@/components/Segmented';
 import { SwitchRow } from '@/components/SwitchRow';
 import { TextField } from '@/components/TextField';
+import { StoreSearch } from '@/features/stores/StoreSearch';
+import { storeName } from '@/features/stores/StoreSetup';
 import { useDebounced } from '@/hooks/useDebounced';
 import { parseNumber } from '@/features/forms/numbers';
 import { formatMoney, t, type MessageKey } from '@/i18n';
@@ -33,7 +35,11 @@ type Props = {
   choice: LineChoice;
   needsAmount: boolean;
   onChange: (next: LineChoice) => void;
+  storeId?: string | null; // the receipt's store: its products can be searched there
+  postalCode?: string | null; // the shop's, if the receipt prints it
 };
+
+type StoreContext = { storeId?: string | null; postalCode?: string | null };
 
 function label(line: Line, choice: LineChoice): string {
   if (!choice.productId) return t('receipt.line.none');
@@ -107,9 +113,11 @@ function NewProduct({ line, onCreated }: { line: Line; onCreated: (id: number, n
   );
 }
 
-function ProductSearch({ line, onPick }: { line: Line; onPick: (id: number, name: string) => void }) {
+function ProductSearch({ line, onPick, store }: { line: Line; onPick: (id: number, name: string) => void; store: StoreContext }) {
   const [text, setText] = useState('');
   const [creating, setCreating] = useState(false);
+  const [inStore, setInStore] = useState(false);
+  const storeId = store.storeId;
   const results = useSearchProducts(useDebounced(text, 300));
   return (
     <View style={{ gap: 8 }}>
@@ -134,6 +142,21 @@ function ProductSearch({ line, onPick }: { line: Line; onPick: (id: number, name
           onPress={() => onPick(item.product.id as number, item.product.name)}
         />
       ))}
+      {storeId ? (
+        <Button
+          variant="ghost"
+          label={t(inStore ? 'receipt.line.store.hide' : 'receipt.line.store', { store: storeName(storeId) })}
+          onPress={() => setInStore((v) => !v)}
+        />
+      ) : null}
+      {storeId && inStore ? (
+        <StoreSearch
+          storeId={storeId}
+          initialQuery={line.search_name ?? nameFromReceipt(line.raw_text)}
+          suggestedPostalCode={store.postalCode}
+          onPicked={onPick}
+        />
+      ) : null}
       <Button
         variant="ghost"
         label={creating ? t('receipt.line.create.hide') : t('receipt.line.create')}
@@ -145,7 +168,7 @@ function ProductSearch({ line, onPick }: { line: Line; onPick: (id: number, name
 }
 
 /** One receipt line: what it says, the suggested product and what the person decides. */
-export function LineCard({ line, choice, needsAmount, onChange }: Props) {
+export function LineCard({ line, choice, needsAmount, onChange, storeId, postalCode }: Props) {
   const [searching, setSearching] = useState(false);
   const noteKeys = (line.notes ?? []).map((n) => `receipt.line.note.${n}` as MessageKey);
   const issueKeys = (line.issues ?? []).map((n) => `receipt.line.issue.${n}` as MessageKey);
@@ -206,6 +229,7 @@ export function LineCard({ line, choice, needsAmount, onChange }: Props) {
       {searching ? (
         <ProductSearch
           line={line}
+          store={{ storeId, postalCode }}
           onPick={(productId, productName) => {
             onChange({ ...choice, productId, productName, apply: true, changed: productId !== line.product?.product_id });
             setSearching(false);

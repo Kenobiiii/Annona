@@ -134,6 +134,8 @@ function Review({ receipt }: { receipt: Receipt }) {
           line={line}
           choice={choices[line.id]}
           needsAmount={needAmount.includes(line.id)}
+          storeId={receipt.store_id}
+          postalCode={receipt.postal_code}
           onChange={(next) => setChoices((cur) => ({ ...cur, [line.id]: next }))}
         />
       ))}

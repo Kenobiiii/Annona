@@ -22,6 +22,9 @@ export const keys = {
   recipe: (day: string, slot: string) => ['recipe', day, slot] as const,
   cookPreview: (day: string, slot: string) => ['cook-preview', day, slot] as const,
   receipt: (id: number) => ['receipt', id] as const,
+  stores: ['stores'] as const,
+  storeConnection: (storeId: string) => ['store-connection', storeId] as const,
+  storeSearch: (storeId: string, q: string) => ['store-search', storeId, q] as const,
 };
 
 // ---- reads ---------------------------------------------------------------------------------
@@ -56,6 +59,36 @@ export function useSearchProducts(q: string, store?: string) {
     enabled: q.trim().length >= 2,
     queryFn: () =>
       unwrap(api.GET('/api/v1/products', { params: { query: { q: q.trim(), store, page: 1, size: 30 } } })),
+  });
+}
+
+export function useStores() {
+  const api = useApi();
+  return useQuery({ queryKey: keys.stores, queryFn: () => unwrap(api.GET('/api/v1/stores')) });
+}
+
+export function useStoreConnection(storeId: string) {
+  const api = useApi();
+  return useQuery({
+    queryKey: keys.storeConnection(storeId),
+    queryFn: () =>
+      unwrap(api.GET('/api/v1/stores/{store_id}/connection', { params: { path: { store_id: storeId } } })),
+  });
+}
+
+/** One search in the store (the server caches it for a day). Only runs when asked (enabled). */
+export function useStoreSearch(storeId: string, q: string, enabled: boolean) {
+  const api = useApi();
+  return useQuery({
+    queryKey: keys.storeSearch(storeId, q.trim()),
+    enabled: enabled && q.trim().length >= 2,
+    staleTime: Infinity,
+    queryFn: () =>
+      unwrap(
+        api.GET('/api/v1/stores/{store_id}/search', {
+          params: { path: { store_id: storeId }, query: { q: q.trim() } },
+        }),
+      ),
   });
 }
 
@@ -219,6 +252,40 @@ export function useCreateProduct() {
   return useWrite(
     (body: Schemas['ProductCreate']) => unwrap(api.POST('/api/v1/products', { body })),
     [['products'], keys.catalog],
+  );
+}
+
+/** Accept the store's notice and/or say where you shop (one request to the store). */
+export function usePutStoreConnection(storeId: string) {
+  const api = useApi();
+  return useWrite(
+    (body: Schemas['ConnectionIn']) =>
+      unwrap(api.PUT('/api/v1/stores/{store_id}/connection', { params: { path: { store_id: storeId } }, body })),
+    [keys.storeConnection(storeId)],
+  );
+}
+
+/** Withdraw the accepted notice and forget the postal code. */
+export function useDeleteStoreConnection(storeId: string) {
+  const api = useApi();
+  return useWrite(
+    () => unwrap(api.DELETE('/api/v1/stores/{store_id}/connection', { params: { path: { store_id: storeId } } })),
+    [keys.storeConnection(storeId), ['store-search']],
+  );
+}
+
+/** Add ONE product of the store to the catalogue (with its price and Open Food Facts data). */
+export function useAddStoreProduct(storeId: string) {
+  const api = useApi();
+  return useWrite(
+    (storeSku: string) =>
+      unwrap(
+        api.POST('/api/v1/stores/{store_id}/products', {
+          params: { path: { store_id: storeId } },
+          body: { store_sku: storeSku },
+        }),
+      ),
+    [['products'], keys.catalog, ['store-search']],
   );
 }
 

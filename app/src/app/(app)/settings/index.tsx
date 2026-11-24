@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { useHousehold, useLlmSettings, usePutHousehold, useProfiles } from '@/api/hooks';
+import { useHousehold, useLlmSettings, usePutHousehold, useProfiles, useStores } from '@/api/hooks';
 import { ApiError } from '@/api/errors';
 import { AppText } from '@/components/AppText';
 import { Banner } from '@/components/Banner';
@@ -16,6 +16,7 @@ import { TextField } from '@/components/TextField';
 import { useConnection } from '@/connection/ConnectionProvider';
 import { ConnectionForm } from '@/features/connection/ConnectionForm';
 import { centsToEuros, eurosToCents } from '@/features/forms/money';
+import { StoreSetup, storeName } from '@/features/stores/StoreSetup';
 import { formatMoney, t } from '@/i18n';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -43,6 +44,26 @@ function ServerSection() {
         <ConnectionForm />
         <Button variant="ghost" label={t('settings.server.forget')} onPress={() => void forget()} />
       </Card>
+    </Section>
+  );
+}
+
+/** Opt-in stores (Mercadona): the accepted notice and the postal code, changeable here. */
+function StoresSection() {
+  const stores = useStores();
+  const optIn = (stores.data ?? []).filter((s) => s.opt_in);
+  if (!optIn.length) return null;
+  return (
+    <Section title={t('settings.stores')}>
+      <AppText variant="caption" muted>
+        {t('settings.stores.hint')}
+      </AppText>
+      {optIn.map((s) => (
+        <Card key={s.id} style={{ gap: 8 }}>
+          <AppText variant="label">{storeName(s.id, s.name)}</AppText>
+          <StoreSetup storeId={s.id} manage />
+        </Card>
+      ))}
     </Section>
   );
 }
@@ -176,6 +197,7 @@ export default function SettingsScreen() {
         ) : null}
       </Section>
       {household.data ? <PeopleSection /> : null}
+      {household.data ? <StoresSection /> : null}
       <AiSection />
       <Section title={t('settings.app')}>
         <Card>

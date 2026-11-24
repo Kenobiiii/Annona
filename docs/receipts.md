@@ -8,8 +8,10 @@ Photo of a receipt -> pantry and prices updated, **only after you confirm**.
 2. **Upload** (`POST /receipts`, multipart): the server checks the file's own bytes (JPEG, PNG or
    WebP, up to 8 MB), stores it under `receipts/` next to the database, and sends it once to the
    configured AI provider (small tier, vision) to be read.
-3. **Read** (AI): strict JSON with the store, date, total and one entry per line *as printed*. The
-   model only transcribes; it never calculates (`core/receipts/draft.py`).
+3. **Read** (AI): strict JSON with the store, its postal code, date, total and one entry per line
+   *as printed*. The model only transcribes; it never calculates (`core/receipts/draft.py`). The
+   one field where it interprets is `search_name`, a plain-words name used only to search a store
+   ("YAK SOJA CUP" -> "yakisoba soja vaso"); matching and the review always use the printed text.
 4. **Check** (code, `core/receipts/parse.py`): numbers, weights and dates are parsed by code.
    - the lines must add up to the printed total (discounts included); if not, the receipt is
      flagged with the difference. This **sum check** catches missed or misread lines;
@@ -29,7 +31,15 @@ Photo of a receipt -> pantry and prices updated, **only after you confirm**.
 
 ## A product the catalogue does not have
 
-From a line's search you can **create the product** (`POST /products`): a name (taken from the
+**Search the receipt's store** ("Buscar en Mercadona", only for stores with a plugin). The first
+time, the app shows the plugin's notice (opt-in plugins) and asks for the shop's postal code,
+prefilled from the receipt when it prints one; nothing reaches the store before you accept. Then
+it searches with the AI's plain-words name of the line (`search_name`, editable), one search per
+press, cached for a day. Picking a result adds that ONE product with the store's SKU, pack size and
+price, plus Open Food Facts nutrition and allergens by barcode. The store only receives the search
+text and the postal code. Change the postal code or withdraw the notice in Settings > Stores.
+
+Or **create the product** (`POST /products`): a name (taken from the
 line), a category and, optionally, a pack size. It is a generic product (no store SKU to give it);
 the price you paid is still saved for the receipt's store when you confirm. Nutrition and allergens
 stay **unknown** until you add them in Products: nothing is guessed. A product you added with the
@@ -50,8 +60,10 @@ photo and its sidecar file. Pantry, prices and names stay on your server.
 
 ## API
 
-`POST /products` (add a product by hand), `POST /receipts`, `GET /receipts/{id}`, `GET /receipts/{id}/image`, `POST /receipts/{id}/confirm`,
-`POST /receipts/{id}/discard`. Errors: `bad_image` (422), `amount_required` (422, with the line
+`POST /receipts`, `GET /receipts/{id}`, `GET /receipts/{id}/image`, `POST /receipts/{id}/confirm`,
+`POST /receipts/{id}/discard`; `POST /products` (add a product by hand); store plugins:
+`GET|PUT|DELETE /stores/{id}/connection`, `GET /stores/{id}/search?q=`, `POST /stores/{id}/products`
+(errors `notice_required` 409, `not_connected` 409, `store_error` 502). Errors: `bad_image` (422), `amount_required` (422, with the line
 ids), `receipt_closed` (409), `not_found` (404).
 
 If you tick a shopping-list item **and** scan the receipt of the same purchase, the pantry gets it
