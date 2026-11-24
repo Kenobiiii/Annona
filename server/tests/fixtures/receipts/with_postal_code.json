@@ -1,0 +1,10 @@
+{
+  "store": "MERCADONA S.A.",
+  "postal_code": "29003",
+  "date": "24/11/2026",
+  "total": "1,85",
+  "lines": [
+    {"raw_text": "YAK SOJA CUP", "total": "1,00", "search_name": "yakisoba soja vaso"},
+    {"raw_text": "SPAGHETTI", "total": "0,85", "search_name": "spaghetti"}
+  ]
+}

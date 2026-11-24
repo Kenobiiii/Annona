@@ -22,10 +22,15 @@ class DraftLine(BaseModel):
     )
     unit_price: str | None = Field(default=None, description="price per unit/kg if printed")
     total: str | None = Field(default=None, description="the line amount as printed, e.g. '9,96'")
+    search_name: str | None = Field(
+        default=None,
+        description="the name in plain words to search the shop, e.g. 'tomate triturado'",
+    )
 
 
 class ReceiptDraft(BaseModel):
     store: str | None = None
+    postal_code: str | None = Field(default=None, description="the shop's postal code as printed")
     date: str | None = Field(default=None, description="purchase date as printed")
     total: str | None = Field(default=None, description="the receipt total as printed")
     lines: list[DraftLine] = Field(max_length=120)
@@ -50,6 +55,13 @@ Rules:
   total.
 - Do NOT include the grand total, payment, tax, change or loyalty lines as products.
 - store, date and the grand total of the receipt go in their own fields.
+- postal_code: the shop's postal code if the receipt prints it in the shop's address (e.g. the
+  "29003" in "29003 MALAGA"), otherwise null.
+- search_name: the ONLY field where you may interpret. Write the product name out in plain,
+  lower-case words, as a shopper would type it into the shop's website search: expand the
+  abbreviations you are confident about ("FIL.PECH.POLLO" -> "filete pechuga pollo"), drop pack
+  sizes and codes. If you are not confident, copy the printed words in lower case. It is only used
+  to search; raw_text must still be exactly as printed.
 - If a value is not legible, use null. Never invent a value."""
 
 

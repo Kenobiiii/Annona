@@ -2874,6 +2874,18 @@
             "title": "Raw Text",
             "type": "string"
           },
+          "search_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the AI's plain-words reading of the name, only to search a shop",
+            "title": "Search Name"
+          },
           "status": {
             "title": "Status",
             "type": "string"
@@ -2941,6 +2953,18 @@
           "lines_total_cents": {
             "title": "Lines Total Cents",
             "type": "integer"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the shop's, if printed",
+            "title": "Postal Code"
           },
           "purchased_on": {
             "anyOf": [

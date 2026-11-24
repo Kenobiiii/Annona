@@ -224,6 +224,7 @@ def scan_receipt(
                     else None
                 ),
                 "quantity": str(item.quantity) if item.quantity is not None else None,
+                "search_name": item.search_name,
             }
         )
     sidecar = _sidecar(str(path))
@@ -232,6 +233,7 @@ def scan_receipt(
         json.dumps(
             {
                 "store_text": parsed.store,
+                "postal_code": parsed.postal_code,
                 "discounts_cents": parsed.discounts_cents,
                 "skipped": parsed.skipped,
                 "issues": parsed.issues,
@@ -257,6 +259,7 @@ class LineView:
     effect: LineEffect | None
     issues: list[str]
     preselected: bool
+    search_name: str | None = None
 
 
 @dataclass
@@ -267,6 +270,7 @@ class ReceiptView:
     skipped: list[str]
     discounts_cents: int
     issues: list[str]
+    postal_code: str | None = None
 
     @property
     def lines_total_cents(self) -> int:
@@ -340,6 +344,7 @@ def view_receipt(session: Session, household: Household, receipt_id: int) -> Rec
                 effect=effect,
                 issues=list(detail.get("issues", [])),
                 preselected=bool(confident),
+                search_name=detail.get("search_name"),
             )
         )
     return ReceiptView(
@@ -349,6 +354,7 @@ def view_receipt(session: Session, household: Household, receipt_id: int) -> Rec
         skipped=side["skipped"],
         discounts_cents=side["discounts_cents"],
         issues=side["issues"],
+        postal_code=side.get("postal_code"),
     )
 
 

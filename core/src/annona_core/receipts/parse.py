@@ -101,6 +101,7 @@ class ParsedLine:
     weight: Quantity | None  # if printed
     unit_price_cents: int | None
     issues: tuple[str, ...] = ()
+    search_name: str | None = None  # AI's plain-words reading, only for searching a shop
 
 
 @dataclass
@@ -110,6 +111,7 @@ class ParsedReceipt:
     total_cents: int | None  # as printed
     lines: list[ParsedLine]  # purchased items
     discounts_cents: int = 0  # sum of negative lines (<= 0)
+    postal_code: str | None = None  # the shop's, as printed (shape checked by code)
     skipped: list[str] = field(default_factory=list)  # lines without a readable amount
     issues: list[str] = field(default_factory=list)
 
@@ -152,12 +154,29 @@ def _purchased_weight(
     return weight, None
 
 
+def parse_postal_code(text: str | None) -> str | None:
+    """A postal code as printed, if it looks like one (3-10 letters/digits, at least 2 digits)."""
+    code = " ".join((text or "").upper().split())
+    if (
+        re.fullmatch(r"[0-9A-Z][0-9A-Z -]{1,8}[0-9A-Z]", code)
+        and sum(c.isdigit() for c in code) >= 2
+    ):
+        return code
+    return None
+
+
+def _search_name(text: str | None, raw: str) -> str | None:
+    name = " ".join((text or "").split())[:80].strip()
+    return name if name and name.casefold() != raw.casefold() else None
+
+
 def parse_receipt(draft: ReceiptDraft) -> ParsedReceipt:
     result = ParsedReceipt(
         store=(draft.store or "").strip() or None,
         purchased_on=parse_date(draft.date),
         total_cents=parse_cents(draft.total),
         lines=[],
+        postal_code=parse_postal_code(draft.postal_code),
     )
     for item in draft.lines:
         raw = " ".join(item.raw_text.split())
@@ -195,6 +214,7 @@ def parse_receipt(draft: ReceiptDraft) -> ParsedReceipt:
                 weight=weight,
                 unit_price_cents=unit_price,
                 issues=tuple(issues),
+                search_name=_search_name(item.search_name, raw),
             )
         )
     if result.total_matches is False:
@@ -212,6 +232,7 @@ __all__ = [
     "parse_cents",
     "parse_date",
     "parse_decimal",
+    "parse_postal_code",
     "parse_receipt",
     "parse_weight",
 ]

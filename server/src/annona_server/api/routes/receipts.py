@@ -60,6 +60,9 @@ class ReceiptLineOut(BaseModel):
     )
     issues: list[str] = Field(description="line_math: quantity x unit price != total")
     status: str
+    search_name: str | None = Field(
+        default=None, description="the AI's plain-words reading of the name, only to search a shop"
+    )
 
 
 class ReceiptOut(BaseModel):
@@ -77,6 +80,7 @@ class ReceiptOut(BaseModel):
     skipped: list[str] = Field(description="lines the AI read without a legible amount")
     lines: list[ReceiptLineOut]
     has_image: bool
+    postal_code: str | None = Field(default=None, description="the shop's, if printed")
 
 
 def _line_out(view: LineView) -> ReceiptLineOut:
@@ -104,6 +108,7 @@ def _line_out(view: LineView) -> ReceiptLineOut:
         notes=list(effect.notes) if effect else [],
         issues=view.issues,
         status=str(line.status),
+        search_name=view.search_name,
     )
 
 
@@ -122,6 +127,7 @@ def _out(view: ReceiptView) -> ReceiptOut:
         skipped=view.skipped,
         lines=[_line_out(v) for v in view.lines],
         has_image=bool(receipt.image_path),
+        postal_code=view.postal_code,
     )
 
 

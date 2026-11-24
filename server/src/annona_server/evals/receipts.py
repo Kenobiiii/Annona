@@ -39,6 +39,7 @@ from annona_core.receipts.parse import ParsedReceipt
 
 from .receipt_synth import (
     CATALOGUE_NAMES,
+    POSTAL_CODE,
     RENDERER_VERSION,
     SyntheticReceipt,
     TrueLine,
@@ -69,6 +70,8 @@ class LineScore:
     product_ok: bool = False
     preselected: bool = False
     confident_wrong: bool = False
+    search_name: str | None = None  # the AI's plain-words reading (only used to search a shop)
+    search_name_ok: bool = False  # it leads the matcher to the right product
 
 
 @dataclass
@@ -83,6 +86,7 @@ class ReceiptScore:
     any_error: bool
     silent_error: bool  # wrong, yet the sum check passed
     caught_error: bool  # wrong, and the sum check flagged it
+    postal_code_ok: bool = False
 
 
 def _quantity_ok(true: TrueLine, predicted) -> bool:
@@ -137,6 +141,11 @@ def score_receipt(truth: SyntheticReceipt, draft: ReceiptDraft) -> ReceiptScore:
         predicted = parsed.lines[best_i]
         match = match_line(predicted.raw_text, CATALOGUE, store_id="eval")
         wrong = match.product_id is not None and match.product_id != true.product_id
+        by_name = (
+            match_line(predicted.search_name, CATALOGUE, store_id="eval")
+            if predicted.search_name
+            else match
+        )
         scores.append(
             LineScore(
                 printed=true.printed,
@@ -150,6 +159,8 @@ def score_receipt(truth: SyntheticReceipt, draft: ReceiptDraft) -> ReceiptScore:
                 product_ok=match.product_id == true.product_id,
                 preselected=match.preselected,
                 confident_wrong=match.preselected and wrong,
+                search_name=predicted.search_name,
+                search_name_ok=by_name.product_id == true.product_id,
             )
         )
     total_read = parsed.total_cents is not None
@@ -171,6 +182,7 @@ def score_receipt(truth: SyntheticReceipt, draft: ReceiptDraft) -> ReceiptScore:
         any_error=any_error,
         silent_error=any_error and not flagged,
         caught_error=any_error and flagged,
+        postal_code_ok=parsed.postal_code == POSTAL_CODE,
     )
 
 
@@ -205,6 +217,12 @@ def aggregate(scores: list[ReceiptScore], calls: list[CallStats]) -> dict[str, A
         ),
         "preselected_rate": _rate(sum(ln.preselected for ln in found), len(found)),
         "confident_wrong": sum(ln.confident_wrong for ln in found),
+        "postal_code_exact": _rate(sum(s.postal_code_ok for s in scores), len(scores)),
+        "search_name_given": _rate(sum(ln.search_name is not None for ln in found), len(found)),
+        # Would searching by the AI's plain-words name find the right product? (vs raw text)
+        "search_name_product_accuracy": _rate(
+            sum(ln.search_name_ok for ln in expected_products), len(expected_products)
+        ),
         "cost_usd": str(cost),
         "cost_per_receipt_usd": str((cost / len(scores)).quantize(Decimal("0.000001")))
         if scores
@@ -241,6 +259,7 @@ def draft_from_truth(truth: SyntheticReceipt) -> ReceiptDraft:
         lines.append(DraftLine(raw_text="DESCUENTO", total=money(truth.discount_cents)))
     return ReceiptDraft(
         store=truth.store,
+        postal_code=POSTAL_CODE,
         date=truth.purchased_on.strftime("%d/%m/%Y"),
         total=money(truth.total_cents),
         lines=lines,

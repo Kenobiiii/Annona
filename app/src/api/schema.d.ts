@@ -1781,6 +1781,11 @@ export interface components {
             quantity: string | null;
             /** Raw Text */
             raw_text: string;
+            /**
+             * Search Name
+             * @description the AI's plain-words reading of the name, only to search a shop
+             */
+            search_name?: string | null;
             /** Status */
             status: string;
             /** Total Cents */
@@ -1800,6 +1805,11 @@ export interface components {
             lines: components["schemas"]["ReceiptLineOut"][];
             /** Lines Total Cents */
             lines_total_cents: number;
+            /**
+             * Postal Code
+             * @description the shop's, if printed
+             */
+            postal_code?: string | null;
             /** Purchased On */
             purchased_on: string | null;
             /**

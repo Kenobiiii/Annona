@@ -22,7 +22,8 @@ from annona_core.receipts import (
     parse_receipt,
     read_receipt,
 )
-from annona_core.receipts.parse import parse_weight
+from annona_core.receipts.draft import build_receipt_prompt
+from annona_core.receipts.parse import parse_postal_code, parse_weight
 
 D = Decimal
 
@@ -356,3 +357,34 @@ def test_the_model_only_reads_and_the_call_uses_the_small_tier_with_the_image():
         "never invent" in request.system.lower()
         and "never\ncalculate" in request.system.replace(" ", "")
     )
+
+
+@pytest.mark.parametrize(
+    ("text", "code"),
+    [("29003", "29003"), (" 29003 ", "29003"), ("sw1a 1aa", "SW1A 1AA"), ("MALAGA", None),
+     ("12", None), (None, None), ("29003 MALAGA CENTRO", None)],
+)  # fmt: skip
+def test_a_postal_code_is_kept_only_if_it_looks_like_one(text, code):
+    assert parse_postal_code(text) == code
+
+
+def test_the_search_name_is_kept_apart_and_never_replaces_the_printed_text():
+    draft = ReceiptDraft(
+        postal_code="29003",
+        lines=[
+            DraftLine(raw_text="YAK SOJA CUP", total="1,00", search_name=" yakisoba  soja vaso "),
+            DraftLine(raw_text="BANANA", total="1,39", search_name="banana"),
+            DraftLine(raw_text="SPAGHETTI", total="0,85"),
+        ],
+    )
+    parsed = parse_receipt(draft)
+    assert parsed.postal_code == "29003"
+    assert [ln.raw_text for ln in parsed.lines] == ["YAK SOJA CUP", "BANANA", "SPAGHETTI"]
+    assert [ln.search_name for ln in parsed.lines] == ["yakisoba soja vaso", None, None]
+
+
+def test_the_prompt_keeps_the_printed_text_and_allows_interpretation_only_for_searching():
+    system, _ = build_receipt_prompt()
+    assert "search_name: the ONLY field where you may interpret" in system
+    assert "raw_text must still be exactly as printed" in system
+    assert "postal_code" in system

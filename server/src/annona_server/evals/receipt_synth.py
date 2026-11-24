@@ -70,6 +70,7 @@ PRODUCTS: list[tuple[int, str, list[str], int, int | None]] = [
     (28, "Agua mineral 6x1,5L", ["AGUA MINERAL 6X1,5L", "AGUA MIN. PACK 6"], 270, None),
 ]
 NON_PRODUCT_LINES = ["BOLSA PLASTICO", "BOLSA COMPRA"]  # bought, but not catalogue food
+POSTAL_CODE = "29010"  # printed in every synthetic shop address
 STORES = ["MERCADONA S.A.", "SUPERMERCADOS EJEMPLO S.L.", "SUPER DEMO S.A."]
 CATALOGUE_NAMES = {pid: name for pid, name, *_ in PRODUCTS}
 _CENT = Decimal("0.01")
@@ -166,7 +167,7 @@ def receipt_lines(r: SyntheticReceipt) -> list[str]:
     """The text rows of the receipt, as a thermal printer would lay them out."""
     out = [
         r.store,
-        "AV. DEL EJEMPLO 1   29010 MALAGA",
+        f"AV. DEL EJEMPLO 1   {POSTAL_CODE} MALAGA",
         f"{r.purchased_on:%d/%m/%Y} 18:42  OP: 1234",
         "",
     ]

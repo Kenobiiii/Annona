@@ -96,6 +96,15 @@ def test_scan_reads_matches_and_checks_the_total(session, home, tmp_path):
     assert not lines["BOLSA PLASTICO"].preselected
 
 
+def test_the_shop_postal_code_and_search_names_are_kept_for_the_review(session, home, tmp_path):
+    view = scan(session, home, "with_postal_code", tmp_path=tmp_path)
+    assert view.postal_code == "29003"
+    lines = by_text(view)
+    assert lines["YAK SOJA CUP"].search_name == "yakisoba soja vaso"
+    assert lines["SPAGHETTI"].search_name is None  # same as printed: nothing to add
+    assert lines["YAK SOJA CUP"].line.raw_text == "YAK SOJA CUP"  # the printed text is kept
+
+
 def test_the_photo_stays_on_the_server_and_the_ai_gets_it_once(session, home, tmp_path):
     household, _ = home
     fake = FakeLLM([(FIXTURES / "basic.json").read_text()])
