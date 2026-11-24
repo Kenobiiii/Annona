@@ -64,6 +64,6 @@ phone, which port is the preview and which is real, and how to stop it.
 
 ## 4. When done
 
-Stop what you started (preview server on 8001, Expo on 8081) with `kill $(pgrep -f "[a]nnona_server.api --port 8001")` style patterns,
+Stop what you started (preview server on 8001, Expo on 8081) with `kill $(pgrep -f "[a]nnona_server.api.*--port 8001")` (and `"[e]xpo start"` for Expo),
 unless the owner wants it left running; if left running, say that a closed session may stop it.
 Delete `/tmp/annona-preview` when the owner no longer needs the copy.

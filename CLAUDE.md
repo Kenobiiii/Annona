@@ -52,6 +52,7 @@ Version lives in 4 pyproject.toml, 3 `__version__`, app.json, package.json(+lock
 </commands>
 
 <gotchas>
+- To let the owner SEE a feature (servers, phone, APK vs Expo Go) use the `preview-feature` skill: it protects real data and local app.json.
 - ruff and git both honour .gitignore: anchor ignore rules (`/data/receipts/`), and after pushing
   verify from a fresh `git clone` (uv sync --locked, ruff, pytest, app jest) before saying CI-green.
 - Workflow YAML: quote `name:` values containing ": "; validate with PyYAML before pushing.
